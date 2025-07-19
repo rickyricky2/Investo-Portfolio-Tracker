@@ -1,5 +1,5 @@
 
-export default function LoginForm( { email }: { email:string} ) {
+export default function LoginForm( { email }: { email:string}) {
     return(
         <div className={"my-4"}>
             <label>Email</label>

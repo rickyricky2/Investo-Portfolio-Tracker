@@ -10,11 +10,11 @@ const LoginPassword = forwardRef<HTMLInputElement, LoginPasswordProps>( (props,r
 
     return(
         <div className={"my-4 relative"}>
-            <label>Password</label>
+            <label>{props.name}</label>
             <input type={showPassword ? "text" : "password"}
-                   name={"password"}
+                   name={props.id}
                    ref={ref}
-                   {...props}
+                   required={props.required}
                    className={"border-2 pr-11 rounded-lg p-1 px-2 w-full text-2xl focus:border-[#49416D] focus:border-3"}/>
             <span className={"absolute top-11 right-3"}
                   onClick={ () => setShowPassword( (prev) => !prev)}>

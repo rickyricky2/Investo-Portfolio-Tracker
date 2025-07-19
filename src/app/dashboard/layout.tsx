@@ -1,6 +1,4 @@
 import type { Metadata } from "next";
-import { redirect } from "next/navigation";
-import getUserFromToken from "@/functions/getUserFromToken";
 
 export const metadata: Metadata = {
     title: "Dashboard | investo",
@@ -8,11 +6,7 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({children}: { children: React.ReactNode; }) {
-    const user = getUserFromToken();
 
-    if (!user) {
-        redirect("/login");
-    }
 
     return (
         <div>

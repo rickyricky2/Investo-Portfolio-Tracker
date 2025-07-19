@@ -54,7 +54,6 @@ export async function POST(request: Request){
         });
 
         if(!userData){
-            console.log(1);
             return NextResponse.json({error: "Invalid token", email:email}, {status: 400});
         }
 

@@ -1,5 +1,10 @@
 import "../../global.css";
 import CreateAccountForm from "@/components/CreateAccountForm";
+import {Metadata} from "next";
+export const metadata: Metadata = {
+    title: "Create Account | Investo",
+    description: "Investment tracking site",
+};
 
 export default function CreateAccountPage(){
     return(
