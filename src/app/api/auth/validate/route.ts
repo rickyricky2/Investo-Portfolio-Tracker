@@ -10,8 +10,11 @@ export async function GET(request: Request) {
     }
 
     try {
-        jwt.verify(token, process.env.LOGIN_SECRET!);
-        return NextResponse.json({ loggedIn: true},{ status: 200 });
+        const decoded = jwt.verify(token, process.env.LOGIN_SECRET!) as {
+            userId: string;
+            email: string;
+        };
+        return NextResponse.json({ loggedIn: true, userId:decoded.userId},{ status: 200 });
     } catch (err) {
         return NextResponse.json({ loggedIn: false }, { status: 401 });
     }

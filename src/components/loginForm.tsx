@@ -54,7 +54,7 @@ export default function LoginForm(){
                 setErrors(data.errors);
                 clearPassword();
             }else{
-                router.push("/dashboard");
+                router.refresh();
             }
         }catch(error:any){
             setIsLoading(false);

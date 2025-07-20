@@ -5,10 +5,11 @@ export async function middleware(request: NextRequest) {
     const token = request.cookies.get('login_token')?.value;
 
     const pathName = request.nextUrl.pathname;
-    const publicPaths = ['/','/login','/create-account','/product','/verify-email','/verify-notice']
+    const publicPaths = ['/','/login','/reset-password','/restore-account','/create-account','/product','/verify-email','/verify-notice']
     const isPublicPath = publicPaths.includes(pathName);
 
     let isLoggedIn = false;
+    let userId;
 
     if(token){
         try {
@@ -20,7 +21,9 @@ export async function middleware(request: NextRequest) {
             });
 
             const data = await res.json();
+
             isLoggedIn = data.loggedIn;
+            userId = data.userId;
 
         } catch (err:any) {
             console.error("Error: ",err);
@@ -33,7 +36,7 @@ export async function middleware(request: NextRequest) {
     }
 
     if (isLoggedIn && isPublicPath) {
-        return NextResponse.redirect(new URL('/dashboard', request.url));
+        return NextResponse.redirect(new URL(`/${userId}`, request.url));
     }
 
     return NextResponse.next();
@@ -42,6 +45,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/dashboard/:path*', '/login', '/create-account', '/product', '/verify-email', '/verify-notice' , '/'],
+    matcher: ['/:user((?!api|_next|favicon.ico)[^/]+)','/:user((?!api|_next|favicon.ico)[^/]+)/:path*', '/login', '/create-account', '/product', '/verify-email', '/verify-notice' , '/'],
 
 };
