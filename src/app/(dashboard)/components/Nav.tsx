@@ -4,7 +4,7 @@ import { MdSpaceDashboard } from "react-icons/md";
 import { MdAccountCircle } from "react-icons/md";
 import { IoMdWallet } from "react-icons/io";
 
-import { useState,useEffect } from 'react'
+import { useState,useEffect } from 'react';
 
 // icons
 

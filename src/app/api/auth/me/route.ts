@@ -30,6 +30,8 @@ export async function GET(req:Request){
             email: decoded.email
         });
 
+        console.log(1);
+
         if(!user){
             return NextResponse.json({
                 loggedIn: false,

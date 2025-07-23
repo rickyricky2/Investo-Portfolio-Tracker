@@ -100,7 +100,7 @@ export async function POST(request: Request){
             "login_token",
             token,
             {
-                httpOnly: true,
+                httpOnly: false,
                 path: "/",
                 secure: process.env.NODE_ENV === "production",
                 maxAge: tokenAge,

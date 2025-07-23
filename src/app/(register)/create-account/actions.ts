@@ -128,7 +128,10 @@ export async function createAccount(
         // checking if account was created
         const user = await users.findOne({email:rawData.email});
         if(!user){
-
+            return{
+                success:false,
+                message: "User was not created",
+            }
         }
 
         // sending an email with verification link to our new user
