@@ -47,12 +47,12 @@ export async function POST(request:Request){
             {email: email},
         );
         if(!user){
-            return NextResponse.json({success:false, error:"Email don't match any account"},{status:400});
+            return NextResponse.json({success:false, error:"Email don't match any settings"},{status:400});
         }
 
         await sendVerificationEmail(email, restorePasswordToken);
 
-        return NextResponse.json({success: true, message: "Link for restoring your account has been sent"}, {status: 200});
+        return NextResponse.json({success: true, message: "Link for restoring your settings has been sent"}, {status: 200});
     } catch(error:any){
         console.error(error);
         return NextResponse.json({success:false, error:"Some error occurred"},{status:500});

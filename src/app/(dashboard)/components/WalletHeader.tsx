@@ -1,12 +1,21 @@
 import { FaPlus } from "react-icons/fa";
 import AddAssetButton from "../components/addAssetButton";
+import AssetFilters from "./AssetFilters";
 
-export default function WalletHeader(){
+interface Filters {
+    type: string;
+    currency: string;
+    search: string;
+}
+
+export default function WalletHeader({filters,onFilterChange}: {filters:Filters; onFilterChange: (filters: Filters) => void}) {
 
     return(
         <header className={"w-full bg-white h-[100px] rounded-2xl shadow-sm "}>
             <div className={"w-full h-full flex items-center justify-between px-10"}>
-                <p className={"text-4xl"}>Total value: 200</p>
+                <div>
+                    <AssetFilters filters={filters} onFilterChange={onFilterChange}/>
+                </div>
                 <AddAssetButton/>
             </div>
         </header>

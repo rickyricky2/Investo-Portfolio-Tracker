@@ -2,6 +2,7 @@ import {NextResponse} from "next/server";
 import {cookies} from "next/headers";
 import jwt from 'jsonwebtoken';
 import clientPromise from "@/lib/db";
+import {ObjectId} from "mongodb";
 
 const getUserEmail = async ()=>{
     const cookieStore = await cookies();
@@ -14,6 +15,7 @@ const getUserEmail = async ()=>{
 
     return decoded.email;
 }
+
 export async function POST(req:Request){
     try{
         const json = await req.json();
@@ -40,7 +42,7 @@ export async function POST(req:Request){
             return NextResponse.json({success:false,error:`Can't find user`},{status:400});
         }
 
-        const userId = user._id;
+        const userId = new ObjectId(user._id);
 
         const assets = db.collection('assets');
 
@@ -77,16 +79,52 @@ export async function GET() {
             return NextResponse.json({success:false,error:"Can't find user"},{status:400});
         }
 
-        const userId = user._id;
+        const userId = new ObjectId(user._id);
 
         const assets = db.collection('assets');
 
         const userAssets = await assets.find({userId: userId}).toArray();
 
-        console.log(userAssets);
         return NextResponse.json({success:true,assets:userAssets},{status:200});
 
     }catch(e:any){
         return NextResponse.json({success:false, error:e},{status:500});
+    }
+}
+
+export async function DELETE(req: Request) {
+    try {
+        const { id } = await req.json();
+
+        if (!id || typeof id !== "string" || !ObjectId.isValid(id)) {
+            return NextResponse.json({ success: false, error: "Invalid Id" }, { status: 400 });
+        }
+
+        const assetId = new ObjectId(id);
+        const email = await getUserEmail();
+
+        const client = await clientPromise;
+        const db = client.db("investodb");
+        const users = db.collection('users');
+
+        const user = await users.findOne({ email });
+        if (!user) {
+            return NextResponse.json({ success: false, error: "Can't find user" }, { status: 400 });
+        }
+        const userId = new ObjectId(user._id);
+
+        const assets = db.collection('assets');
+        const asset = await assets.findOne({ _id: assetId, userId });
+
+        if (!asset) {
+            return NextResponse.json({ success: false, error: "Can't find asset or no permission" }, { status: 404 });
+        }
+
+        await assets.findOneAndDelete({ _id: assetId, userId });
+
+        return NextResponse.json({ success: true }, { status: 200 });
+    } catch (error: any) {
+        console.error(error);
+        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
     }
 }

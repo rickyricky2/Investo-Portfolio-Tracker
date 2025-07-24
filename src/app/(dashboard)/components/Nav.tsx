@@ -102,7 +102,7 @@ export default function Nav() {
             </ul>
             {/* footer */}
             <div className='flex items-center gap-2 px-2 py-2'>
-                <Link href={`/{userId}/account`} className={"flex items-center gap-2"}>
+                <Link href={`/{userId}/settings`} className={"flex items-center gap-2"}>
                     <div><MdAccountCircle size={30} /></div>
                     <div className={`leading-5 ${!open && 'w-0 translate-x-24'} duration-500 overflow-hidden`}>
                         <p>Saheb</p>

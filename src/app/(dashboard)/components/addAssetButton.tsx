@@ -1,6 +1,6 @@
 "use client"
 import { FaPlus } from "react-icons/fa";
-import { useState,useEffect } from 'react';
+import { useState,useEffect, useRef } from 'react';
 import {z} from "zod";
 
 const assetSchema = z.object({
@@ -25,6 +25,20 @@ export default function AddAssetButton(){
     const [isOpen,setIsOpen]=useState(false);
     const [error, setError]=useState("");
     const [loading, setLoading]=useState(false);
+    const wrapperRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -61,7 +75,7 @@ export default function AddAssetButton(){
     }
 
     return(
-        <div className={"relative"}>
+        <div className={`relative`} ref={wrapperRef}>
             <div className={`bg-[#A882DD] transition-all rounded-full p-1 z-20 relative group `}  >
                 <FaPlus className={`text-gray-100 z-20 transition-all ${isOpen ? "rotate-45" : ""}`} size={30} onClick={() => setIsOpen(!isOpen)} />
                 <p className={`${isOpen && 'hidden'} absolute bottom-6 -left-7 group-hover:-translate-y-5 shadow-md rounded-md text-lg
@@ -70,13 +84,13 @@ export default function AddAssetButton(){
                     Add Asset
                 </p>
             </div>
-            <div className={`absolute bg-[#A882DD] z-10 top-0 right-0 rounded-3xl transition-all p-5 overflow-hidden ${isOpen ? "max-w-[500px] max-h-[500px]" : "max-w-0 max-h-0"}`}>
+            <div className={`absolute bg-[#A882DD] z-10 shadow-xl top-0 right-0 rounded-3xl transition-all p-5 overflow-hidden ${isOpen ? "max-w-[500px] max-h-[500px]" : "max-w-0 max-h-0 opacity-0"}`}>
                 <h2 className={"text-3xl"}>Add Asset</h2>
                 <form onSubmit={handleSubmit} className={"text-xl"}>
                     {formAssets.map( (item,index) => {
                         return(
                             <section className={"flex my-3"} key={index}>
-                                <label className={"w-25"}>{item.label}:</label>
+                                <label className={"w-25 font-medium"}>{item.label}:</label>
                                 {item.key === "currency" ? (
                                     <select
                                         name={item.key}
@@ -141,10 +155,10 @@ export default function AddAssetButton(){
                         );
                     })}
                     {error && (
-                        <p className={"font-bold my-3"}>{error}</p>
+                        <p className={"font-medium my-3"}>{error}</p>
                     )}
                     <input type="submit" value="Add Asset"
-                    className={"bg-white rounded-lg px-3 py-2 cursor-pointer"}/>
+                    className={"bg-white rounded-lg px-3 py-2 cursor-pointer transition-all hover:-translate-y-1"}/>
                 </form>
             </div>
         </div>

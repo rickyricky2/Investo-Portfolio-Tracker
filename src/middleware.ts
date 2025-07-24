@@ -5,7 +5,7 @@ export async function middleware(request: NextRequest) {
     const token = request.cookies.get('login_token')?.value;
 
     const pathName = request.nextUrl.pathname;
-    const publicPaths = ['/','/login','/reset-password','/restore-account','/create-account','/product','/verify-email','/verify-notice']
+    const publicPaths = ['/','/login','/reset-password','/restore-settings','/create-settings','/product','/verify-email','/verify-notice']
     const isPublicPath = publicPaths.includes(pathName);
 
     let isLoggedIn = false;
@@ -45,6 +45,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/:user((?!api|_next|favicon.ico)[^/]+)','/:user((?!api|_next|favicon.ico)[^/]+)/:path*', '/login', '/create-account', '/product', '/verify-email', '/verify-notice' , '/'],
+    matcher: ['/:user((?!api|_next|favicon.ico)[^/]+)','/:user((?!api|_next|favicon.ico)[^/]+)/:path*', '/login', '/create-settings', '/product', '/verify-email', '/verify-notice' , '/'],
 
 };
