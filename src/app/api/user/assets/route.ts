@@ -92,6 +92,53 @@ export async function GET() {
     }
 }
 
+export async function PUT(req: Request, { params }: { params: { id: string } }) {
+    try {
+        const body = await req.json();
+        const { id, type, name, symbol, quantity, unitPrice, currency} = body;
+
+        const assetId = new ObjectId(id);
+        const email = await getUserEmail();
+
+        const client = await clientPromise;
+        const db = client.db("investodb");
+        const users = db.collection('users');
+
+        const user = await users.findOne({ email:email });
+        if (!user) {
+            return NextResponse.json({ success: false, error: "Can't find user" }, { status: 400 });
+        }
+        const userId = new ObjectId(user._id);
+
+        const assets = db.collection('assets');
+        const asset = await assets.findOne({ _id: assetId, userId });
+
+        if (!asset) {
+            return NextResponse.json({ success: false, error: "Can't find asset or no permission" }, { status: 404 });
+        }
+
+        const totalValue = Number(unitPrice) * Number(quantity);
+
+        await assets.findOneAndUpdate(
+            { _id: assetId, userId: userId },
+            {
+                $set: {
+                    type: type,
+                    name: name,
+                    symbol: symbol,
+                    quantity: quantity,
+                    unitPrice: unitPrice,
+                    totalValue: totalValue,
+                    currency: currency,
+                }
+            });
+
+        return NextResponse.json({ success: true }, { status: 200 });
+    } catch (e) {
+        return NextResponse.json({ success: false, error: "Update failed" }, { status: 500 });
+    }
+}
+
 export async function DELETE(req: Request) {
     try {
         const { id } = await req.json();
@@ -107,14 +154,14 @@ export async function DELETE(req: Request) {
         const db = client.db("investodb");
         const users = db.collection('users');
 
-        const user = await users.findOne({ email });
+        const user = await users.findOne({ email:email });
         if (!user) {
             return NextResponse.json({ success: false, error: "Can't find user" }, { status: 400 });
         }
         const userId = new ObjectId(user._id);
 
         const assets = db.collection('assets');
-        const asset = await assets.findOne({ _id: assetId, userId });
+        const asset = await assets.findOne({ _id: assetId, userId: userId });
 
         if (!asset) {
             return NextResponse.json({ success: false, error: "Can't find asset or no permission" }, { status: 404 });

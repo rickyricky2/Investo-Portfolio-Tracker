@@ -18,6 +18,7 @@ export default function CreateAccountForm() {
     const [subscriptionTypeState, setSubscriptionType] = useState("");
     const router = useRouter();
     const [state, action, isPending] = useActionState(createAccount, initialState);
+    const [isChecked,setIsChecked] = useState(false);
 
     useEffect(() => {
         try {
@@ -43,13 +44,13 @@ export default function CreateAccountForm() {
     }, [state.success]);
 
     return (
-        <div className="md:w-[600] min-h-[600] my-10 border-2 border-gray-300 transition-all hover:border-[#A882DD] p-5 rounded-lg inline-block">
+        <div className="md:w-[600] min-h-[600] sm:my-10 sm:border-2 border-gray-400 dark:border-dark-text-secondary transition-all hover:border-light-main dark:hover:border-dark-main p-5 rounded-lg inline-block">
             <form action={action}>
                 <input type="hidden" value={subscriptionTypeState} name="subscriptionType" />
                 <input type="hidden" value={subscriptionDurationState} name="subscriptionDuration" />
 
                 <article className={"my-5"}>
-                    <label className={"text-3xl"}>Email</label>
+                    <label className={`text-3xl ${state?.errors?.email ? "text-light-error-text dark:text-dark-error-text" : 'text-light-text dark:text-dark-text'}`}>Email</label>
                     <input
                         type={"email"}
                         defaultValue={state.inputs?.email}
@@ -57,77 +58,85 @@ export default function CreateAccountForm() {
                         required
                         minLength={2}
                         maxLength={100}
-                        className={`mt-1 border-2 rounded-md p-1 px-2 w-full text-2xl focus:border-[#49416D] focus:border-3 ${state?.errors?.email ? "border-red-500 focus:border-red-500" : ' '}`}/>
+                        className={`mt-1 border-2 rounded-md p-1 px-2 transition outline-none w-full text-2xl focus:border-3 ${state?.errors?.email ? "border-light-error-border focus:border-light-error-border bg-light-error-bg text-light-error-text dark:text-dark-error-text dark:bg-dark-error-bg dark:border-dark-error dark:focus:border-dark-error" : 'focus:border-light-secondary dark:focus:border-dark-secondary '}`}/>
                     {state?.errors?.email && (
-                        <p className={"text-2xl text-red-500"}>
+                        <p className={"text-2xl text-light-error-text dark:text-dark-error-text"}>
                             {state.errors.email[0]}
                         </p>
                     )}
                 </article>
                 <article className={"my-5 relative"}>
-                    <label  className={"text-3xl"}>Password</label>
+                    <label  className={`text-3xl ${state?.errors?.password ? "text-light-error-text dark:text-dark-error-text" : 'text-light-text dark:text-dark-text'}`}>Password</label>
                     <input type={showPassword ? "text" : "password"}
                            required
                            minLength={8}
                            maxLength={100}
                            name={"password"}
-                           className={`mt-1 border-2 rounded-md p-1 px-2 w-full text-2xl focus:border-[#49416D] focus:border-3 ${state?.errors?.password ? "border-red-500 focus:border-red-500" : ' '}`}/>
+                           className={`mt-1 border-2 rounded-md p-1 px-2 transition outline-none w-full text-2xl  focus:border-3 ${state?.errors?.password ? "border-light-error-border focus:border-light-error-border bg-light-error-bg text-light-error-text dark:text-dark-error-text dark:bg-dark-error-bg dark:border-dark-error dark:focus:border-dark-error" : 'focus:border-light-secondary dark:focus:border-dark-secondary '}`}/>
                     {state?.errors?.password && (
-                        <p className={"text-2xl text-red-500"}>
+                        <p className={"text-2xl text-light-error-text dark:text-dark-error-text"}>
                             {state.errors.password[0]}
                         </p>
                     )}
-                    <span className={"absolute top-12 right-3 text-3xl"}
+                    <span className={`absolute top-12 right-3 text-3xl ${state?.errors?.password ? "text-light-error-text dark:text-dark-error-text" : 'text-light-text dark:text-dark-text' }`}
                           onClick={ () => setShowPassword( (prev) => !prev)}>
                                     {showPassword ? <FaRegEyeSlash/> : <FaRegEye/> }
                                 </span>
                 </article>
                 <article className={"my-5"}>
-                    <label  className={"text-3xl"}>First Name</label>
+                    <label  className={`text-3xl ${state?.errors?.firstName ? "text-light-error-text dark:text-dark-error-text" : 'text-light-text dark:text-dark-text'}`}>First Name</label>
                     <input type={"text"}
                            defaultValue={state.inputs?.firstName}
                            name={"firstName"}
                            required
                            minLength={2}
                            maxLength={50}
-                           className={`mt-1 border-2 rounded-md p-1 px-2 w-full text-2xl focus:border-[#49416D] focus:border-3 ${state?.errors?.firstName ? "border-red-500 focus:border-red-500" : ' '}`}/>
+                           className={`mt-1 border-2 rounded-md p-1 px-2 transition outline-none w-full text-2xl focus:border-3 ${state?.errors?.firstName ? "border-light-error-border focus:border-light-error-border bg-light-error-bg text-light-error-text dark:text-dark-error-text dark:bg-dark-error-bg dark:border-dark-error dark:focus:border-dark-error" : 'focus:border-light-secondary dark:focus:border-dark-secondary '}`}/>
                     {state?.errors?.firstName && (
-                        <p className={"text-2xl text-red-500"}>
+                        <p className={"text-2xl text-light-error-text dark:text-dark-error-text"}>
                             {state.errors.firstName[0]}
                         </p>
                     )}
                 </article>
                 <article className={"my-5"}>
-                    <label  className={"text-3xl"}>Last Name</label>
+                    <label  className={`text-3xl ${state?.errors?.lastName ? "text-light-error-text dark:text-dark-error-text" : 'text-light-text dark:text-dark-text'}`}>Last Name</label>
                     <input  type={"text"}
                             defaultValue={state.inputs?.lastName}
                             name={"lastName"}
                             required
                             minLength={2}
                             maxLength={50}
-                            className={`mt-1 border-2 rounded-md p-1 px-2 w-full text-2xl focus:border-[#49416D] focus:border-3 ${state?.errors?.lastName ? "border-red-500 focus:border-red-500" : ' '}`}/>
+                            className={`mt-1 border-2 rounded-md p-1 px-2 transition outline-none w-full text-2xl focus:border-3 ${state?.errors?.lastName ? "border-light-error-border focus:border-light-error-border bg-light-error-bg text-light-error-text dark:text-dark-error-text dark:bg-dark-error-bg dark:border-dark-error dark:focus:border-dark-error" : 'focus:border-light-secondary dark:focus:border-dark-secondary '}`}/>
                     {state?.errors?.lastName && (
-                        <p className={"text-2xl text-red-500"}>
+                        <p className={"text-2xl text-light-error-text dark:text-dark-error-text"}>
                             {state.errors.lastName[0]}
                         </p>
                     )}
                 </article>
-                <article>
-                    <label className={"text-2xl"} >Accept our terms</label>
+                <article className={"relative"}>
+                    <label
+                        className={`text-2xl ${state?.errors?.terms ? "text-light-error-text dark:text-dark-error-text" : 'text-light-text dark:text-dark-text'}`}>
+                        Accept our terms
+                    </label>
                     <input type={"checkbox"}
                         // required
                            name={"terms"}
-                           className={`mx-2 w-5 h-5 ${state?.errors?.terms ? "border-red-500 focus:border-red-500 " : ""}`}/>
-                    {state?.errors?.terms && (
-                        <p className={"text-2xl text-red-500"}>
-                            {state.errors.terms[0]}
-                        </p>
-                    )}
+                           onChange={() => setIsChecked(!isChecked)}
+                           className={`absolute left-[190px] top-[8px] border-2 appearance-none w-5 h-5 ${state?.errors?.terms ? "border-light-error-border focus:border-light-error-border bg-light-error-bg text-light-error-text dark:text-dark-error-text dark:bg-dark-error-bg dark:border-dark-error-border dark:checked:border-dark-error-border" : `  dark:focus:border-dark-secondary ${isChecked ? "border-light-main dark:border-dark-main" : "border-light-secondary dark:border-dark-text"} `}`}/>
+                    <div className={`absolute left-[192px] top-[18px] ${isChecked ? "" : "hidden"}`}>
+                        <span className={`bg-light-text dark:bg-dark-text w-[10px] h-[2px] rounded-full absolute transition rotate-45`}></span>
+                        <span className={`bg-light-text dark:bg-dark-text w-[10px] h-[2px] rounded-full absolute transition translate-x-[60%] rotate-135`}></span>
+                    </div>
                 </article>
+                {state?.errors?.terms && (
+                    <p className={"mt-2 text-2xl text-light-error-text dark:text-dark-error-text"}>
+                        {state.errors.terms[0]}
+                    </p>
+                )}
                 <article className={"mt-10 relative"}>
                     <button type={"submit"}
                             disabled={isPending}
-                            className={"text-2xl px-5 py-4 m-auto bg-[#49416D] active:bg-[#4a426ec9] text-gray-100 rounded-lg transition hover:-translate-y-2 hover:shadow-2xl"}>
+                            className={"text-2xl px-5 py-4 m-auto bg-light-secondary dark:bg-dark-secondary active:bg-[#4a426ec9] text-light-text-secondary dark:text-dark-text rounded-lg transition hover:-translate-y-2 hover:shadow-2xl"}>
                         {isPending ? 'Creating settings..' : 'Create Account' }</button>
                 </article>
 

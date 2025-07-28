@@ -1,8 +1,10 @@
 import ProductClient from "@/components/ProductClient";
+import PublicHeader from "@/components/publicHeader";
 
 export default function ProductPage() {
     return (
-        <div className="container min-h-screen min-w-screen bg-gray-100 tracking-wider overflow-hidden">
+        <div className="w-full min-h-screen bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text tracking-wider overflow-hidden">
+            <PublicHeader/>
             <ProductClient />
         </div>
     );

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import ThemeProvider from "@/components/ThemeProvider";
 
 export const metadata: Metadata = {
   title: "Investo",
@@ -15,11 +16,30 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <body
-        className={`antialiased tracking-tight`}
-      >
-        {children}
-      </body>
+        <head>
+            <script dangerouslySetInnerHTML={{
+                __html: `
+                (function(){
+                    const theme = localStorage.getItem("theme");
+                    if(theme){
+                        document.bodyElement.classList.add(theme);
+                    }else{
+                        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+                        if(prefersDark){
+                            document.bodyElement.classList.add('dark');
+                        }
+                    }
+                })();
+                `,
+            }} />
+        </head>
+          <body
+            className={`antialiased tracking-tight`}
+          >
+            <ThemeProvider>
+                {children}
+            </ThemeProvider>
+          </body>
     </html>
   );
 }

@@ -5,19 +5,33 @@ import { AiFillPieChart, AiOutlineFund } from "react-icons/ai";
 import { MdAttachMoney } from "react-icons/md";
 import ScrollReveal from "../components/scrollAnimation";
 import HeaderOnScroll from "../components/headerOnScroll";
+import {subscriptionPlans} from "@/lib/subscriptionPlans";
 
-// A882DD
-// 49416D
+const aboutContent: {icons:JSX.Element; info:string}[] = [
+    {
+        icons: <AiFillPieChart className={"w-30 h-20 mb-10 lg:m-0"}/> ,
+        info: "Track all your investments in one place – no more spreadsheets."
+    },
+    {
+        icons: <AiOutlineFund className={"w-30 h-20 mb-10 lg:m-0"} /> ,
+        info: "Get real-time market data and insights on your portfolio."
+    },
+    {
+        icons: <MdAttachMoney className={"w-30 h-20 mb-10 lg:m-0"} /> ,
+        info: "Start for free with powerful features and no hidden fees."
+    }
+]
+
 export default async function Home() {
 
     return (
-      <div className={"container min-h-screen min-w-screen"}>
+      <div className={"w-full min-h-screen bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text"}>
           <HeaderOnScroll/>
       {/*    Hero*/}
-          <div className={"text-center my-10 p-5 md:p-20 sm:w-9/10 m-auto"}>
+          <div className={"text-center p-5 md:p-20 sm:w-9/10 m-auto"}>
               <h1 className={"text-5xl sm:text-6xl md:text-8xl my-10"}>All your investments in one place</h1>
               <p className={"text-4xl md:text-5xl mb-15"}> investo is your private finanse assistant</p>
-              <Link href={"/product"} className={"text-4xl bg-[#49416D] py-4 px-5 rounded-lg text-gray-100 transition-all hover:scale-110"}>Register Now</Link>
+              <Link href={"/product"} className={"text-4xl inline-block bg-light-secondary dark:bg-dark-secondary py-4 px-5 rounded-lg text-light-text-secondary dark:text-dark-text transition-all hover:scale-110"}>Register Now</Link>
 
           </div>
       {/*    About*/}
@@ -25,58 +39,47 @@ export default async function Home() {
           <div className={"text-center mt-20 p-10 w-9/10 m-auto"}>
               <h2 className={"text-5xl"}>Three reasons why u should register now</h2>
               <div className={"flex flex-col flex-wrap w-full lg:max-w-[60%] m-auto text-4xl justify-center items-left my-20"}>
-                  <article className={"hover:scale-110 hover:-translate-y-5 transition-all duration-600 flex flex-col lg:flex-row w-full justify-start items-center border-gray-400 border-b-1 rounded-1 pb-10 my-10"}>
-                      <AiFillPieChart className={"w-30 h-20 mb-10 lg:m-0"} />
-                      <p>Track all your investments in one place – no more spreadsheets.</p>
-                  </article>
-                  <article className={"hover:scale-110 hover:-translate-y-5 transition-all duration-600 flex gap-5 flex-col lg:flex-row w-full justify-left items-center border-gray-400 border-b-1 rounded-1 pb-10 my-10"}>
-                      <AiOutlineFund className={"w-30 h-20 mb-10 lg:m-0"} />
-                      <p>Get real-time market data and insights on your portfolio.</p>
-                  </article>
-                  <article className={"hover:scale-110 hover:-translate-y-5 transition-all duration-600 flex gap-5 flex-col lg:flex-row w-full justify-left items-center border-gray-400 border-b-1 rounded-1 pb-10 mt-10"}>
-                      <MdAttachMoney className={"w-30 h-20 mb-10 lg:m-0"} />
-                      <p>Start for free with powerful features and no hidden fees.</p>
-                  </article>
+                  {aboutContent.map((item,index) => {
+                      return(
+                          <article key={index} className={"hover:scale-110 hover:-translate-y-5 transition-all duration-600 flex flex-col lg:flex-row w-full justify-start items-center border-gray-400 dark:border-dark-secondary border-b-1 rounded-1 pb-10 my-10"}>
+                              {item.icons}
+                              <p>{item.info}</p>
+                          </article>
+                      );
+                  })}
               </div>
           </div>
           </ScrollReveal>
       {/*    Pricing */}
           <ScrollReveal>
           <div className={"text-center p-10 w-9/10 m-auto"}>
-              <h2 className={"text-5xl"}>Checkout our plans</h2>
+              <h2 className={"text-5xl text-center"}>Checkout our plans</h2>
               <div className={"flex flex-wrap gap-15 justify-center items-center my-10"}>
-                  <div className={`p-4 pt-5 pb-10 min-w-70 w-90 max-w-100 rounded-sm border-2 border-gray-400 
-                   transition-all hover:border-[#A882DD] hover:-translate-y-3 hover:shadow-2xl`}>
-                      <div className={"text-left border-b-1 border-gray-400 py-1 pb-2"}>
-                          <h2 className={"text-5xl"}>Free</h2>
-                          <p className={"text-4xl"}>00.00/<span className={"text3xl"}>Month</span></p>
-                      </div>
-                      <div className={"py-2 mb-5"}>
-                          <p className={"text-3xl py-3"}>Includes</p>
-                          <ul className={"text-2xl text-left p-5"}>
-                              <li className={"relative"}><span className={"w-2 h-2 rounded-full bg-black absolute bottom-3 -left-5 "}></span>Add all your assets</li>
-                              <li className={"relative"}><span className={"w-2 h-2 rounded-full bg-black absolute bottom-3 -left-5 "}></span>Trace your investments</li>
-                              <li className={"relative"}><span className={"w-2 h-2 rounded-full bg-black absolute bottom-3 -left-5 "}></span>Watch your money growth</li>
-                          </ul>
-                      </div>
-                      <Link href={"/product"} className={"text-3xl bg-[#49416D] text-white py-2 px-5 rounded-lg font-medium hover:bg-[#4a426ec9]"}>Select</Link>
-                  </div>
-                  <div className={`p-4 pt-5 pb-10 min-w-70 w-90  max-w-100 rounded-sm border-2 border-gray-400 
-                   transition-all hover:border-[#A882DD] hover:-translate-y-3 hover:shadow-2xl`}>
-                      <div className={"text-left border-b-1 border-gray-400 py-1"}>
-                          <h2 className={"text-5xl"}>Standard</h2>
-                          <p className={"text-4xl"}>04.00/<span className={"text3xl"}>Month</span></p>
-                      </div>
-                      <div className={"py-2 mb-5"}>
-                          <p className={"text-3xl py-3"}>Includes</p>
-                          <ul className={"text-2xl text-left p-5"}>
-                              <li className={"relative"}><span className={"w-2 h-2 rounded-full bg-black absolute bottom-3 -left-5 "}></span>Add all your assets</li>
-                              <li className={"relative"}><span className={"w-2 h-2 rounded-full bg-black absolute bottom-3 -left-5 "}></span>Trace your investments</li>
-                              <li className={"relative"}><span className={"w-2 h-2 rounded-full bg-black absolute bottom-3 -left-5 "}></span>Watch your money growth</li>
-                          </ul>
-                      </div>
-                      <Link href={"/product"} className={"text-3xl bg-[#49416D] text-white py-2 px-5 rounded-lg font-medium hover:bg-[#4a426ec9]"}>Select</Link>
-                  </div>
+                  {subscriptionPlans.map((item,index) => {
+                      return(
+                          <div key={index} className={`p-4 pt-5 pb-10 min-w-70 w-90 max-w-100 min-h-[500px] rounded-sm border-2 border-gray-400 dark:border-dark-secondary
+                              transition-all hover:border-light-main dark:hover:border-dark-main hover:-translate-y-3 hover:shadow-2xl`}>
+                              <div className={"text-left border-b-1 border-gray-400 dark:border-dark-secondary py-1 pb-2"}>
+                                  <h2 className={"text-5xl"}>{item.name}</h2>
+                                  <p className={"text-4xl"}>{item.monthlyPrice}$/<span className={"text-3xl text-dark-text-secondary"}>Month</span></p>
+                              </div>
+                              <div className={"py-2 mb-1"}>
+                                  <p className={"text-3xl py-3"}>Includes</p>
+                                  <ul className={"text-2xl text-left p-5"}>
+                                      {item.includes.map((item,index) => {
+                                          return(
+                                              <li key={index} className={"relative"}><span className={"w-2 h-2 rounded-full bg-black dark:bg-dark-text absolute bottom-3 -left-5 "}></span>{item}</li>
+                                          );
+                                      })}
+                                  </ul>
+                              </div>
+                              {item.name === "Free" ? (
+                                  <p className={"text-light-text dark:text-dark-text tracking-normal text-lg"}>No credit card info needed!</p>
+                              ) : ""}
+                              <Link href={"/product"} className={"mt-4 inline-block text-3xl bg-light-secondary dark:border-dark-secondary text-light-text-secondary dark:text-dark-text py-2 px-5 rounded-lg font-medium hover:bg-light-secondary dark:hover:bg-dark-secondary"}>Select</Link>
+                          </div>
+                      );
+                  })}
               </div>
           </div>
           </ScrollReveal>
@@ -91,40 +94,40 @@ export default async function Home() {
                               <section className={"flex flex-col items-start gap-3 w-full md:w-1/2"}>
                                   <label>First Name</label>
                                   <input type="text" placeholder={"Enter your name"} required
-                                  className={"border-1 rounded-sm w-full px-2 py-1 focus:border-[#49416D]"}/>
+                                  className={"border-1 rounded-sm w-full px-2 py-1 focus:border-light-secondary dark:focus:border-dark-secondary"}/>
                               </section>
                               <section className={"flex flex-col items-start gap-3 w-full md:w-1/2"}>
                                   <label>Last Name</label>
                                   <input type={"text"} placeholder={"Enter your last name"} required
-                                         className={"border-1 rounded-sm w-full px-2 py-1 focus:border-[#49416D]"}/>
+                                         className={"border-1 rounded-sm w-full px-2 py-1 focus:border-light-secondary dark:focus:border-dark-secondary"}/>
                               </section>
                           </div>
                           <div  className={"flex flex-col gap-3 w-full mb-10"}>
                               <section  className={"flex flex-col items-start gap-3 p-2 w-full"}>
                                   <label>E-mail</label>
                                   <input type="email" placeholder={"Enter your e-mail"} required
-                                         className={"border-1 rounded-sm px-2 py-1 focus:border-[#49416D] w-full"}/>
+                                         className={"border-1 rounded-sm px-2 py-1 focus:border-light-secondary dark:focus:border-dark-secondary w-full"}/>
                               </section>
                               <section className={"flex flex-col items-start gap-3 p-2 w-full"}>
                                   <label>Topic</label>
                                   <input type="text" placeholder={"Enter topic"} required
-                                         className={"border-1 rounded-sm px-2 py-1 focus:border-[#49416D] w-full"}/>
+                                         className={"border-1 rounded-sm px-2 py-1 focus:border-light-secondary dark:focus:border-dark-secondary w-full"}/>
                               </section>
                               <section className={"flex flex-col items-start gap-3 p-2 w-full"}>
                                   <label>Your message</label>
                                   <textarea placeholder={"Enter message"} required rows={7}
-                                            className={"border-1 rounded-sm px-2 py-1 focus:border-[#49416D] w-full"}/>
+                                            className={"border-1 rounded-sm px-2 py-1 focus:border-light-secondary dark:focus:border-dark-secondary w-full"}/>
                               </section>
                           </div>
-                          <input className={"bg-[#49416D] text-gray-100 px-5 py-3 my-5 rounded-lg text-4xl transition-all hover:scale-120 hover:shadow-2xl active:bg-[#4a426ec9]"}
+                          <input className={"bg-light-secondary dark:bg-dark-secondary text-light-text-secondary dark:text-dark-text px-5 py-3 my-5 rounded-lg text-4xl transition-all hover:scale-120 hover:shadow-2xl active:bg-[#4a426ec9]"}
                           type={"submit"} value={"Submit"}/>
                       </div>
                   </form>
               </div>
           </div>
           </ScrollReveal>
-          <footer className={"bg-[#A882DD] p-4"}>
-                <p className={"text-2xl p-2 text-gray-100"}>Copyright &copy 2025 investo.pl All rights reserved </p>
+          <footer className={"bg-light-main dark:bg-dark-main px-4 "}>
+                <p className={"text-lg p-2 text-light-text-secondary dark:text-dark-text"}>Copyright &copy; 2025 Investo.pl All rights reserved </p>
           </footer>
       </div>
   );

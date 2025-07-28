@@ -11,7 +11,7 @@ export default function AssetFilters({ filters, onFilterChange }: { filters: Fil
 
     return (
         <div className="flex gap-4 font-medium">
-            <select value={filters.type} onChange={(e) => handleChange("type", e.target.value)} className=" focus:bg-gray-200 focus:outline-none w-full border-white border-1 border-b-2 p-1 border-b-black  focus:border-white  focus:ring-0 focus:border-b-black bg-transparent apperance-none pr-6 text-lg">
+            <select value={filters.type} onChange={(e) => handleChange("type", e.target.value)} className=" focus:bg-gray-200 focus:outline-none w-full border-white border-1 border-b-2 p-1 border-b-black dark:border-dark-bg dark:border-b-dark-secondary dark:text-dark-text dark:focus:bg-dark-bg dark:focus:border-dark-bg  focus:border-white  focus:ring-0 focus:border-b-black bg-transparent apperance-none pr-6 text-lg">
                 <option value="all">Type</option>
                 <option value="stock">Stock</option>
                 <option value="bond">Bond</option>
@@ -35,7 +35,7 @@ export default function AssetFilters({ filters, onFilterChange }: { filters: Fil
                 <option value="other">Other</option>
             </select>
 
-            <select value={filters.currency}  onChange={(e) => handleChange("currency", e.target.value)} className="focus:outline-none focus:bg-gray-200 w-full border-white border-1 border-b-2 p-1 border-b-black  focus:border-white  focus:ring-0 focus:border-b-black bg-transparent apperance-none pr-6 text-lg">
+            <select value={filters.currency}  onChange={(e) => handleChange("currency", e.target.value)} className="focus:outline-none focus:bg-gray-200 w-full border-white border-1 border-b-2 p-1 border-b-black dark:border-dark-bg dark:border-b-dark-secondary dark:text-dark-text dark:focus:bg-dark-bg dark:focus:border-dark-bg  focus:border-white  focus:ring-0 focus:border-b-black bg-transparent apperance-none pr-6 text-lg">
                 <option value="all">Currency</option>
                 <option value="USD">USD – US Dollar</option>
                 <option value="EUR">EUR – Euro</option>
@@ -60,7 +60,7 @@ export default function AssetFilters({ filters, onFilterChange }: { filters: Fil
                 placeholder="Search..."
                 value={filters.search}
                 onChange={(e) => handleChange("search", e.target.value)}
-                className="w-full border-white border-1 border-b-2 p-1 border-b-black focus:outline-none focus:bg-gray-200  focus:border-white  focus:ring-0 focus:border-b-black bg-transparent apperance-none pr-6 text-lg"
+                className="w-full border-white border-1 border-b-2 p-1 border-b-black focus:outline-none focus:bg-gray-200  focus:border-white dark:border-dark-bg dark:border-b-dark-secondary dark:text-dark-text dark:focus:bg-dark-bg dark:focus:border-dark-bg  focus:ring-0 focus:border-b-black bg-transparent apperance-none pr-6 text-lg"
             />
         </div>
     );

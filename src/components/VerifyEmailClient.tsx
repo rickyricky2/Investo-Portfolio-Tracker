@@ -74,7 +74,7 @@ export default function VerifyEmailClient() {
     }
 
     return (
-        <div className="container text-3xl bg-gray-100 min-h-screen min-w-screen flex justify-center items-center tracking-tight text-center p-5">
+        <div className="w-full min-h-screen px-5 text-3xl bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text flex justify-center items-center tracking-tight text-center">
             {status.type === "loading" && <p>Verifying...</p>}
 
             {status.type === "success" && (
@@ -86,12 +86,12 @@ export default function VerifyEmailClient() {
 
             {status.type === "error" && (
                 <div>
-                    <p className="text-red-600">{status.message}</p>
+                    <p className="text-light-error-text dark:text-dark-error-text">{status.message}</p>
 
                         <button
                             disabled={resendStatus.type === "loading"}
                             onClick={() => resendVerification(email)}
-                            className="mt-4 px-4 py-2 bg-[#49416D] text-white rounded hover:scale-105 transition-all"
+                            className="mt-4 px-4 py-2 bg-light-secondary dark:bg-dark-secondary text-light-text-secondary dark:text-dark-text-secondary rounded hover:scale-105 transition-all"
                         >
                             Resend verification link
                         </button>
@@ -100,7 +100,7 @@ export default function VerifyEmailClient() {
                         <p className="mt-2 text-green-600">{resendStatus.message}</p>
                     )}
                     {resendStatus.type === "error" && (
-                        <p className="mt-2 text-red-500">{resendStatus.message}</p>
+                        <p className="mt-2 text-light-error-text dark:text-dark-error-text">{resendStatus.message}</p>
                     )}
                 </div>
             )}

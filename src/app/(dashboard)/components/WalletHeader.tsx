@@ -8,15 +8,15 @@ interface Filters {
     search: string;
 }
 
-export default function WalletHeader({filters,onFilterChange}: {filters:Filters; onFilterChange: (filters: Filters) => void}) {
+export default function WalletHeader({filters,onFilterChange, onAdded}: {filters:Filters; onFilterChange: (filters: Filters) => void; onAdded: () => void}) {
 
     return(
-        <header className={"w-full bg-white h-[100px] rounded-2xl shadow-sm "}>
+        <header className={"w-full bg-light-bg-secondary dark:bg-dark-bg h-[100px] rounded-2xl shadow-sm "}>
             <div className={"w-full h-full flex items-center justify-between px-10"}>
                 <div>
                     <AssetFilters filters={filters} onFilterChange={onFilterChange}/>
                 </div>
-                <AddAssetButton/>
+                <AddAssetButton onAdded={onAdded}/>
             </div>
         </header>
     );

@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
+import {subscriptionPlans} from "@/lib/subscriptionPlans";
 
 export default function ProductClient() {
     const [subscriptionDuration, setSubscriptionDuration] = useState("monthly");
@@ -29,21 +30,21 @@ export default function ProductClient() {
     }, []);
 
     return (
-        <div className="flex flex-col justify-center items-center py-20">
+        <div className="flex flex-col justify-center items-center py-15">
             <div>
-                <h1 className="text-7xl">Choose Your Plan</h1>
-                <section className="text-4xl flex cursor-pointer justify-center">
+                <h1 className="text-5xl sm:text-7xl text-wrap text-center">Choose Your Plan</h1>
+                <section className="text-3xl sm:text-4xl flex cursor-pointer justify-center">
                     <h2
-                        className={`w-[15rem] text-center my-5 pb-2 border-b-2 ${
-                            subscriptionDuration === "monthly" ? "border-[#A882DD]" : "border-gray-300"
+                        className={`min-w-[150px] sm:w-[15rem] text-center my-5 pb-2 border-b-2 ${
+                            subscriptionDuration === "monthly" ? "border-light-main dark:border-dark-main" : "border-dark-text-secondary dark:border-dark-text-secondary"
                         }`}
                         onClick={() => changeDuration("monthly")}
                     >
                         Monthly
                     </h2>
                     <h2
-                        className={`w-[15rem] text-center my-5 pb-2 border-b-2 ${
-                            subscriptionDuration === "yearly" ? "border-[#A882DD]" : "border-gray-300"
+                        className={`min-w-[150px] sm:w-[15rem] text-center my-5 pb-2 border-b-2 ${
+                            subscriptionDuration === "yearly" ? "border-light-main dark:border-dark-main" : "border-dark-text-secondary dark:border-dark-text-secondary"
                         }`}
                         onClick={() => changeDuration("yearly")}
                     >
@@ -52,89 +53,53 @@ export default function ProductClient() {
                 </section>
             </div>
 
-            <div className="flex flex-wrap gap-15 justify-center items-center my-10">
-                {/* Free Plan */}
-                <div
-                    className={`p-4 pt-5 pb-10 min-w-70 w-120 max-w-200 min-h-[450px] rounded-sm border-2 transition-all hover:cursor-pointer hover:border-[#A882DD] hover:-translate-y-3 hover:shadow-md ${
-                        subscription === "Free" ? "border-[#A882DD] border-3 -translate-y-3 shadow-md" : "border-gray-400"
-                    }`}
-                    onClick={() => saveProduct("Free")}
-                >
-                    <div className="text-center border-b-1 border-gray-400 py-1 pb-5">
-                        <h2 className="text-5xl pb-5">Free</h2>
-                        <p className="text-4xl">
-                            0 zł/<span className="text-2xl text-gray-500">{subscriptionDuration === "monthly" ? "Month" : "Year"}</span>
-                        </p>
-                        {subscriptionDuration === "yearly" && (
-                            <div className="tracking-normal">
-                                <p>For 1 year</p>
-                                <p className="font-medium">After a year, it is brought 0/month</p>
+            <div className="flex flex-wrap gap-10 sm:gap-15 justify-center items-center my-10">
+                {subscriptionPlans.map((item,index) => {
+                    return(
+                        <div
+                            key={index}
+                            className={`p-4 pt-5 pb-10 min-w-70 w-9/10 max-w-90 sm:w-120 sm:max-w-200 min-h-[450px] sm:min-h-[450px] rounded-sm border-2 transition-all hover:cursor-pointer hover:border-light-main dark:hover:border-dark-main hover:-translate-y-3 hover:shadow-md ${
+                                subscription === `${item.name}` ? "border-light-main dark:border-dark-main border-3 -translate-y-3 shadow-md" : "border-gray-400"
+                            }`}
+                            onClick={() => saveProduct(item.name)}
+                        >
+                            <div className="text-center border-b-1 border-gray-400 py-1 pb-5">
+                                <h2 className="text-5xl pb-5">{item.name}</h2>
+                                <p className="text-4xl">
+                                    {subscriptionDuration === "monthly" ? item.monthlyPrice : item.yearlyPrice}$/
+                                    <span className="text-2xl text-gray-400 dark:text-dark-text-secondary">{subscriptionDuration === "monthly" ? "Month" : "Year"}</span>
+                                </p>
+                                {subscriptionDuration === "yearly" && (
+                                    <div className="tracking-normal">
+                                        <p>For 1 year</p>
+                                        <p className="font-medium">After a year, it is brought {item.monthlyPrice}$/Month</p>
+                                    </div>
+                                )}
                             </div>
-                        )}
-                    </div>
-                    <div className="py-2 mb-5">
-                        <ul className="text-2xl text-left p-5">
-                            <li className="relative">
-                                <span className="w-2 h-2 rounded-full bg-black absolute bottom-3 -left-5"></span>
-                                Add all your assets
-                            </li>
-                            <li className="relative">
-                                <span className="w-2 h-2 rounded-full bg-black absolute bottom-3 -left-5"></span>
-                                Trace your investments
-                            </li>
-                            <li className="relative">
-                                <span className="w-2 h-2 rounded-full bg-black absolute bottom-3 -left-5"></span>
-                                Watch your money growth
-                            </li>
-                        </ul>
-                    </div>
-                    <h3 className="text-center tracking-normal font-semibold">No credit card info needed!</h3>
-                </div>
+                            <div className="py-2 mb-5">
+                                <ul className="text-2xl text-left p-5">
+                                    {item.includes.map((item,index) => {
+                                        return(
+                                            <li key={index} className="relative list-disc">
+                                                {/*<span className="w-2 h-2 rounded-full bg-light-text dark:bg-dark-text absolute bottom-3 -left-5"></span>*/}
+                                                {item}
+                                            </li>
+                                        );
+                                    })}
+                                </ul>
+                            </div>
+                            {item.name === "Free" ? (
+                                <h3 className="text-center tracking-normal font-semibold">No credit card info needed!</h3>
 
-                {/* Standard Plan */}
-                <div
-                    className={`p-4 pt-5 pb-10 min-w-70 w-120 max-w-200 min-h-[450px] rounded-sm border-2 transition-all hover:cursor-pointer hover:border-[#A882DD] hover:-translate-y-3 hover:shadow-md ${
-                        subscription === "Standard" ? "border-[#A882DD] border-3 -translate-y-3 shadow-md" : "border-gray-400"
-                    }`}
-                    onClick={() => saveProduct("Standard")}
-                >
-                    <div className="text-center border-b-1 border-gray-400 py-1 pb-5">
-                        <h2 className="text-5xl pb-5">Standard</h2>
-                        <p className="text-4xl">
-                            {4.99 * 11} zł/
-                            <span className="text-2xl text-gray-500">
-                {subscriptionDuration === "monthly" ? "Month" : "Year"}
-              </span>
-                        </p>
-                        {subscriptionDuration === "yearly" && (
-                            <div className="tracking-normal">
-                                <p>For 1 year</p>
-                                <p className="font-medium">After a year, it is brought {4.99 * 11} zł/month</p>
-                            </div>
-                        )}
-                    </div>
-                    <div className="py-2 mb-5">
-                        <ul className="text-2xl text-left p-5">
-                            <li className="relative">
-                                <span className="w-2 h-2 rounded-full bg-black absolute bottom-3 -left-5"></span>
-                                Add all your assets
-                            </li>
-                            <li className="relative">
-                                <span className="w-2 h-2 rounded-full bg-black absolute bottom-3 -left-5"></span>
-                                Trace your investments
-                            </li>
-                            <li className="relative">
-                                <span className="w-2 h-2 rounded-full bg-black absolute bottom-3 -left-5"></span>
-                                Watch your money growth
-                            </li>
-                        </ul>
-                    </div>
-                </div>
+                            ) : ""}
+                        </div>
+                    );
+                })}
             </div>
 
             <Link
                 href="/create-account"
-                className="px-4 py-4 bg-[#49416D] text-3xl rounded-lg text-gray-100 my-2 hover:scale-110 hover:-translate-y-2 transition-all"
+                className="px-4 py-4 bg-light-secondary dark:bg-dark-secondary text-3xl rounded-lg text-light-text-secondary dark:text-dark-text my-2 hover:scale-110 hover:-translate-y-2 transition-all"
             >
                 Continue
             </Link>

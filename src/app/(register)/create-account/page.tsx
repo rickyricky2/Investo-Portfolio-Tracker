@@ -1,5 +1,7 @@
 import "../../global.css";
 import CreateAccountForm from "@/components/CreateAccountForm";
+import PublicHeader from "@/components/publicHeader";
+
 import {Metadata} from "next";
 export const metadata: Metadata = {
     title: "Create Account | Investo",
@@ -8,9 +10,10 @@ export const metadata: Metadata = {
 
 export default function CreateAccountPage(){
     return(
-        <div className="container tracking-tight min-h-screen min-w-screen bg-gradient-to-b from-gray-100 to-white">
+        <div className="w-full tracking-tight min-h-screen bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text">
+            <PublicHeader/>
             <div className="flex justify-center items-center">
-                <main className="my-20 tracking-tight">
+                <main className="my-10 tracking-tight">
                     <h1 className="text-6xl text-center">Create An Account</h1>
                     <CreateAccountForm />
                 </main>

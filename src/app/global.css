@@ -1,2 +1,31 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+
+    --color-light-bg: var(--color-gray-100);
+    --color-light-bg-secondary: var(--color-white);
+    --color-light-main: #A882DD;
+    --color-light-secondary: #49416D ;
+    --color-light-tertiary: #9170bf;
+    --color-light-text: #111111;
+    --color-light-text-secondary: #FFFFFF;
+    --color-light-error-bg: rgba(192, 80, 80, 0.12);  /* lekko czerwony, półprzezroczysty */
+    --color-light-error-border: #C05050;              /* ciemniejszy czerwono-różowy, wyraźny */
+    --color-light-error-text: #8B2F2F;               /* głęboka, stonowana czerwień */
+
+    --color-dark-bg: #1E1B26;       /* ciemny, grafitowy fiolet */
+    --color-dark-main: #9C7CC8;     /* ciemniejszy, zgaszony fiolet – bardziej stonowany */
+    --color-dark-secondary: #49416D;/* głębszy, lekko szarawy fiolet dla akcentów */
+    --color-dark-tertiary: #AF96D6; /* subtelny jaśniejszy akcent */
+    --color-dark-text: #E4E0EC;
+    --color-dark-text-secondary: #AFA8BF;
+    --color-dark-on-main: #1E1B26;
+    --color-dark-error-bg: #3A2628;         /* ciemne, przygaszone tło z nutą czerwieni */
+    --color-dark-error-border: #D17C7C;     /* pastelowy, ale wyraźny różowy border */
+    --color-dark-error-text: #ECAAAA;       /* jasna, czytelna treść */
+
+    --breakpoint-tiny: 400px;
+}
+

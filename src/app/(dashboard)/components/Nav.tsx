@@ -3,7 +3,7 @@ import Link from "next/link";
 import { MdSpaceDashboard } from "react-icons/md";
 import { MdAccountCircle } from "react-icons/md";
 import { IoMdWallet } from "react-icons/io";
-
+import SwitchThemeButton from "./SwitchThemeButton";
 import { useState,useEffect } from 'react';
 
 // icons
@@ -15,7 +15,7 @@ import { MdOutlineDashboard } from "react-icons/md";
 
 const menuItems = [
     {
-        icons: <MdSpaceDashboard className="text-white" size={30} />,
+        icons: <MdSpaceDashboard size={30} />,
         label: 'Dashboard',
         url: `/{userId}`
     },
@@ -64,7 +64,7 @@ export default function Nav() {
 
 
     return (
-        <nav className={`sticky top-0 shadow-md h-screen p-2 flex flex-col duration-500 bg-[#A882DD] text-white ${open ? 'w-60' : 'w-16'}`}>
+        <nav className={`sticky top-0 shadow-md h-screen p-2 flex flex-col duration-500 bg-light-main dark:bg-dark-main dark:text-dark-bg text-white ${open ? 'w-60' : 'w-16'}`}>
 
             {/* Header */}
             <div className=' px-3 py-2 h-20 flex justify-between items-center'>
@@ -73,9 +73,9 @@ export default function Nav() {
                 </h2>
                 <button onClick={handleSidebarToggle} className={`h-full ${open ? "" : "w-full"}`}>
                     <div className={"w-full flex flex-col items-center gap-y-1"}>
-                        <span className={`w-9 bg-white h-1 transition duration-170 rounded-full ${open? "translate-y-3 rotate-45":""}`}></span>
-                        <span className={`w-9 bg-white h-1 transition duration-170 rounded-full ${open? "translate-y-1 rotate-45":""}`}></span>
-                        <span className={`w-9 bg-white h-1 transition duration-170 rounded-full ${open? "-translate-y-1 -rotate-45":""}`}></span>
+                        <span className={`w-9 bg-white dark:bg-dark-bg h-1 transition duration-170 rounded-full ${open? "translate-y-3 rotate-45":""}`}></span>
+                        <span className={`w-9 bg-white dark:bg-dark-bg h-1 transition duration-170 rounded-full ${open? "translate-y-1 rotate-45":""}`}></span>
+                        <span className={`w-9 bg-white dark:bg-dark-bg h-1 transition duration-170 rounded-full ${open? "-translate-y-1 -rotate-45":""}`}></span>
                     </div>
                 </button>
             </div>
@@ -86,7 +86,7 @@ export default function Nav() {
                 {
                     menuItems.map((item, index) => {
                         return (
-                            <li key={index} className={`px-2 py-2 my-2 hover:bg-blue-800 rounded-md duration-300 cursor-pointer flex gap-2 items-center relative group  ${open ? "":"justify-between"}`}>
+                            <li key={index} className={`px-2 py-2 my-2 hover:bg-light-secondary dark:hover:bg-dark-secondary rounded-md duration-300 cursor-pointer flex gap-2 items-center relative group  ${open ? "":"justify-between"}`}>
                                 <Link href={`${item.url}`} className={"flex items-center gap-2"}>
                                     <div>{item.icons}</div>
                                     <p className={`${!open && 'w-0 translate-x-24'} duration-500 overflow-hidden`}>{item.label}</p>
@@ -100,6 +100,8 @@ export default function Nav() {
                     })
                 }
             </ul>
+            {/* theme switch */}
+            <SwitchThemeButton type={"vertical"}/>
             {/* footer */}
             <div className='flex items-center gap-2 px-2 py-2'>
                 <Link href={`/{userId}/settings`} className={"flex items-center gap-2"}>

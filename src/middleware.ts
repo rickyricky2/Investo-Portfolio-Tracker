@@ -5,7 +5,7 @@ export async function middleware(request: NextRequest) {
     const token = request.cookies.get('login_token')?.value;
 
     const pathName = request.nextUrl.pathname;
-    const publicPaths = ['/','/login','/reset-password','/restore-settings','/create-settings','/product','/verify-email','/verify-notice']
+    const publicPaths = ['/','/login','/reset-password','/restore-settings','/create-account','/product','/verify-email','/verify-notice']
     const isPublicPath = publicPaths.includes(pathName);
 
     let isLoggedIn = false;

@@ -1,7 +1,7 @@
 "use client";
-import WalletAssets from "./WalletAssets";
+import WalletAssets, {WalletAssetsRef} from "./WalletAssets";
 import WalletHeader from "./WalletHeader";
-import {useState} from "react";
+import {useState,useRef} from "react";
 
 export default function WalletPageClient(){
     const [filters, setFilters] = useState({
@@ -10,10 +10,13 @@ export default function WalletPageClient(){
         search: ""
     });
 
+    const walletRef = useRef<WalletAssetsRef>(null);
+
     return(
         <div className={"flex flex-col gap-5"}>
-            <WalletHeader filters={filters} onFilterChange={setFilters} />
-            <WalletAssets filters={filters}/>
+            <WalletHeader filters={filters} onFilterChange={setFilters}
+            onAdded={() => walletRef.current?.refresh()}/>
+            <WalletAssets ref={walletRef} filters={filters}/>
         </div>
     );
 }

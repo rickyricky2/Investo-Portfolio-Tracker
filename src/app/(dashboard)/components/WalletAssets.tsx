@@ -1,8 +1,12 @@
 "use client";
 import { FaSort, FaSpinner } from "react-icons/fa";
-import {useState, useEffect} from "react";
+import {useState, useEffect,forwardRef,useImperativeHandle} from "react";
 import {Asset,SortKey,SortConfig} from "@/types/assets";
 import AssetModifyMenu from "../components/AssetModifyMenu";
+
+export type WalletAssetsRef = {
+    refresh: () => void;
+}
 
 const tableHeaders: {label:string, key:SortKey}[] = [
     { label:"Type", key:"type" },
@@ -16,33 +20,36 @@ const tableHeaders: {label:string, key:SortKey}[] = [
     { label:"Daily Change", key:"dailyChange" },
 ];
 
-export default function WalletAssets({filters}: {filters: {type:string; currency:string; search:string}}){
+const WalletAssets = forwardRef<WalletAssetsRef, {filters: {type:string; currency:string; search:string}}>(({filters},ref) => {
     const [assets, setAssets] = useState<Asset[]>([]);
     const [error, setError] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [sortConfig,setSortConfig] = useState<SortConfig>({key:null, direction:"asc"});
 
-    useEffect(()=>{
-        const getData = async () =>{
-            setIsLoading(true);
+    const getAssets = async () =>{
+        setIsLoading(true);
 
-            const res = await fetch("/api/user/assets",{
-                method: "GET",
-            });
+        const res = await fetch("/api/user/assets",{
+            method: "GET",
+        });
 
-            const data = await res.json();
+        const data = await res.json();
 
-            setIsLoading(false);
+        setIsLoading(false);
 
-            if(!data.success){
-                setError(data?.error);
-            }
-
-            console.log(data.assets);
-            setAssets(data.assets);
+        if(!data.success){
+            setError(data?.error);
         }
-        getData();
-    },[]);
+
+        console.log(data.assets);
+        setAssets(data.assets);
+    }
+
+    useEffect(()=>{ getAssets(); },[]);
+
+    useImperativeHandle(ref, () => ({
+        refresh: getAssets
+    }))
 
     const sortAssets = (data: Asset[]) => {
         const {key, direction} = sortConfig;
@@ -96,7 +103,7 @@ export default function WalletAssets({filters}: {filters: {type:string; currency
     }
 
     return(
-        <main className={"bg-white w-full h-screen rounded-2xl px-5 shadow-sm tracking-tight overflow-hidden"}>
+        <main className={"bg-white dark:bg-dark-bg w-full h-screen rounded-2xl px-5 shadow-sm tracking-tight overflow-hidden"}>
             <table className={"w-full px-5"}>
                 <thead className="w-full">
                     <tr className="w-full border-b-2 rounded-4xl border-[#A882DD]">
@@ -133,7 +140,7 @@ export default function WalletAssets({filters}: {filters: {type:string; currency
                                 <td>{asset.currency}</td>
                                 <td>{getPortfolioPercentage(asset.totalValue)}%</td>
                                 <td>{asset.dailyChange ? asset.dailyChange : "-"}</td>
-                                <td><AssetModifyMenu id={asset._id}/></td>
+                                <td><AssetModifyMenu id={asset._id}  refresh={getAssets}/></td>
                             </tr>
                         );
                     })
@@ -145,4 +152,6 @@ export default function WalletAssets({filters}: {filters: {type:string; currency
             </table>
         </main>
     );
-}
+});
+WalletAssets.displayName = "WalletAssets";
+export default WalletAssets;

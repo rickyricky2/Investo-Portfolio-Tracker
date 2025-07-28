@@ -21,7 +21,7 @@ const formAssets: {label:string, key:string, type:string}[] = [
     { label:"Currency", key:"currency", type:"text" },
 ];
 
-export default function AddAssetButton(){
+export default function AddAssetButton({onAdded}:{onAdded: () => void }){
     const [isOpen,setIsOpen]=useState(false);
     const [error, setError]=useState("");
     const [loading, setLoading]=useState(false);
@@ -49,14 +49,15 @@ export default function AddAssetButton(){
             type: formData.get('type') as string,
             name: formData.get('name') as string,
             symbol: formData.get('symbol') as string,
-            quantity: formData.get('quantity') as string,
-            unitPrice: formData.get('unitPrice') as string,
+            quantity: Number(formData.get('quantity')),
+            unitPrice: Number(formData.get('unitPrice')),
             currency: formData.get('currency') as string,
         }
 
         const validateData = assetSchema.safeParse(rawData);
 
         if(!validateData.success){
+            console.log(1);
             setError(validateData.error.errors[0].message);
             return;
         }
@@ -70,21 +71,24 @@ export default function AddAssetButton(){
         const data = await res.json();
 
         if(!data.success){
-            setError("");
+            setError(data?.error);
         }
+
+        onAdded();
+        setIsOpen(false);
     }
 
     return(
         <div className={`relative`} ref={wrapperRef}>
-            <div className={`bg-[#A882DD] transition-all rounded-full p-1 z-20 relative group `}  >
-                <FaPlus className={`text-gray-100 z-20 transition-all ${isOpen ? "rotate-45" : ""}`} size={30} onClick={() => setIsOpen(!isOpen)} />
+            <div className={`bg-light-main dark:bg-dark-main transition-all rounded-full p-1 z-20 relative group `}  >
+                <FaPlus className={`text-gray-100 dark:text-dark-bg z-20 transition-all ${isOpen ? "rotate-45" : ""}`} size={30} onClick={() => setIsOpen(!isOpen)} />
                 <p className={`${isOpen && 'hidden'} absolute bottom-6 -left-7 group-hover:-translate-y-5 shadow-md rounded-md text-lg
                       w-25 p-2 scale-0 text-black bg-white duration-175 overflow-hidden group-hover:scale-100 text-center
                 `}>
                     Add Asset
                 </p>
             </div>
-            <div className={`absolute bg-[#A882DD] z-10 shadow-xl top-0 right-0 rounded-3xl transition-all p-5 overflow-hidden ${isOpen ? "max-w-[500px] max-h-[500px]" : "max-w-0 max-h-0 opacity-0"}`}>
+            <div className={`absolute bg-light-main dark:bg-dark-main z-10 shadow-xl top-0 right-0 rounded-3xl transition-all p-5 overflow-hidden ${isOpen ? "max-w-[500px] max-h-[500px]" : "max-w-0 max-h-0 opacity-0"}`}>
                 <h2 className={"text-3xl"}>Add Asset</h2>
                 <form onSubmit={handleSubmit} className={"text-xl"}>
                     {formAssets.map( (item,index) => {
