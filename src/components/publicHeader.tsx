@@ -14,7 +14,7 @@ export default function PublicHeader(){
                         investo
                     </div>
                 </Link>
-                <div className={"justify-self-end tiny:hidden w-full relative top-[6px] -right-[25px]"} onClick={()=>{setIsOpen(!isOpen)}} >
+                <div className={"justify-self-end tiny:hidden w-full relative top-[6px] -right-[15px]"} onClick={()=>{setIsOpen(!isOpen)}} >
                     <span className={`bg-light-text-secondary dark:bg-dark-text w-[30px] h-[5px] rounded-full absolute transition ${isOpen ? "rotate-45" : "-rotate-45"}`}></span>
                     <span className={`bg-light-text-secondary dark:bg-dark-text w-[30px] h-[5px] rounded-full absolute transition translate-x-[60%] ${isOpen ? "rotate-135" : "rotate-225"}`}></span>
                 </div>

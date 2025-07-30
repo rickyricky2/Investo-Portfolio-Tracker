@@ -35,14 +35,14 @@ export default function SwitchThemeButton({type}:{type:string}){
 
     if(type === "horizontal"){
         return(
-            <div className={"rounded-full bg-light-tertiary border-2 border-light-secondary dark:border-dark-bg flex flex-col items-start shadow-sm justify-between h-[50px] w-[80px] lg:w-[100px] overflow-hidden"}>
+            <div className={"rounded-full bg-light-tertiary border-2 border-gray-300 dark:border-dark-text flex flex-col items-start shadow-sm justify-between h-[50px] w-[80px] lg:w-[100px] overflow-hidden"}>
                 <div className={` bg-light-main dark:bg-dark-main w-[50px] h-full rounded-full overflow-hidden flex items-center justify-center transition 
                 ${theme === "dark" ? "translate-x-[26px] lg:translate-x-[46px]" : ""}` }
                      onClick={handleThemeClick}>
                     {theme === "light" ? (
-                        <FaSun className={"text-light-bg "} size={20}  />
+                        <FaSun className={"text-light-text-secondary "} size={20}  />
                     ) : (
-                        <FaMoon className={"text-light-bg dark:text-dark-bg"} size={20} />
+                        <FaMoon className={"dark:text-dark-text"} size={20} />
                     )}
                 </div>
             </div>
@@ -50,14 +50,14 @@ export default function SwitchThemeButton({type}:{type:string}){
     }
     else if(type === "vertical"){
         return(
-            <div className={"rounded-full bg-light-tertiary border-2 border-light-secondary dark:border-dark-bg flex flex-col items-center shadow-sm justify-between h-[100px] mb-5 w-[50px] overflow-hidde"}>
+            <div className={"rounded-full bg-light-tertiary border-2 border-gray-300 dark:border-dark-text flex shrink-0 flex-col items-center shadow-sm justify-between h-[100px] mb-5 w-[48px] overflow-hidden"}>
                 <div className={` bg-light-main dark:bg-dark-main w-full h-[50px] rounded-full overflow-hidden flex items-center justify-center transition 
                 ${theme === "dark" ? "translate-y-[46px]" : ""}` }
                      onClick={handleThemeClick}>
                     {theme === "light" ? (
-                        <FaSun className={"text-light-bg "} size={20}  />
+                        <FaSun className={"text-light-text-secondary "} size={20}  />
                     ) : (
-                        <FaMoon className={"text-light-bg dark:text-dark-bg"} size={20} />
+                        <FaMoon className={"dark:text-dark-text"} size={20} />
                     )}
                 </div>
             </div>

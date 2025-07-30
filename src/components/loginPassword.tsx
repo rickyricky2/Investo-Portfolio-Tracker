@@ -2,7 +2,12 @@
 import {FaRegEye, FaRegEyeSlash} from "react-icons/fa";
 import {useState,forwardRef} from "react";
 
-type LoginPasswordProps = React.InputHTMLAttributes<HTMLInputElement>;
+type LoginPasswordProps = {
+    id:string;
+    name:string;
+    required:boolean;
+    isError: boolean;
+}
 
 const LoginPassword = forwardRef<HTMLInputElement, LoginPasswordProps>( (props,ref) => {
     const [showPassword, setShowPassword] = useState(false);
@@ -10,13 +15,13 @@ const LoginPassword = forwardRef<HTMLInputElement, LoginPasswordProps>( (props,r
 
     return(
         <div className={"my-4 relative"}>
-            <label>{props.name}</label>
+            <label className={`${props.isError ? "text-light-error-text dark:text-dark-error-text" : 'text-light-text dark:text-dark-text'}`}>{props.name}</label>
             <input type={showPassword ? "text" : "password"}
                    name={props.id}
                    ref={ref}
                    required={props.required}
-                   className={"border-2 pr-11 rounded-lg p-1 px-2 w-full text-2xl focus:border-[#49416D] focus:border-3"}/>
-            <span className={"absolute top-11 right-3"}
+                   className={`border-2 pr-11 rounded-lg p-1 px-2 w-full text-lg lg:text-2xl outline-none focus:border-3 ${props.isError ? "border-light-error-border focus:border-light-error-border bg-light-error-bg text-light-error-text dark:text-dark-error-text dark:bg-dark-error-bg dark:border-dark-error dark:focus:border-dark-error" : 'focus:border-light-secondary dark:focus:border-dark-secondary '}`}/>
+            <span className={`absolute top-11 right-3 ${props.isError ? "text-light-error-text dark:text-dark-error-text" : 'text-light-text dark:text-dark-text' }`}
                   onClick={ () => setShowPassword( (prev) => !prev)}>
                         {showPassword ? <FaRegEyeSlash/> : <FaRegEye/> }
                     </span>

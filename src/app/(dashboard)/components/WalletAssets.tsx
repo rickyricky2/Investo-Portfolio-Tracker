@@ -103,16 +103,16 @@ const WalletAssets = forwardRef<WalletAssetsRef, {filters: {type:string; currenc
     }
 
     return(
-        <main className={"bg-white dark:bg-dark-bg w-full h-screen rounded-2xl px-5 shadow-sm tracking-tight overflow-hidden"}>
+        <main className={"bg-light-bg-secondary dark:bg-dark-bg-secondary text-light-text dark:text-dark-text w-full min-h-screen rounded-2xl px-5 shadow-sm tracking-tight overflow-hidden"}>
             <table className={"w-full px-5"}>
                 <thead className="w-full">
-                    <tr className="w-full border-b-2 rounded-4xl border-[#A882DD]">
+                    <tr className="w-full cursor-default border-b-2 rounded-4xl border-light-main dark:border-dark-main">
                         {tableHeaders.map( (item,index) => {
                             return(
                                 <th key={index} >
                                     <div className={"flex items-center gap-1 justify-center text-lg my-2 font-medium"}>
                                         {item.label}
-                                        <FaSort onClick={()=> handleSort(item.key)} className={"cursor-pointer "} />
+                                        <FaSort onClick={()=> handleSort(item.key)} className={"dark:text-dark-main cursor-pointer "} />
                                     </div>
                                 </th>
                             );
@@ -123,14 +123,16 @@ const WalletAssets = forwardRef<WalletAssetsRef, {filters: {type:string; currenc
                 {isLoading && (
                     <tr>
                         <td colSpan={tableHeaders.length} className="text-center py-10">
-                            <FaSpinner className="animate-spin text-4xl text-purple-600 mx-auto" />
+                            <FaSpinner className="animate-spin text-4xl mx-auto text-light-main dark:text-dark-main" />
                         </td>
                     </tr>
                 )}
                 {!isLoading && assets && (
                     sortedFilteredAssets.map((asset,index)=>{
                         return(
-                            <tr key={index} className="odd:bg-gray-200 rounded-4xl text-center text-xl font-medium">
+                            <tr
+                                key={index}
+                                className="cursor-default rounded-4xl text-center text-xl font-medium odd:bg-light-bg odd:dark:bg-dark-secondary text-light-text dark:text-dark-text">
                                 <td>{asset.type}</td>
                                 <td>{asset.name}</td>
                                 <td>{asset.symbol ? asset.symbol : "-"}</td>
@@ -146,12 +148,17 @@ const WalletAssets = forwardRef<WalletAssetsRef, {filters: {type:string; currenc
                     })
                 )}
                 {error && (
-                    <tr><td colSpan={9}>{error}</td></tr>
+                    <tr>
+                        <td colSpan={tableHeaders.length} className="text-center py-10 text-light-error-text dark:text-dark-error-text">
+                            {error}
+                        </td>
+                    </tr>
                 )}
                 </tbody>
             </table>
         </main>
     );
 });
+
 WalletAssets.displayName = "WalletAssets";
 export default WalletAssets;

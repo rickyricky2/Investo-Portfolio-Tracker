@@ -2,10 +2,9 @@
 import LoginPassword from "@/components/loginPassword";
 import {useState,useEffect} from "react";
 import {useSearchParams} from "next/navigation";
-import { FaCheck } from "react-icons/fa";
+import {FaCheck, FaSpinner} from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
 import {z} from "zod";
-import {NextResponse} from "next/server";
 
 // validation schema
 const passwordSchema = z.string()
@@ -19,6 +18,7 @@ export default function RestoreAccountClient(){
     const searchParams = useSearchParams();
     const token = searchParams.get("token");
 
+    const [isLoading, setIsLoading] = useState(false);
     const[error, setError] = useState("");
     const[status,setStatus] = useState("loading");
 
@@ -52,6 +52,7 @@ export default function RestoreAccountClient(){
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) =>{
         e.preventDefault();
+        setIsLoading(true);
 
         const formData = new FormData(e.currentTarget);
         const password1 = formData.get("new_password1") as string;
@@ -62,6 +63,7 @@ export default function RestoreAccountClient(){
         }
 
         if(!comparePasswords(password1,password2)){
+            setIsLoading(false);
             setError("Passwords don't match");
             return;
         }
@@ -69,10 +71,11 @@ export default function RestoreAccountClient(){
         const validatePassword = passwordSchema.safeParse(password1);
 
         if(!validatePassword.success){
+            setIsLoading(false);
             setError(validatePassword.error.errors[0]?.message);
             return;
         }
-        console.log(password1);
+
         const res = await fetch("/api/restore-account",{
             method: "POST",
             headers:{"Content-Type": "application/json"},
@@ -80,6 +83,8 @@ export default function RestoreAccountClient(){
         })
 
         const data = await res.json();
+
+        setIsLoading(false);
 
         if(!data.success){
             setStatus("error");
@@ -93,27 +98,40 @@ export default function RestoreAccountClient(){
         <form onSubmit={handleSubmit}>
             <div className={"flex relative overflow-hidden tracking-tight"}>
                 <div className={`transition duration-800 ${ status !== "loading" ? "-translate-x-180" : ""}`}>
-                    <LoginPassword name={"New password"} id={"new_password1"} />
-                    <LoginPassword name={"New Password Again"} id={"new_password2"} />
+                    <LoginPassword name={"New password"} id={"new_password1"} required={false} isError={!!error} />
+                    <LoginPassword name={"New Password Again"} id={"new_password2"} required={false} isError={!!error}/>
                     {(error && status === "loading") && (
-                        <p className="text-red-500">{error}</p>
+                        <p className="text-light-error-text dark:text-dark-error-text">{error}</p>
                     )}
                     <div className={"text-center"}>
-                        <input
-                        type={"submit"}
-                        value={"Change password"}
-                        disabled={!(status === "loading")}
-                        className={"px-10 py-3 mt-3 m-auto bg-[#A882DD] active:bg-[#4a426ec9] text-gray-100 rounded-lg transition hover:-translate-y-2 hover:shadow-2xl"}
-                        />
+                        <button
+                            type={"submit"}
+                            value={"Change password"}
+                            disabled={!(status === "loading")}
+                            className={"px-10 py-3 mt-3 m-auto bg-light-secondary dark:bg-dark-secondary active:bg-light-active dark:active:bg-dark-active text-light-text-secondary dark:text-dark-text rounded-lg transition hover:-translate-y-2 hover:shadow-2xl"}>
+
+                            {isLoading ? <FaSpinner size={30} className={"animate-spin mx-auto"} /> : "Login"}
+
+                        </button>
                     </div>
                 </div>
-                <div className={`absolute transition duration-800 ${ status === "success" ? "inset-5":"translate-x-180"}`}>
-                    <h2 className={"text-center"}>Successfuly updated your password</h2>
-                    <FaCheck className={"text-9xl m-auto my-10 text-[#A882DD]"}/>
-                </div>
-                <div className={`absolute transition duration-800 ${ status === "error" ? "inset-5":"translate-x-180"}`}>
-                    <h2 className={"text-center"}>{error}</h2>
-                    <RxCross2 className={"text-9xl m-auto my-10 text-[#A882DD]"} />
+                <div className={`absolute transition duration-800 ${ status !== "loading" ? "inset-5":"translate-x-180"}`}>
+                        { status === "success" ?
+                            (
+                                <>
+                                    <h2 className={"text-center"}>
+                                        Successfuly updated your password
+                                    </h2>
+                                    <FaCheck className={"text-9xl m-auto my-10 text-light-main dark:text-dark-main"}/>
+                                </>
+                            ) : (
+                                <>
+                                    <h2 className={"text-center"}>
+                                        {error}
+                                    </h2>
+                                    <RxCross2 className={"text-9xl m-auto my-10 text-light-main dark:text-dark-main"} />
+                                </>
+                )}
                 </div>
             </div>
         </form>

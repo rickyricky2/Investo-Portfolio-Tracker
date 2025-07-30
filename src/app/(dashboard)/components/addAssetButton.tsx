@@ -79,26 +79,25 @@ export default function AddAssetButton({onAdded}:{onAdded: () => void }){
     }
 
     return(
-        <div className={`relative`} ref={wrapperRef}>
+        <div className={`relative text-light-text-secondary dark:text-dark-text`} ref={wrapperRef}>
             <div className={`bg-light-main dark:bg-dark-main transition-all rounded-full p-1 z-20 relative group `}  >
-                <FaPlus className={`text-gray-100 dark:text-dark-bg z-20 transition-all ${isOpen ? "rotate-45" : ""}`} size={30} onClick={() => setIsOpen(!isOpen)} />
+                <FaPlus className={`text-light-text-secondary dark:text-dark-text z-20 transition-all ${isOpen ? "rotate-45" : ""}`} size={30} onClick={() => setIsOpen(!isOpen)} />
                 <p className={`${isOpen && 'hidden'} absolute bottom-6 -left-7 group-hover:-translate-y-5 shadow-md rounded-md text-lg
-                      w-25 p-2 scale-0 text-black bg-white duration-175 overflow-hidden group-hover:scale-100 text-center
+                      w-25 p-2 scale-0 text-light-text bg-light-text-secondary dark:text-dark-text dark:bg-dark-secondary font-medium duration-175 overflow-hidden group-hover:scale-100 text-center
                 `}>
                     Add Asset
                 </p>
             </div>
-            <div className={`absolute bg-light-main dark:bg-dark-main z-10 shadow-xl top-0 right-0 rounded-3xl transition-all p-5 overflow-hidden ${isOpen ? "max-w-[500px] max-h-[500px]" : "max-w-0 max-h-0 opacity-0"}`}>
-                <h2 className={"text-3xl"}>Add Asset</h2>
-                <form onSubmit={handleSubmit} className={"text-xl"}>
+            <div className={`absolute bg-light-main dark:bg-dark-main z-10 shadow-xl top-0 right-0 rounded-3xl transition-all p-5 overflow-hidden ${isOpen ? "min-w-[300px] w-[350px] max-h-[500px]" : "max-w-0 max-h-0 opacity-0"}`}>
+                <h2 className={"text-3xl font-medium"}>Add Asset</h2>
+                <form onSubmit={handleSubmit} className={"text-xl w-full"}>
                     {formAssets.map( (item,index) => {
                         return(
-                            <section className={"flex my-3"} key={index}>
-                                <label className={"w-25 font-medium"}>{item.label}:</label>
+                            <section className={"flex my-3 relative w-full"} key={index}>
                                 {item.key === "currency" ? (
                                     <select
                                         name={item.key}
-                                        className="border-2 rounded-lg px-1 ml-1 overflow-hidden w-60"
+                                        className="w-full font-medium border-b-2 border-b-light-text-secondary dark:border-b-dark-text outline-none focus:scale-x-105 p-1 focus:bg-light-tertiary dark:focus:bg-dark-secondary"
                                         required
                                         defaultValue=""
                                     >
@@ -126,7 +125,7 @@ export default function AddAssetButton({onAdded}:{onAdded: () => void }){
                                     item.key === "type" ? (
                                         <select
                                             name="type"
-                                            className="border-2 rounded-lg px-1 ml-1 w-60"
+                                            className="w-full font-medium border-b-2 border-b-light-text-secondary dark:border-b-dark-text outline-none focus:scale-x-105 p-1 focus:bg-light-tertiary dark:focus:bg-dark-secondary"
                                             required
                                             defaultValue=""
                                         >
@@ -153,16 +152,21 @@ export default function AddAssetButton({onAdded}:{onAdded: () => void }){
                                             <option value="other">Other</option>
                                         </select>
                                         ) : (
-                                        <input type={item.type} min={1} name={item.key} className={"border-2 rounded-lg px-1 ml-1 w-60"}/>
+                                                <input
+                                                    type={item.type}
+                                                    min={1}
+                                                    placeholder={item.label}
+                                                    name={item.key}
+                                                    className={"w-full font-medium border-b-2 border-b-light-text-secondary dark:border-b-dark-text outline-none focus:scale-x-105 p-1 placeholder:text-light-text-secondary dark:placeholder:text-dark-text focus:placeholder:text-light-tertiary dark:focus:placeholder:text-dark-text-secondary"}/>
                                     ))}
                             </section>
                         );
                     })}
                     {error && (
-                        <p className={"font-medium my-3"}>{error}</p>
+                        <p className={"font-medium my-3 text-light-error-text dark:text-dark-error-text"}>{error}</p>
                     )}
                     <input type="submit" value="Add Asset"
-                    className={"bg-white rounded-lg px-3 py-2 cursor-pointer transition-all hover:-translate-y-1"}/>
+                    className={"bg-light-secondary dark:bg-dark-secondary text-light-text-secondary dark:text-dark-text active:bg-light-active dark:active:bg-dark-active rounded-lg px-3 py-2 cursor-pointer transition-all hover:-translate-y-1"}/>
                 </form>
             </div>
         </div>

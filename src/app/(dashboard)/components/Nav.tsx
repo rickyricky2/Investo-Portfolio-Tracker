@@ -5,49 +5,58 @@ import { MdAccountCircle } from "react-icons/md";
 import { IoMdWallet } from "react-icons/io";
 import SwitchThemeButton from "./SwitchThemeButton";
 import { useState,useEffect } from 'react';
-
+import {useRouter} from "next/navigation";
 // icons
 
 import { TbReportSearch } from "react-icons/tb";
 import { IoLogoBuffer } from "react-icons/io";
 import { CiSettings } from "react-icons/ci";
 import { MdOutlineDashboard } from "react-icons/md";
-
-const menuItems = [
-    {
-        icons: <MdSpaceDashboard size={30} />,
-        label: 'Dashboard',
-        url: `/{userId}`
-    },
-    {
-        icons: <IoMdWallet size={30} />,
-        label: 'Wallet',
-        url: `/{userId}/wallet`
-    },
-    {
-        icons: <MdOutlineDashboard size={30} />,
-        label: 'Settings',
-        url: `/{userId}/settings`
-    },
-    {
-        icons: <CiSettings size={30} />,
-        label: 'Setting',
-        url: `/{userId}`
-    },
-    {
-        icons: <IoLogoBuffer size={30} />,
-        label: 'Log',
-        url: `/{userId}`
-    },
-    {
-        icons: <TbReportSearch size={30} />,
-        label: 'Report',
-        url: `/{userId}`
-    }
-]
+import { RiLogoutCircleLine } from "react-icons/ri";
 
 export default function Nav() {
     const [open, setOpen] = useState(true);
+    const [userData, setUserData] = useState({
+        id: "",
+        email: "",
+        firstName: "",
+        lastName: "",
+    });
+
+    const router = useRouter();
+
+    const menuItems = [
+        {
+            icons: <MdSpaceDashboard size={30} />,
+            label: 'Dashboard',
+            url: `${userData.id}`
+        },
+        {
+            icons: <IoMdWallet size={30} />,
+            label: 'Wallet',
+            url: `${userData.id}/wallet`
+        },
+        {
+            icons: <MdOutlineDashboard size={30} />,
+            label: 'Settings',
+            url: `${userData.id}/settings`
+        },
+        {
+            icons: <CiSettings size={30} />,
+            label: 'Setting',
+            url: `${userData.id}/`
+        },
+        {
+            icons: <IoLogoBuffer size={30} />,
+            label: 'Log',
+            url: `${userData.id}/`
+        },
+        {
+            icons: <TbReportSearch size={30} />,
+            label: 'Report',
+            url: `${userData.id}/`
+        }
+    ]
 
     useEffect(() =>{
         const sidebarOpen = localStorage.getItem('sidebarOpen');
@@ -56,15 +65,40 @@ export default function Nav() {
         }
     },[]);
 
+    useEffect( () => {
+        const getUserInfo = async () => {
+            const res = await fetch("/api/auth/me", {
+                method: "GET",
+            });
+
+            const data = await res.json();
+
+            if(!data.loggedIn){
+                console.log(data?.message);
+                router.push("/login");
+            }
+
+            setUserData(data.user);
+        }
+        getUserInfo();
+    },[]);
+
     const handleSidebarToggle = () => {
         const newState = !open
         setOpen(newState);
         localStorage.setItem("sidebarOpen",`${newState}`);
     }
 
+    const handleLogout = async () => {
+        await fetch("/api/auth/logout", {
+            method: "POST",
+        })
+        router.push("/login");
+    }
+
 
     return (
-        <nav className={`sticky top-0 shadow-md h-screen p-2 flex flex-col duration-500 bg-light-main dark:bg-dark-main dark:text-dark-bg text-white ${open ? 'w-60' : 'w-16'}`}>
+        <nav className={`sticky top-0 shadow-md h-screen p-2 flex flex-col duration-500 bg-light-main dark:bg-dark-main dark:text-dark-text text-light-text-secondary ${open ? 'w-60' : 'w-16'}`}>
 
             {/* Header */}
             <div className=' px-3 py-2 h-20 flex justify-between items-center'>
@@ -73,9 +107,9 @@ export default function Nav() {
                 </h2>
                 <button onClick={handleSidebarToggle} className={`h-full ${open ? "" : "w-full"}`}>
                     <div className={"w-full flex flex-col items-center gap-y-1"}>
-                        <span className={`w-9 bg-white dark:bg-dark-bg h-1 transition duration-170 rounded-full ${open? "translate-y-3 rotate-45":""}`}></span>
-                        <span className={`w-9 bg-white dark:bg-dark-bg h-1 transition duration-170 rounded-full ${open? "translate-y-1 rotate-45":""}`}></span>
-                        <span className={`w-9 bg-white dark:bg-dark-bg h-1 transition duration-170 rounded-full ${open? "-translate-y-1 -rotate-45":""}`}></span>
+                        <span className={`w-9 bg-light-text-secondary dark:bg-dark-text h-1 transition duration-170 rounded-full ${open? "translate-y-3 rotate-45":""}`}></span>
+                        <span className={`w-9 bg-light-text-secondary dark:bg-dark-text h-1 transition duration-170 rounded-full ${open? "translate-y-1 rotate-45":""}`}></span>
+                        <span className={`w-9 bg-light-text-secondary dark:bg-dark-text h-1 transition duration-170 rounded-full ${open? "-translate-y-1 -rotate-45":""}`}></span>
                     </div>
                 </button>
             </div>
@@ -87,11 +121,11 @@ export default function Nav() {
                     menuItems.map((item, index) => {
                         return (
                             <li key={index} className={`px-2 py-2 my-2 hover:bg-light-secondary dark:hover:bg-dark-secondary rounded-md duration-300 cursor-pointer flex gap-2 items-center relative group  ${open ? "":"justify-between"}`}>
-                                <Link href={`${item.url}`} className={"flex items-center gap-2"}>
+                                <Link href={`/${item.url}`} className={"flex items-center gap-2"}>
                                     <div>{item.icons}</div>
-                                    <p className={`${!open && 'w-0 translate-x-24'} duration-500 overflow-hidden`}>{item.label}</p>
+                                    <p className={`${!open && 'w-0 translate-x-24 opacity-0'} duration-500 overflow-hidden`}>{item.label}</p>
                                     <p className={`${open && 'hidden'} absolute left-32 shadow-md rounded-md
-                                         w-0 p-0 text-black bg-white duration-100 overflow-hidden group-hover:w-fit group-hover:p-2 group-hover:left-16
+                                         w-0 p-0 text-light-text dark:text-dark-text bg-light-text-secondary dark:bg-dark-secondary font-medium duration-100 overflow-hidden group-hover:w-fit group-hover:p-2 group-hover:left-16
                                         `}>{item.label}
                                     </p>
                                 </Link>
@@ -101,17 +135,35 @@ export default function Nav() {
                 }
             </ul>
             {/* theme switch */}
-            <SwitchThemeButton type={"vertical"}/>
+            <div className={"flex gap-2 items-center relative "}>
+                <SwitchThemeButton type={"vertical"}/>
+                <div className={`h-full flex flex-col justify-evenly cursor-default duration-500 overflow-hidden mb-4 ${!open && 'w-0 translate-x-24'}`}>
+                    <p>Light</p>
+                    <p>Dark</p>
+                </div>
+            </div>
             {/* footer */}
-            <div className='flex items-center gap-2 px-2 py-2'>
-                <Link href={`/{userId}/settings`} className={"flex items-center gap-2"}>
+            <div className='flex flex-col items-start gap-2 py-2 '>
+                <div className={"flex items-center px-2 gap-2 cursor-default"}>
                     <div><MdAccountCircle size={30} /></div>
                     <div className={`leading-5 ${!open && 'w-0 translate-x-24'} duration-500 overflow-hidden`}>
-                        <p>Saheb</p>
-                        <span className='text-xs'>saheb@gmail.com</span>
-
+                        <p>
+                            {userData.firstName && `${userData.firstName.at(0)!.toUpperCase()}${userData.firstName.slice(1)} `}
+                            {userData.lastName && `${userData.lastName}`}
+                        </p>
+                        <span className='text-xs'>{userData.email}</span>
                     </div>
-                </Link>
+                </div>
+                <div className={`w-full px-2 py-2 hover:bg-light-secondary dark:hover:bg-dark-secondary rounded-md duration-300 cursor-pointer flex  items-center relative group  ${open ? "":"justify-between"}`}>
+                    <div className={"flex items-center gap-2 "} onClick={handleLogout}>
+                        <div><RiLogoutCircleLine size={30} /></div>
+                        <p className={`leading-5 ${!open && 'w-0 translate-x-24'} duration-500 overflow-hidden`}>Logout</p>
+                        <p className={`${open && 'hidden'} absolute left-32 shadow-md rounded-md
+                                         w-0 p-0 text-light-text dark:text-dark-text bg-light-text-secondary dark:bg-dark-secondary font-medium duration-100 overflow-hidden group-hover:w-fit group-hover:p-2 group-hover:left-16
+                                        `}>Logout
+                        </p>
+                    </div>
+                </div>
             </div>
 
 

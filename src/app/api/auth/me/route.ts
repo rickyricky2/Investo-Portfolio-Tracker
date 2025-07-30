@@ -12,7 +12,8 @@ export async function GET(req:Request){
         // check for token
         if(!token){
             return NextResponse.json({
-                loggedIn: false
+                loggedIn: false,
+                message: "Can't find token"
             },{status: 400});
         }
 
@@ -23,14 +24,12 @@ export async function GET(req:Request){
 
     //     grab user data here
         const client = await clientPromise;
-        const db = client.db("users");
-        const users = db.collection("users");
+        const db = client.db("investodb");
+        const users = db.collection('users');
 
-        const user  =  await users.findOne({
-            email: decoded.email
-        });
+        const email = decoded.email;
 
-        console.log(1);
+        const user = await users.findOne( {email:email});
 
         if(!user){
             return NextResponse.json({
@@ -53,6 +52,7 @@ export async function GET(req:Request){
         console.error(error.message);
         return NextResponse.json({
             loggedIn: false,
+            error:"Internal Server Error"
         },{status:500});
     }
 }

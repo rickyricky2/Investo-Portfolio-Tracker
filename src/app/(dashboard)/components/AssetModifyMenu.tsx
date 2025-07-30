@@ -38,8 +38,8 @@ export default function AssetModifyMenu({id,refresh}: {id: string;refresh: () =>
 
     return(
         <div className="flex items-center justify-evenly gap-2 w-full">
-            <IoPencil  className={"text-blue-600 cursor-pointer"} onClick={() => handleUpdate} size={20} />
-            <FaRegTrashAlt className={"text-red-600 cursor-pointer"} onClick={() => handleDelete(id)} size={20} />
+            <IoPencil  className={"text-light-tertiary dark:text-dark-text cursor-pointer"} onClick={() => handleUpdate} size={20} />
+            <FaRegTrashAlt className={"text-light-error-text dark:text-dark-error-text cursor-pointer"} onClick={() => handleDelete(id)} size={20} />
         </div>
     );
 }

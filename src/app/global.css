@@ -14,9 +14,12 @@
     --color-light-error-bg: rgba(192, 80, 80, 0.12);  /* lekko czerwony, półprzezroczysty */
     --color-light-error-border: #C05050;              /* ciemniejszy czerwono-różowy, wyraźny */
     --color-light-error-text: #8B2F2F;               /* głęboka, stonowana czerwień */
+    --color-light-hover: #5A4B87;   /* trochę jaśniejszy od #49416D */
+    --color-light-active: #3B3354;
 
     --color-dark-bg: #1E1B26;       /* ciemny, grafitowy fiolet */
-    --color-dark-main: #9C7CC8;     /* ciemniejszy, zgaszony fiolet – bardziej stonowany */
+    --color-dark-bg-secondary: #2A2733;
+    --color-dark-main: #6F57A4;
     --color-dark-secondary: #49416D;/* głębszy, lekko szarawy fiolet dla akcentów */
     --color-dark-tertiary: #AF96D6; /* subtelny jaśniejszy akcent */
     --color-dark-text: #E4E0EC;
@@ -25,6 +28,8 @@
     --color-dark-error-bg: #3A2628;         /* ciemne, przygaszone tło z nutą czerwieni */
     --color-dark-error-border: #D17C7C;     /* pastelowy, ale wyraźny różowy border */
     --color-dark-error-text: #ECAAAA;       /* jasna, czytelna treść */
+    --color-dark-hover: #5A4B87;
+    --color-dark-active: #3B3354;
 
     --breakpoint-tiny: 400px;
 }
