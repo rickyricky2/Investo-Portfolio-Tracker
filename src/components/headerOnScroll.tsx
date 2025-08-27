@@ -25,7 +25,7 @@ export default function HeaderOnScroll() {
             <div className={`sm:flex justify-between transition-all duration-1000 px-4 lg:px-10 py-2 items-center w-full
                 ${scrolled ? "sm:py-0 ":"sm:py-2"}`}>
                 <Link href={"/"} className={"lg:ml-10"}>
-                    <Logo scrolled={scrolled}></Logo>
+                    <Logo></Logo>
                 </Link>
                 <div className={"flex gap-3 h-full flex-wrap justify-center items-center my-4 sm:m-0 md:gap-4 lg:gap-10"}>
                     <Link href={"/login"} className={"text-2xl bg-light-secondary dark:bg-dark-secondary py-2 px-3 rounded-lg text-light-text-secondary dark:text-dark-text transition-transform hover:-translate-y-2"}>
