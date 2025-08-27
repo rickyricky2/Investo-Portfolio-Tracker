@@ -1,7 +1,6 @@
 "use client"
 import LoginPassword from "@/components/loginPassword";
 import {useState,useEffect} from "react";
-import {useSearchParams} from "next/navigation";
 import {FaCheck, FaSpinner} from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
 import {z} from "zod";
