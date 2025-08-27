@@ -7,7 +7,11 @@ export const metadata: Metadata = {
     description: "Investment tracking site",
 };
 
-export default async function RestoreAccount({ searchParams }: { searchParams: { token?: string } }){
+interface RestoreAccountPageProps {
+    searchParams: { token?: string };
+}
+
+export default async function RestoreAccount({ searchParams }: RestoreAccountPageProps){
     const token = searchParams.token;
     return(
         <div className={"bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text w-full min-h-screen tracking-tight"}>
