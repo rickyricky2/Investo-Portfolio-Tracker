@@ -9,7 +9,7 @@ import {Asset} from "@/types/assets";
 
 export default function WalletTable({tableHeaders, isLoading, handleSort, sortedFilteredAssets, error, getAssets}: walletProps) {
     const [editingId, setEditingId] = useState<string | null>(null);
-    const [editedValues, setEditedValues] = useState<Asset | null>(null);
+    const [editedValues, setEditedValues] = useState<Asset>({} as Asset);
     const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
     const triggerRefresh = useWalletStore((state) => state.triggerRefresh);
 
@@ -46,11 +46,11 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
 
     const cancelEditing = () => {
         setEditingId(null);
-        setEditedValues(null);
+        setEditedValues({} as Asset);
     };
 
     const handleChange = (key: string, value: string | number) => {
-        setEditedValues((prev: any) => ({ ...prev, [key]: value }));
+        setEditedValues((prev: Asset) => ({ ...prev, [key]: value }));
     };
 
     const saveChanges = async () => {

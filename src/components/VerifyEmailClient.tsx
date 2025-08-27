@@ -69,9 +69,10 @@ export default function VerifyEmailClient() {
             }
 
             setResendStatus({ type: "success", message: data.message });
-        } catch (error: any) {
-            console.error(error.message);
-            setResendStatus({ type: "error", message: error.message });
+        } catch (error: unknown) {
+            if(error instanceof Error){
+                setResendStatus({ type: "error", message: error.message });
+            }
         }
     }
 
