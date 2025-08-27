@@ -1,18 +1,13 @@
 import "@/app/global.css";
 import Header from "@/components/publicHeader"
 import RestoreAccountClient from "@/components/RestoreAccountClient"
-import {Metadata} from "next";
-export const metadata: Metadata = {
-    title: "Restore Account | Investo",
-    description: "Investment tracking site",
-};
 
 interface RestoreAccountPageProps {
     searchParams: { token?: string };
 }
 
-export default async function RestoreAccount({ searchParams }: RestoreAccountPageProps){
-    const token = searchParams.token;
+export default function RestoreAccount({ searchParams }: RestoreAccountPageProps){
+    const token = searchParams?.token;
     return(
         <div className={"bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text w-full min-h-screen tracking-tight"}>
             <div className={"flex flex-col gap-10 sm:gap-40"}>

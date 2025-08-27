@@ -5,6 +5,10 @@ import {FaCheck, FaSpinner} from "react-icons/fa";
 import { RxCross2 } from "react-icons/rx";
 import {z} from "zod";
 
+interface RestoreAccountClientProps {
+    token?: string;
+}
+
 // validation schema
 const passwordSchema = z.string()
         .min(8, "Password must be at least 8 characters long")
@@ -13,7 +17,7 @@ const passwordSchema = z.string()
         .regex(/\d/, "Password must contain at least one number")
         .regex(/[^a-zA-Z0-9]/, "Password must contain at least one special character");
 
-export default function RestoreAccountClient({token}:{token?:string}){
+export default function RestoreAccountClient({token}:RestoreAccountClientProps){
 
     const [isLoading, setIsLoading] = useState(false);
     const[error, setError] = useState("");
@@ -49,7 +53,7 @@ export default function RestoreAccountClient({token}:{token?:string}){
             }
         }
         verify_token();
-    },[]);
+    },[token]);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) =>{
         e.preventDefault();
