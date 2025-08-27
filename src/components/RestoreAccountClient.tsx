@@ -14,9 +14,7 @@ const passwordSchema = z.string()
         .regex(/\d/, "Password must contain at least one number")
         .regex(/[^a-zA-Z0-9]/, "Password must contain at least one special character");
 
-export default function RestoreAccountClient(){
-    const searchParams = useSearchParams();
-    const token = searchParams.get("token");
+export default function RestoreAccountClient({token}:{token?:string}){
 
     const [isLoading, setIsLoading] = useState(false);
     const[error, setError] = useState("");
