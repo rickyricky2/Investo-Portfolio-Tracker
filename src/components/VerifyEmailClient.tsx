@@ -1,7 +1,6 @@
 "use client";
 
 import "@/app/global.css";
-import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function VerifyEmailClient({token}:{token?:string}) {
