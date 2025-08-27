@@ -4,9 +4,7 @@ import "@/app/global.css";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 
-export default function VerifyEmailClient() {
-    const searchParams = useSearchParams();
-    const token = searchParams.get("token");
+export default function VerifyEmailClient({token}:{token?:string}) {
 
     const [status, setStatus] = useState({ type: "loading", message: "" });
     const [email, setEmail] = useState("");

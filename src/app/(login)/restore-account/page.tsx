@@ -1,11 +1,7 @@
 import "@/app/global.css";
 import Header from "@/components/publicHeader"
 import RestoreAccountClient from "@/components/RestoreAccountClient"
-
-type Props = {
-    params: Promise<{ id: string }>
-    searchParams: Promise<{ [key: string]: string | string[] | undefined }>
-};
+import {Props} from "@/types/Props";
 
 export default async function RestoreAccount({ searchParams }: Props) {
     const params = await searchParams;
