@@ -91,7 +91,7 @@ export default function PortfolioDashboard(){
                         headers:{"Content-Type": "application/json"},
                     });
 
-                    let data = await res.json();
+                    const data = await res.json();
 
                     if(!data.success) {
                         if(dataStore.code === "expired") {

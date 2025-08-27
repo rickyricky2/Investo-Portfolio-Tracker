@@ -20,7 +20,7 @@ export async function GET(req:Request){
         // check if we have data with this ticker in db
         const dataStore = await getDataStore();
 
-        let data = await dataStore.findOne({ticker: ticker, country: country});
+        const data = await dataStore.findOne({ticker: ticker, country: country});
 
         if (data) {
             // if yes we need to check if last update time is more than one hour

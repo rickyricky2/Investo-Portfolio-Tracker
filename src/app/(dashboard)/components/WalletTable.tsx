@@ -4,12 +4,12 @@ import {MdCancel} from "react-icons/md";
 import AssetModifyMenu from "@/app/(dashboard)/components/AssetModifyMenu";
 import {walletProps} from "@/types/wallet";
 import React, {useState} from "react";
-import {Asset} from "@/types/assets";
 import {useWalletStore} from "@/store/useWalletStore";
+import {Asset} from "@/types/assets";
 
 export default function WalletTable({tableHeaders, isLoading, handleSort, sortedFilteredAssets, error, getAssets}: walletProps) {
     const [editingId, setEditingId] = useState<string | null>(null);
-    const [editedValues, setEditedValues] = useState<Record<string, string | number>>({});
+    const [editedValues, setEditedValues] = useState<Asset | null>(null);
     const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
     const triggerRefresh = useWalletStore((state) => state.triggerRefresh);
 
@@ -39,14 +39,14 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
     }
 
     // editing assets
-    const startEditing = (asset: any) => {
+    const startEditing = (asset: Asset) => {
         setEditingId(asset._id);
         setEditedValues(asset);
     };
 
     const cancelEditing = () => {
         setEditingId(null);
-        setEditedValues({});
+        setEditedValues(null);
     };
 
     const handleChange = (key: string, value: string | number) => {
@@ -155,27 +155,27 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                 {isExpanded ? <FaChevronDown /> : <FaChevronRight />}
                                             </button>
                                         </td>
-                                        {asset.addedManually && isEditing
-                                            ? <td className={"p-1"}> {editableInput("ticker", editedValues.ticker)}</td>
+                                        {asset.addedManually && isEditing && editedValues
+                                            ? <td className={"p-1"}> {editableInput("ticker", editedValues.ticker!)}</td>
                                             : <td className={"py-2"}>{asset.ticker}</td>}
-                                        {asset.addedManually && isEditing
+                                        {asset.addedManually && isEditing && editedValues
                                             ? <td className={"p-1"}> {editableInput("type", editedValues.type)}</td>
                                             : <td className={"py-2"}>{asset.type}</td>}
-                                        {asset.addedManually && isEditing
+                                        {asset.addedManually && isEditing && editedValues
                                             ? <td className={"p-1"}> {editableInput("name", editedValues.name)}</td>
                                             : <td className={"py-2"}>{asset.name}</td>}
                                         <td className="hidden lg:table-cell">
-                                            {isEditing
+                                            {isEditing && editedValues
                                                 ? editableInput("quantity", editedValues.quantity)
                                                 : asset.quantity}
                                         </td>
                                         <td className="hidden lg:table-cell">
-                                            {isEditing
+                                            {isEditing && editedValues
                                                 ? editableInput("purchaseUnitPrice", editedValues.purchaseUnitPrice)
                                                 : asset.purchaseUnitPrice}
                                         </td>
                                         <td className="hidden lg:table-cell">
-                                            {asset.addedManually && isEditing
+                                            {asset.addedManually && isEditing && editedValues
                                                 ? editableInput("lastUnitPrice", editedValues.lastUnitPrice)
                                                 : asset.lastUnitPrice}
                                         </td>
@@ -183,7 +183,7 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                             {asset.totalValue}
                                         </td>
                                         <td className="hidden lg:table-cell">
-                                            {asset.addedManually && isEditing
+                                            {asset.addedManually && isEditing && editedValues
                                                 ? editableInput("currency", editedValues.currency)
                                                 : asset.currency}
                                         </td>
@@ -211,7 +211,6 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                     {isExpanded && (
                                         <tr className={"odd:bg-light-bg odd:dark:bg-dark-secondary text-light-text dark:text-dark-text"}>
                                             <td colSpan={tableHeaders.length + 2} className="p-0 ">
-                                                {/*<AssetDetails asset={asset} isEditing={isEditing} />*/}
                                                 <div
                                                     className={`
                                                         flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-20
@@ -222,7 +221,7 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                         <div className={`flex items-center lg:hidden`}>
                                                             <FaSort onClick={() => handleSort("quantity")} className={"dark:text-dark-main cursor-pointer mr-1 "} />
                                                             <span className="font-semibold">Quantity:&nbsp;</span>
-                                                            {isEditing
+                                                            {isEditing && editedValues
                                                                 ? <span className={"p-1"}> {editableInput("quantity", editedValues.quantity)}</span>
                                                                 : <span className={"text-xl"}>{asset.quantity}</span>}
                                                         </div>
@@ -231,7 +230,7 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                         <div className={`flex items-center lg:hidden`}>
                                                             <FaSort onClick={() => handleSort("purchaseUnitPrice")} className={"dark:text-dark-main cursor-pointer mr-1 "} />
                                                             <span className="font-semibold">Purchase Unit Price:&nbsp;</span>
-                                                            {isEditing
+                                                            {isEditing && editedValues
                                                                 ? <span className={"p-1"}> {editableInput("purchaseUnitPrice", editedValues.purchaseUnitPrice)}</span>
                                                                 : <span className={"text-xl"}>{asset.purchaseUnitPrice}</span>}
                                                         </div>
@@ -240,7 +239,7 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                         <div className={`flex items-center lg:hidden`}>
                                                             <FaSort onClick={() => handleSort("lastUnitPrice")} className={"dark:text-dark-main cursor-pointer mr-1 "} />
                                                             <span className="font-semibold">Last Unit Price:&nbsp;</span>
-                                                            {asset.addedManually && isEditing
+                                                            {asset.addedManually && isEditing && editedValues
                                                                 ? <span className={"p-1"}> {editableInput("lastUnitPrice", editedValues.lastUnitPrice)}</span>
                                                                 : <span className={"text-xl"}>{asset.lastUnitPrice}</span>}
                                                         </div>
@@ -249,8 +248,8 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                         <div className={`flex items-center lg:hidden`}>
                                                             <FaSort onClick={() => handleSort("totalValue")} className={"dark:text-dark-main cursor-pointer mr-1 "} />
                                                             <span className="font-semibold">Total Value:&nbsp;</span>
-                                                            {asset.addedManually && isEditing
-                                                                ? <span className={"p-1"}> {editableInput("totalValue", editedValues.totalValue)}</span>
+                                                            {asset.addedManually && isEditing && editedValues
+                                                                ? <span className={"p-1"}> {editableInput("totalValue", editedValues.totalValue!)}</span>
                                                                 : <span className={"text-xl"}>{asset.totalValue}</span>}
                                                         </div>
                                                     ) : null}
@@ -258,7 +257,7 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                         <div className={`flex items-center lg:hidden`}>
                                                             <FaSort onClick={() => handleSort("currency")} className={"dark:text-dark-main cursor-pointer mr-1 "} />
                                                             <span className="font-semibold">Currency:&nbsp;</span>
-                                                            {asset.addedManually && isEditing
+                                                            {asset.addedManually && isEditing && editedValues
                                                                 ? <span className={"p-1"}> {editableInput("currency", editedValues.currency)}</span>
                                                                 : <span className={"text-xl"}>{asset.currency}</span>}
                                                         </div>
@@ -285,7 +284,7 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                         <div className={`flex items-center `}>
                                                             <FaSort onClick={() => handleSort("country")} className={"dark:text-dark-main cursor-pointer mr-1 "} />
                                                             <span className="font-semibold">Country:&nbsp;</span>
-                                                            {asset.addedManually && isEditing
+                                                            {asset.addedManually && isEditing && editedValues
                                                                 ? <span className={"p-1"}> {editableInput("country", editedValues.country)}</span>
                                                                 : <span className={"text-xl"}>{asset.country}</span>}
                                                         </div>

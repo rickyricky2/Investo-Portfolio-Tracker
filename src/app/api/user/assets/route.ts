@@ -136,7 +136,7 @@ export async function PUT(req: Request) {
             });
 
         return NextResponse.json({ success: true }, { status: 200 });
-    } catch (error:unknown) {
+    } catch{
         return NextResponse.json({ success: false, error: "Update failed" }, { status: 500 });
     }
 }

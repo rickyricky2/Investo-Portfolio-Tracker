@@ -65,7 +65,7 @@ export async function createAccount(
         const subscriptionDuration = formData.get('subscriptionDuration') as string;
 
         const validateData = createAccountSchema.safeParse(rawData);
-        const {password:_password,terms:_terms, ...safeInputs} = rawData;
+        const {password:password,terms:terms, ...safeInputs} = rawData; // eslint-disable-line @typescript-eslint/no-unused-vars
 
         if(!validateData.success){
             return {
