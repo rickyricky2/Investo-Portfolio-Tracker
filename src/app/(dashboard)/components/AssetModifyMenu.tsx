@@ -1,10 +1,8 @@
 "use client";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { IoPencil } from "react-icons/io5";
-import {useRouter} from "next/navigation";
 
 export default function AssetModifyMenu({id,refresh, handleEdit}: {id: string;refresh: () => void; handleEdit: (id:string) => void}) {
-    const router = useRouter();
     const handleDelete = async (id:string) =>{
 
         const res = await fetch("/api/user/assets",{

@@ -42,9 +42,13 @@ export default function RestoreAccountClient(){
                     setError(data.error);
                     return;
                 }
-            }catch(error:any){
+            }catch(error:unknown){
                 setStatus("error");
-                setError(error.message);
+                if(error instanceof Error){
+                    setError(error.message);
+                }else{
+                    setError("An unknown error occurred");
+                }
             }
         }
         verify_token();

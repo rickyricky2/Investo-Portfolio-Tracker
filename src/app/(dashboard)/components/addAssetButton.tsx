@@ -1,6 +1,6 @@
 "use client"
-import { FaPlus } from "react-icons/fa";
-import { useState,useEffect, useRef } from 'react';
+import {FaPlus, FaSpinner} from "react-icons/fa";
+import React, { useState,useEffect, useRef } from 'react';
 import { useWalletStore } from "@/store/useWalletStore";
 import {z} from "zod";
 import {formAssets,typesWithTicker,countries, currencies, assetTypes} from "@/content/assetContent";
@@ -10,7 +10,7 @@ let assetSchema;
 export default function AddAssetButton(){
     const [isOpen,setIsOpen]=useState(false);
     const [error, setError]=useState("");
-    const [loading, setLoading]=useState(false);
+    const [isLoading, setIsLoading]=useState(false);
     const wrapperRef = useRef<HTMLDivElement>(null);
 
     const triggerRefresh = useWalletStore((state) => state.triggerRefresh);
@@ -31,7 +31,7 @@ export default function AddAssetButton(){
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
         setError("");
-        setLoading(true);
+        setIsLoading(true);
 
         const formData = new FormData(e.currentTarget);
 
@@ -71,7 +71,7 @@ export default function AddAssetButton(){
 
             if(!validateData.success){
                 setError(validateData.error.errors[0].message);
-                setLoading(false);
+                setIsLoading(false);
                 return;
             }
 
@@ -145,7 +145,7 @@ export default function AddAssetButton(){
 
                     if(!data.success){
                         setError("We couldn't find ticker");
-                        setLoading(false);
+                        setIsLoading(false);
                         return;
                     }
 
@@ -184,7 +184,7 @@ export default function AddAssetButton(){
 
                     if(!data.success){
                         setError("We couldn't find ticker u need to add information manually");
-                        setLoading(false);
+                        setIsLoading(false);
                         setNotAddDataManually(false);
                         return;
                     }
@@ -348,8 +348,11 @@ export default function AddAssetButton(){
                     {error && (
                         <p className={"font-medium my-3 text-light-error-text dark:text-dark-error-text"}>{error}</p>
                     )}
-                    <input type="submit" value="Add Asset"
-                    className={"bg-light-secondary dark:bg-dark-secondary text-light-text-secondary dark:text-dark-text active:bg-light-active dark:active:bg-dark-active rounded-lg px-3 py-2 cursor-pointer transition-all hover:-translate-y-1"}/>
+                    {isLoading ?
+                        <FaSpinner className="animate-spin text-4xl mx-auto text-light-main dark:text-dark-main" />
+                        : <input type="submit" value="Add Asset"
+                                 className={"bg-light-secondary dark:bg-dark-secondary text-light-text-secondary dark:text-dark-text active:bg-light-active dark:active:bg-dark-active rounded-lg px-3 py-2 cursor-pointer transition-all hover:-translate-y-1"}/>
+                    }
                 </form>
             </div>
         </div>

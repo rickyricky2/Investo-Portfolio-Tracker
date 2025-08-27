@@ -4,11 +4,9 @@ import {useEffect, useRef, useState} from "react";
 import SwitchThemeButton from "../components/SwitchThemeButton";
 import {useRouter} from "next/navigation";
 
-import {MdOutlineDashboard, MdSpaceDashboard} from "react-icons/md";
+import {MdSpaceDashboard} from "react-icons/md";
 import {IoLogoBuffer, IoMdWallet} from "react-icons/io";
-import {CiSettings} from "react-icons/ci";
 import { MdAccountCircle } from "react-icons/md";
-import {TbReportSearch} from "react-icons/tb";
 
 import AddAssetButton from "../components/addAssetButton";
 

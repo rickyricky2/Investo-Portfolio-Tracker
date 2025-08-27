@@ -7,7 +7,7 @@ export async function POST(req:Request){
     try{
         jwt.verify(token, process.env.PASSWORD_RESET_SECRET!);
         return NextResponse.json({success:true},{status:200});
-    }catch(error:any){
+    }catch(error:unknown){
         return NextResponse.json({success:false,error:error},{status:500});
     }
 

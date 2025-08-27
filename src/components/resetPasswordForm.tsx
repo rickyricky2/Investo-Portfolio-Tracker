@@ -1,12 +1,10 @@
 "use client"
 import "@/app/global.css";
 import LoginEmail from "@/components/loginEmail"
-import {useRouter} from "next/navigation";
 import {useState}  from "react";
 import {FaCheck, FaSpinner} from "react-icons/fa";
 
 export default function ResetPasswordForm() {
-    const router = useRouter();
     const [isSend,setIsSend] =  useState(false);
     const [isLoading,setIsLoading] = useState(false);
     const [error,setError]=useState("");
@@ -38,7 +36,7 @@ export default function ResetPasswordForm() {
                 setIsSend(true);
             }
 
-        }catch(error:any){
+        }catch(error:unknown){
             console.error(error);
         }
     }

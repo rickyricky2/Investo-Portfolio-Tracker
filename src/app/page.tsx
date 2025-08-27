@@ -7,7 +7,7 @@ import ScrollReveal from "../components/scrollAnimation";
 import HeaderOnScroll from "../components/headerOnScroll";
 import {subscriptionPlans} from "@/lib/subscriptionPlans";
 
-const aboutContent: {icons:JSX.Element; info:string}[] = [
+const aboutContent: {icons: React.ReactNode; info:string}[] = [
     {
         icons: <AiFillPieChart className={"w-30 h-20 mb-10 lg:m-0"}/> ,
         info: "Track all your investments in one place – no more spreadsheets."

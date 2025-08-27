@@ -9,10 +9,6 @@ type Snapshot = {
     totalValue: number;
 };
 
-type Props = {
-    userId: string;
-};
-
 
 export default function MainChart({mainCurrency}: {mainCurrency: string}) {
     const [snapshots, setSnapshots] = useState<Snapshot[]>([]);

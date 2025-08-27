@@ -29,7 +29,7 @@ export function connectWS(): WebSocket {
         console.log("Successfully connected to Finnhub WS");
     });
 
-    let lastUpdate: Record<string,number> = {};
+    const lastUpdate: Record<string,number> = {};
 
     ws.on("message", async (msg: WebSocket.Data) => {
         try {

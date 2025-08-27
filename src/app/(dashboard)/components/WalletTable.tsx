@@ -1,15 +1,15 @@
 "use client";
-import {FaSort, FaSpinner, FaChevronDown, FaChevronRight, FaCheckCircle, FaEdit} from "react-icons/fa";
+import {FaSort, FaSpinner, FaChevronDown, FaChevronRight, FaCheckCircle} from "react-icons/fa";
 import {MdCancel} from "react-icons/md";
 import AssetModifyMenu from "@/app/(dashboard)/components/AssetModifyMenu";
 import {walletProps} from "@/types/wallet";
 import React, {useState} from "react";
-import {useRouter} from "next/navigation";
+import {Asset} from "@/types/assets";
 import {useWalletStore} from "@/store/useWalletStore";
 
-export default function WalletTable({tableHeaders, sortConfig, isLoading, getPortfolioPercentage, handleSort, sortedFilteredAssets, error, getAssets}: walletProps) {
+export default function WalletTable({tableHeaders, isLoading, handleSort, sortedFilteredAssets, error, getAssets}: walletProps) {
     const [editingId, setEditingId] = useState<string | null>(null);
-    const [editedValues, setEditedValues] = useState<any>({});
+    const [editedValues, setEditedValues] = useState<Record<string, string | number>>({});
     const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
     const triggerRefresh = useWalletStore((state) => state.triggerRefresh);
 
@@ -37,8 +37,6 @@ export default function WalletTable({tableHeaders, sortConfig, isLoading, getPor
     for (let i = startPage; i <= endPage; i++) {
         visiblePages.push(i);
     }
-
-    const router = useRouter();
 
     // editing assets
     const startEditing = (asset: any) => {
@@ -101,34 +99,6 @@ export default function WalletTable({tableHeaders, sortConfig, isLoading, getPor
         }));
     };
 
-    // Helper for responsive details
-    const AssetDetails = ({ asset,isEditing }: { asset: any; isEditing:boolean; }) => (
-        <div
-            key={asset._id}
-            className={`
-                flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-20
-                px-4 py-4 text-lg font-medium
-                even:bg-light-bg dark:bg-dark-bg-secondary
-                text-light-text dark:text-dark-text
-            `}
-        >
-            {tableHeaders.map( (item,index) =>{
-                if(!(asset[item.key!])){
-                    return;
-                }
-                return(
-                    <div key={index} className={`flex items-center ${index < 10 ? "lg:hidden" : ""} ${index < 3 ? "hidden" : ""}`}>
-                        <FaSort onClick={() => handleSort(item.key)} className={"dark:text-dark-main cursor-pointer mr-1 "} />
-                        <span className="font-semibold">{item.label}:&nbsp;</span>
-                        {asset.addedManually && isEditing
-                            ? <span className={"p-1"}> {editableInput(item.key!, editedValues[item.key!])}</span>
-                            : <span className={"text-xl"}>{asset[item.key!]}</span>}
-                    </div>
-                );
-            })}
-        </div>
-    );
-
     return (
         <React.Fragment>
             <main className={`
@@ -162,7 +132,7 @@ export default function WalletTable({tableHeaders, sortConfig, isLoading, getPor
                         </tr>
                     )}
                     {!isLoading && sortedFilteredAssets && (
-                        currentAssets.map((asset, index) => {
+                        currentAssets.map( asset => {
                             const isEditing = asset._id === editingId;
                             const isExpanded = expandedRows[asset._id];
 

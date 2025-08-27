@@ -1,4 +1,3 @@
-import { FaPlus } from "react-icons/fa";
 import AddAssetButton from "../components/addAssetButton";
 import AssetFilters from "./AssetFilters";
 import {Filters} from "./walletPageClient";

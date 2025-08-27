@@ -25,7 +25,7 @@ export async function middleware(request: NextRequest) {
             isLoggedIn = data.loggedIn;
             userId = data.userId;
 
-        } catch (err:any) {
+        } catch (err:unknown) {
             console.error("Error: ",err);
             isLoggedIn = false;
         }

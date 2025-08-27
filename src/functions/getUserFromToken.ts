@@ -9,8 +9,7 @@ export default async function getUserFromToken() {
     if(!token) return false;
 
     try{
-        const user = jwt.verify(token, process.env.LOGIN_SECRET!);
-        return true ;
+        return jwt.verify(token, process.env.LOGIN_SECRET!);
     }catch{
         cookieStore.delete("login_token");
         return false;

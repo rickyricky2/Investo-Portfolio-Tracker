@@ -66,7 +66,7 @@ export async function POST(req:Request){
 
         return NextResponse.json({success:true},{status:200});
 
-    } catch(error:any){
+    } catch(error:unknown){
         return NextResponse.json({success:false, error:error},{status:500});
     }
 }
@@ -91,8 +91,8 @@ export async function GET() {
 
         return NextResponse.json({success:true,assets:userAssets},{status:200});
 
-    }catch(e:any){
-        return NextResponse.json({success:false, error:e},{status:500});
+    }catch(error:unknown){
+        return NextResponse.json({success:false, error:error},{status:500});
     }
 }
 
@@ -136,7 +136,7 @@ export async function PUT(req: Request) {
             });
 
         return NextResponse.json({ success: true }, { status: 200 });
-    } catch (e) {
+    } catch (error:unknown) {
         return NextResponse.json({ success: false, error: "Update failed" }, { status: 500 });
     }
 }
@@ -170,8 +170,8 @@ export async function DELETE(req: Request) {
         await assets.findOneAndDelete({ _id: assetId, userId });
 
         return NextResponse.json({ success: true }, { status: 200 });
-    } catch (error: any) {
+    } catch (error: unknown) {
         console.error(error);
-        return NextResponse.json({ success: false, error: error.message }, { status: 500 });
+        return NextResponse.json({ success: false, error: error }, { status: 500 });
     }
 }

@@ -72,7 +72,7 @@ export default function WalletAssets({filters}: {filters: Filters}){
                 const ticker = assets[asset].ticker;
                 const country = assets[asset].country;
 
-                let res = await fetch(`/api/dataStore?ticker=${encodeURIComponent(ticker)}&country=${country}`, {
+                const res = await fetch(`/api/dataStore?ticker=${encodeURIComponent(ticker)}&country=${country}`, {
                     method: "GET",
                     headers: {"Content-Type": "application/json"},
                 });
@@ -96,7 +96,7 @@ export default function WalletAssets({filters}: {filters: Filters}){
                         headers:{"Content-Type": "application/json"},
                     });
 
-                    let data = await res.json();
+                    const data = await res.json();
 
                     if(!data.success) {
                         if(dataStore.code === "expired") {

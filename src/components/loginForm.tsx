@@ -58,7 +58,7 @@ export default function LoginForm(){
             }else{
                 router.refresh();
             }
-        }catch(error:any){
+        }catch{
             setIsLoading(false);
             setErrors({email:["Couldn't log in, try again later."]});
         }

@@ -15,7 +15,7 @@ export async function GET(request: Request) {
             email: string;
         };
         return NextResponse.json({ loggedIn: true, userId:decoded.userId},{ status: 200 });
-    } catch (err) {
-        return NextResponse.json({ loggedIn: false }, { status: 401 });
+    } catch (error:unknown) {
+        return NextResponse.json({ loggedIn: false, error:error }, { status: 401 });
     }
 }

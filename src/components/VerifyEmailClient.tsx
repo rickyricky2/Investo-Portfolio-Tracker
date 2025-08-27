@@ -36,8 +36,10 @@ export default function VerifyEmailClient() {
                 } else {
                     setStatus({ type: "success", message: "Verified email successfully" });
                 }
-            } catch (error: any) {
-                setStatus({ type: "error", message: error.message });
+            } catch (error: unknown) {
+                if(error instanceof Error){
+                    setStatus({ type: "error", message: error.name });
+                }
             }
         };
 

@@ -3,7 +3,6 @@ import {z} from "zod";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import { NextResponse } from "next/server";
-import {loginFormData} from "@/types/login";
 import clientPromise from "@/lib/db";
 
 // validation schema
@@ -108,7 +107,7 @@ export async function POST(request: Request){
 
         return response;
 
-    } catch(error:any){
+    } catch(error:unknown){
         console.error(error);
         return NextResponse.json({
             success: false,

@@ -22,13 +22,13 @@ export async function GET(req: Request) {
             .toArray();
 
         return NextResponse.json({ success: true, snapshots },{status:200});
-    } catch (err) {
+    } catch (err:unknown) {
         console.error(err);
        return NextResponse.json({ success: false, error: "Server error" },{status:500});
     }
 }
 
-export async function POST(req:Request) {
+export async function POST() {
     const usersCollection = await getCollection("users");
     const users = await usersCollection.find({}).toArray();
 

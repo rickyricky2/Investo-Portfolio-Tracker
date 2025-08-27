@@ -9,10 +9,6 @@ export async function GET(req:Request){
     const dataType = searchParams.get("dataType") || "";
     const ticker = searchParams.get("ticker");
     const country = searchParams.get("country");
-    const amount = searchParams.get("amount");
-    const base = searchParams.get("base");
-    const main_currency = searchParams.get("main_currency");
-
 
     if(dataType === "prices"){
         let pricesUrl = `https://finnhub.io/api/v1/quote?country=${country}&symbol=${ticker}&token=${finnhub_token}`;

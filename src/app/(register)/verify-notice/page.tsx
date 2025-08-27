@@ -17,10 +17,10 @@ export default function VerifyNoticePage(){
                         Thank you for creating an account!
                     </h1>
                     <p className="py-6 text-2xl sm:text-3xl lg:text-4xl">
-                        We've sent a verification link to your email address.<br/> Please check your inbox and click the link to verify your account.
+                        We&apos;ve sent a verification link to your email address.<br/> Please check your inbox and click the link to verify your account.
                     </p>
                     <p className="py-6 text-xl sm:text-2xl lg:text-3xl">
-                        Didn’t get the email? Make sure to check your spam folder or click the button below to resend the verification link.
+                        Didn&apos;t get the email? Make sure to check your spam folder or click the button below to resend the verification link.
                     </p>
                 </div>
             </div>

@@ -22,7 +22,6 @@ function formatDate(date:Date | string) {
 export default function PortfolioDashboard(){
     const [assets, setAssets] = useState<Asset[]>([]);
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState(false);
 
     const [totalInvestedAmount,setTotalInvestedAmount] = useState(0);
     const [numberOfInvestments,setNumberOfInvestments] = useState(0);
@@ -43,7 +42,6 @@ export default function PortfolioDashboard(){
 
         if(!data.success){
             setIsLoading(false);
-            setError(data?.error);
             console.error(data?.error);
         }
 
@@ -69,7 +67,7 @@ export default function PortfolioDashboard(){
                 const ticker = assets[asset].ticker;
                 const country = assets[asset].country;
 
-                let res = await fetch(`/api/dataStore?ticker=${encodeURIComponent(ticker!)}&country=${country}`, {
+                const res = await fetch(`/api/dataStore?ticker=${encodeURIComponent(ticker!)}&country=${country}`, {
                     method: "GET",
                     headers: {"Content-Type": "application/json"},
                 });

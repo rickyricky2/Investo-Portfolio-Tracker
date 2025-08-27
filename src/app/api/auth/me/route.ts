@@ -4,7 +4,7 @@ import {cookies} from "next/headers";
 import {NextResponse} from "next/server";
 import clientPromise from "@/lib/db";
 
-export async function GET(req:Request){
+export async function GET(){
     try{
         const cookieStore = await cookies();
         const token = cookieStore.get("login_token")?.value;
@@ -51,8 +51,8 @@ export async function GET(req:Request){
             }
         },{status:200});
 
-    }catch(error:any){
-        console.error(error.message);
+    }catch(error:unknown){
+        console.error(error);
         return NextResponse.json({
             success:false,
             loggedIn: false,

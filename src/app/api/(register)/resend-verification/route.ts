@@ -53,7 +53,7 @@ export async function POST(request:Request){
         await sendVerificationEmail(email, emailToken);
 
         return NextResponse.json({success: true, message: "New verification email has been sent"}, {status: 200});
-    } catch(error:any){
+    } catch(error:unknown){
         return NextResponse.json({error:error},{status:500});
     }
 }

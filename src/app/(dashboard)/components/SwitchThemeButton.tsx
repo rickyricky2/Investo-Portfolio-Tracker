@@ -6,16 +6,15 @@ export default function SwitchThemeButton({type}:{type:string}){
     const [theme, setTheme] = useState<string>("");
 
     useEffect(() => {
-        let theme = localStorage.getItem("theme");
-        if(!theme){
+        const savedTheme = localStorage.getItem("theme");
+
+        if(!savedTheme){
             const prefersDark:boolean = window.matchMedia("(prefers-color-scheme: dark)").matches;
-            if(prefersDark){
-                setTheme("dark");
-            }
-            setTheme("light");
+            setTheme(prefersDark ? "dark" : "light");
             return;
         }
-        setTheme(theme);
+
+        setTheme(savedTheme);
     },[]);
 
     const handleThemeClick = () =>{

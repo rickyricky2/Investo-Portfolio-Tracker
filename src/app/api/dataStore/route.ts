@@ -1,6 +1,5 @@
 import {NextResponse} from "next/server";
 import clientPromise from "@/lib/db";
-import {connectWS,subscribeTicker,unsubscribeTicker} from "@/lib/finnhub-ws";
 
 async function getDataStore() {
     const client = await clientPromise;
@@ -25,7 +24,7 @@ export async function GET(req:Request){
 
         if (data) {
             // if yes we need to check if last update time is more than one hour
-            const lastUpdatedAt = data.updatedAt.getTime();
+            const lastUpdatedAt:number = data.updatedAt.getTime();
             const date = new Date().getTime();
 
             const timeDiff = date - lastUpdatedAt;
@@ -39,9 +38,9 @@ export async function GET(req:Request){
         // if no
         return NextResponse.json({success: false,code:"no data", error:"we don't store this ticker in database"}, {status: 500});
 
-    }catch(e:any){
-        console.error(e);
-        return NextResponse.json({success: false, error:e.message}, {status: 500});
+    }catch(error:unknown){
+        console.error(error);
+        return NextResponse.json({success: false, error:error}, {status: 500});
     }
 
 }
@@ -107,8 +106,8 @@ export async function POST(req:Request){
             return NextResponse.json({success: true,message:"successfully added ticker to dataStore"}, {status: 200});
         }
 
-    }catch(e:any){
-        return NextResponse.json({success: false, error:e.message}, {status: 500});
+    }catch(error:unknown){
+        return NextResponse.json({success: false, error:error}, {status: 500});
     }
 
 }
@@ -134,7 +133,7 @@ export async function PUT(req:Request){
         )
 
         return NextResponse.json({success:true},{status:200});
-    }catch(e:any){
-        return NextResponse.json({success: false, error:e.message}, {status: 500});
+    }catch(error:unknown){
+        return NextResponse.json({success: false, error:error}, {status: 500});
     }
 }

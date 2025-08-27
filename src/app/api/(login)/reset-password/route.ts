@@ -53,7 +53,7 @@ export async function POST(request:Request){
         await sendVerificationEmail(email, restorePasswordToken);
 
         return NextResponse.json({success: true, message: "Link for restoring your settings has been sent"}, {status: 200});
-    } catch(error:any){
+    } catch(error:unknown){
         console.error(error);
         return NextResponse.json({success:false, error:"Some error occurred"},{status:500});
     }

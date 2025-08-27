@@ -71,8 +71,8 @@ export async function POST(request: Request){
 
         return NextResponse.json({success:true},{status:200});
 
-    }catch(error:any){
-        if(error.name === "TokenExpiredError"){
+    }catch(error:unknown){
+        if( error instanceof Error && error.name === "TokenExpiredError"){
 
             const client = await clientPromise;
             const db = client.db("investodb");
