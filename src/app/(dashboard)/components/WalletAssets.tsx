@@ -1,26 +1,45 @@
 "use client";
-import { FaSort, FaSpinner } from "react-icons/fa";
-import {useState, useEffect,forwardRef,useImperativeHandle} from "react";
+import {useState, useEffect} from "react";
 import {Asset,SortKey,SortConfig} from "@/types/assets";
-import AssetModifyMenu from "../components/AssetModifyMenu";
+import WalletTable from "../components/WalletTable";
+import {walletProps} from "@/types/wallet";
+import {useWalletStore} from "@/store/useWalletStore";
+import {typesWithTicker} from "@/content/assetContent";
+import {Filters} from "./walletPageClient";
 
-export type WalletAssetsRef = {
-    refresh: () => void;
-}
-
-const tableHeaders: {label:string, key:SortKey}[] = [
+export const tableHeaders: {label:string, key:SortKey}[] = [
+    { label:"Ticker", key:"ticker" },
     { label:"Type", key:"type" },
     { label:"Name", key:"name" },
-    { label:"Symbol", key:"symbol" },
     { label:"Quantity", key:"quantity" },
-    { label:"Unit Price", key:"unitPrice" },
+    { label:"Purchase Price", key:"purchaseUnitPrice" },
+    { label:"Last Price", key:"lastUnitPrice" },
     { label:"Total Value", key:"totalValue" },
     { label:"Currency", key:"currency" },
-    { label:"Portfolio", key:"portfolioPercentage" },
-    { label:"Daily Change", key:"dailyChange" },
-];
+    { label:"Daily change", key:"dailyChange" },
+    { label:"Profit/Loss", key:"profit_loss" },
 
-const WalletAssets = forwardRef<WalletAssetsRef, {filters: {type:string; currency:string; search:string}}>(({filters},ref) => {
+    { label:"Country", key:"country" },
+    { label:"CreatedAt", key:"createdAt" },
+
+
+    // { label:"Portfolio", key:"portfolioPercentage" },
+
+    // { label:"Total Purchase Price", key:"purchaseTotalPrice" },
+];
+function formatDate(date:string) {
+    const formatedDate = new Date(date);
+    return formatedDate.toLocaleString("pl-PL",{
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+    });
+}
+
+export default function WalletAssets({filters}: {filters: Filters}){
     const [assets, setAssets] = useState<Asset[]>([]);
     const [error, setError] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -39,17 +58,96 @@ const WalletAssets = forwardRef<WalletAssetsRef, {filters: {type:string; currenc
 
         if(!data.success){
             setError(data?.error);
+            console.error(data?.error);
         }
 
-        console.log(data.assets);
-        setAssets(data.assets);
+        const assets = data.assets;
+        // for every asset
+        for(const asset in assets){
+            // check if asset was added manualy
+            assets[asset].createdAt =  formatDate(assets[asset].createdAt);
+
+            if(!assets[asset].addedManually) {
+                //  check if we have this ticker in dataStore
+                const ticker = assets[asset].ticker;
+                const country = assets[asset].country;
+
+                let res = await fetch(`/api/dataStore?ticker=${encodeURIComponent(ticker)}&country=${country}`, {
+                    method: "GET",
+                    headers: {"Content-Type": "application/json"},
+                });
+
+                const dataStore = await res.json();
+
+                let lastUnitPrice;
+                let dailyChange ;
+                let dailyChangePercent ;
+
+                if(!dataStore.success) {
+                    //we have to check if the last update in dataStore was later than hour ago
+                    if(dataStore.code === "expired") {
+                        lastUnitPrice = dataStore.tickerInfo.lastUnitPrice;
+                        dailyChange = dataStore.tickerInfo.dailyChange;
+                        dailyChangePercent = dataStore.tickerInfo.dailyChange;
+                    }
+
+                    let res = await fetch(`/api/stockMarketAPI?ticker=${ticker}&country=${country}`, {
+                        method: "GET",
+                        headers:{"Content-Type": "application/json"},
+                    });
+
+                    let data = await res.json();
+
+                    if(!data.success) {
+                        if(dataStore.code === "expired") {
+                            assets[asset].lastUnitPrice = lastUnitPrice;
+                            assets[asset].dailyChange = dailyChange;
+                            assets[asset].dailyChangePercent = dailyChange;
+                            continue;
+                        }else {
+                            continue;
+                        }
+                    }
+                    lastUnitPrice = Number(data.tickerInfo.close).toFixed(2);
+                    dailyChange = Number(data.tickerInfo.change).toFixed(2);
+                    dailyChangePercent = Number(data.tickerInfo.percent_change).toFixed(2);
+
+                    assets[asset].lastUnitPrice = lastUnitPrice;
+                    assets[asset].dailyChange =dailyChange;
+                    assets[asset].dailyChangePercent = dailyChangePercent;
+
+                    res = await fetch("/api/dataStore",{
+                        method:"PUT",
+                        headers:{"Content-Type": "application/json"},
+                        body: JSON.stringify({ticker,country,lastUnitPrice,dailyChangePercent,dailyChange}),
+                    })
+                }else{
+                    assets[asset].lastUnitPrice = dataStore.tickerInfo.lastUnitPrice;
+                    assets[asset].dailyChange = dataStore.tickerInfo.dailyChange;
+                    assets[asset].dailyChangePercent = dataStore.tickerInfo.dailyChangePercent;
+                }
+            }else{
+                if(!(typesWithTicker.includes(assets[asset].type))){
+                    assets[asset].lastUnitPrice = assets[asset].purchaseUnitPrice;
+                }
+                assets[asset].dailyChange = "";
+                assets[asset].dailyChangePercent = "";
+            }
+            assets[asset].totalValue = assets[asset].lastUnitPrice ? assets[asset].lastUnitPrice * assets[asset].quantity : assets[asset].purchaseUnitPrice * assets[asset].quantity  ;
+            assets[asset].profit_loss = Number(assets[asset].totalValue - assets[asset].purchaseUnitPrice * assets[asset].quantity).toFixed(2);
+            assets[asset].profit_lossPercent = Number( (assets[asset].totalValue - assets[asset].purchaseUnitPrice * assets[asset].quantity) / assets[asset].purchaseUnitPrice * 100).toFixed(2);
+            assets[asset].lastUnitPrice = Number(assets[asset].lastUnitPrice).toFixed(2);
+            assets[asset].dailyChange = Number(assets[asset].dailyChange).toFixed(2);
+            assets[asset].dailyChangePercent =  Number(assets[asset].dailyChangePercent).toFixed(2);
+        }
+        setAssets(assets);
     }
 
-    useEffect(()=>{ getAssets(); },[]);
+    const { refreshTrigger } = useWalletStore();
 
-    useImperativeHandle(ref, () => ({
-        refresh: getAssets
-    }))
+    useEffect(()=> {
+        getAssets();
+        }, [refreshTrigger]);
 
     const sortAssets = (data: Asset[]) => {
         const {key, direction} = sortConfig;
@@ -73,11 +171,12 @@ const WalletAssets = forwardRef<WalletAssetsRef, {filters: {type:string; currenc
     const filteredAssets = assets.filter((asset) => {
         const matchesType = filters.type === "all" || asset.type === filters.type;
         const matchesCurrency = filters.currency === "all" || asset.currency === filters.currency;
+        const matchesCountry = filters.country === "all" || asset.country === filters.country;
         const matchesSearch =
             filters.search === "" ||
             asset.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-            (asset.symbol && asset.symbol.toLowerCase().includes(filters.search.toLowerCase()));
-        return matchesType && matchesCurrency && matchesSearch;
+            (asset.ticker && asset.ticker.toLowerCase().includes(filters.search.toLowerCase()));
+        return matchesType && matchesCurrency && matchesCountry && matchesSearch;
     });
 
     const sortedFilteredAssets = sortAssets(filteredAssets);
@@ -101,64 +200,16 @@ const WalletAssets = forwardRef<WalletAssetsRef, {filters: {type:string; currenc
         if(totalPortfolioValue === 0) return 0;
         return ((assetValue/totalPortfolioValue) * 100).toFixed(2);
     }
+    const commonProps: walletProps = {
+        tableHeaders,
+        sortedFilteredAssets,
+        handleSort,
+        sortConfig,
+        getAssets,
+        isLoading,
+        getPortfolioPercentage,
+        error,
+    };
 
-    return(
-        <main className={"bg-light-bg-secondary dark:bg-dark-bg-secondary text-light-text dark:text-dark-text w-full min-h-screen rounded-2xl px-5 shadow-sm tracking-tight overflow-hidden"}>
-            <table className={"w-full px-5"}>
-                <thead className="w-full">
-                    <tr className="w-full cursor-default border-b-2 rounded-4xl border-light-main dark:border-dark-main">
-                        {tableHeaders.map( (item,index) => {
-                            return(
-                                <th key={index} >
-                                    <div className={"flex items-center gap-1 justify-center text-lg my-2 font-medium"}>
-                                        {item.label}
-                                        <FaSort onClick={()=> handleSort(item.key)} className={"dark:text-dark-main cursor-pointer "} />
-                                    </div>
-                                </th>
-                            );
-                        })}
-                    </tr>
-                </thead>
-                <tbody>
-                {isLoading && (
-                    <tr>
-                        <td colSpan={tableHeaders.length} className="text-center py-10">
-                            <FaSpinner className="animate-spin text-4xl mx-auto text-light-main dark:text-dark-main" />
-                        </td>
-                    </tr>
-                )}
-                {!isLoading && assets && (
-                    sortedFilteredAssets.map((asset,index)=>{
-                        return(
-                            <tr
-                                key={index}
-                                className="cursor-default rounded-4xl text-center text-xl font-medium odd:bg-light-bg odd:dark:bg-dark-secondary text-light-text dark:text-dark-text">
-                                <td>{asset.type}</td>
-                                <td>{asset.name}</td>
-                                <td>{asset.symbol ? asset.symbol : "-"}</td>
-                                <td>{asset.quantity ? asset.quantity : "-"}</td>
-                                <td>{asset.unitPrice ? asset.unitPrice : "-"}</td>
-                                <td>{asset.totalValue}</td>
-                                <td>{asset.currency}</td>
-                                <td>{getPortfolioPercentage(asset.totalValue)}%</td>
-                                <td>{asset.dailyChange ? asset.dailyChange : "-"}</td>
-                                <td><AssetModifyMenu id={asset._id}  refresh={getAssets}/></td>
-                            </tr>
-                        );
-                    })
-                )}
-                {error && (
-                    <tr>
-                        <td colSpan={tableHeaders.length} className="text-center py-10 text-light-error-text dark:text-dark-error-text">
-                            {error}
-                        </td>
-                    </tr>
-                )}
-                </tbody>
-            </table>
-        </main>
-    );
-});
-
-WalletAssets.displayName = "WalletAssets";
-export default WalletAssets;
+        return <WalletTable {...commonProps} />;
+};

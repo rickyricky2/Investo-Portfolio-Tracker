@@ -34,3 +34,7 @@
     --breakpoint-tiny: 400px;
 }
 
+.dark{
+    --color-light-text: var(--color-dark-text);
+}
+

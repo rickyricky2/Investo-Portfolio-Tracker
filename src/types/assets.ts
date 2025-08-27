@@ -1,15 +1,29 @@
+
 export type Asset = {
     _id: string;
     userId:string;
-    type: string;
+    type:string;
+    ticker?:string;
     name: string;
-    symbol?: string;
-    quantity?: number;
-    unitPrice?: number;
-    totalValue: number;
-    currency: string;
+    quantity: number;
+    purchaseUnitPrice:number;
+    lastUnitPrice:number;
+    totalValue?:number;
+    currency:string;
+    dailyChange?:number;
+    dailyChangePercent?:number;
+    profit_loss?:number;
+    profit_lossPercent?:number;
+
     portfolioPercentage?: number;
-    dailyChange?: number;
+
+    purchaseTotalPrice:number
+
+    country:string;
+
+    addedManually:boolean;
+    createdAt:Date | string;
+    updatedAt:Date;
 };
 
 export type SortKey = keyof Asset | null;

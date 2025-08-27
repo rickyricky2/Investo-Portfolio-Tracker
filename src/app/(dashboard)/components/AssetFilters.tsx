@@ -1,8 +1,6 @@
-interface Filters {
-    type: string;
-    currency: string;
-    search: string;
-}
+import {assetTypes,currencies,countries} from "@/content/assetContent";
+import {Filters} from "./walletPageClient";
+
 
 export default function AssetFilters({ filters, onFilterChange }: { filters: Filters; onFilterChange: (filters: Filters) => void }) {
     const handleChange = (field: keyof Filters, value: string) => {
@@ -10,49 +8,26 @@ export default function AssetFilters({ filters, onFilterChange }: { filters: Fil
     };
 
     return (
-        <div className="flex gap-4 font-medium">
-            <select value={filters.type} onChange={(e) => handleChange("type", e.target.value)} className=" focus:bg-light-bg focus:outline-none w-full border-light-text-secondary border-1 border-b-2 p-1 border-b-dark-bg dark:border-dark-bg-secondary dark:border-b-dark-main text-light-text dark:text-dark-text dark:focus:bg-dark-bg dark:focus:border-dark-bg  focus:border-light-bg  focus:ring-0 focus:border-b-light-text dark:focus:border-b-dark-main bg-transparent apperance-none pr-6 text-lg">
+        <div className="flex gap-4 font-medium mb-2">
+            <select value={filters.type} onChange={(e) => handleChange("type", e.target.value)} className=" focus:bg-light-bg focus:outline-none w-full border-light-text-secondary border-1 border-b-2 p-1 border-b-light-main dark:border-dark-bg-secondary dark:border-b-dark-main text-dark-text-secondary focus:text-light-text dark:text-dark-text-secondary dark:focus:text-dark-text dark:focus:bg-dark-bg dark:focus:border-dark-bg  focus:border-light-bg  focus:ring-0 focus:border-b-light-main dark:focus:border-b-dark-main bg-transparent apperance-none pr-6 text-lg">
                 <option value="all">Type</option>
-                <option value="stock">Stock</option>
-                <option value="bond">Bond</option>
-                <option value="mutual_fund">Mutual Fund</option>
-                <option value="etf">ETF (Exchange-Traded Fund)</option>
-                <option value="real_estate">Real Estate</option>
-                <option value="crypto">Cryptocurrency</option>
-                <option value="commodity">Commodity</option>
-                <option value="cash">Cash</option>
-                <option value="private_equity">Private Equity</option>
-                <option value="hedge_fund">Hedge Fund</option>
-                <option value="collectibles">Collectibles (Art, Antiques)</option>
-                <option value="forex">Forex (Foreign Exchange)</option>
-                <option value="infrastructure">Infrastructure</option>
-                <option value="venture_capital">Venture Capital</option>
-                <option value="precious_metals">Precious Metals (Gold, Silver)</option>
-                <option value="insurance_contracts">Insurance Contracts</option>
-                <option value="structured_products">Structured Products</option>
-                <option value="debt_instruments">Debt Instruments</option>
-                <option value="royalties">Royalties</option>
-                <option value="other">Other</option>
+                {assetTypes.map((item,index) => (
+                    <option key={item.value} value={`${item.value}`}>{item.label}</option>
+                ))}
             </select>
 
-            <select value={filters.currency}  onChange={(e) => handleChange("currency", e.target.value)} className="focus:bg-light-bg focus:outline-none w-full border-light-text-secondary border-1 border-b-2 p-1 border-b-dark-bg dark:border-dark-bg-secondary dark:border-b-dark-main text-light-text dark:text-dark-text dark:focus:bg-dark-bg dark:focus:border-dark-bg  focus:border-light-bg  focus:ring-0 focus:border-b-light-text dark:focus:border-b-dark-main bg-transparent apperance-none pr-6 text-lg">
+            <select value={filters.currency}  onChange={(e) => handleChange("currency", e.target.value)} className="focus:bg-light-bg focus:outline-none w-full border-light-text-secondary border-1 border-b-2 p-1 border-b-light-main dark:border-dark-bg-secondary dark:border-b-dark-main text-dark-text-secondary focus:text-light-text dark:text-dark-text-secondary dark:focus:text-dark-text dark:focus:bg-dark-bg dark:focus:border-dark-bg  focus:border-light-bg  focus:ring-0 focus:border-b-light-main dark:focus:border-b-dark-main bg-transparent apperance-none pr-6 text-lg">
                 <option value="all">Currency</option>
-                <option value="USD">USD – US Dollar</option>
-                <option value="EUR">EUR – Euro</option>
-                <option value="GBP">GBP – British Pound</option>
-                <option value="CHF">CHF – Swiss Franc</option>
-                <option value="JPY">JPY – Japanese Yen</option>
-                <option value="PLN">PLN – Polish Zloty</option>
-                <option value="CAD">CAD – Canadian Dollar</option>
-                <option value="AUD">AUD – Australian Dollar</option>
-                <option value="CNY">CNY – Chinese Yuan</option>
-                <option value="NZD">NZD – New Zealand Dollar</option>
-                <option value="SEK">SEK – Swedish Krona</option>
-                <option value="NOK">NOK – Norwegian Krone</option>
-                <option value="MXN">MXN – Mexican Peso</option>
-                <option value="SGD">SGD – Singapore Dollar</option>
-                <option value="HKD">HKD – Hong Kong Dollar</option>
-                <option value="KRW">KRW – South Korean Won</option>
+                {currencies.map((item,index) => (
+                    <option key={item.value} value={`${item.value}`}>{item.label}</option>
+                ))}
+            </select>
+
+            <select value={filters.country}  onChange={(e) => handleChange("country", e.target.value)} className="focus:bg-light-bg focus:outline-none w-full border-light-text-secondary border-1 border-b-2 p-1 border-b-light-main dark:border-dark-bg-secondary dark:border-b-dark-main text-dark-text-secondary focus:text-light-text dark:text-dark-text-secondary dark:focus:text-dark-text dark:focus:bg-dark-bg dark:focus:border-dark-bg  focus:border-light-bg  focus:ring-0 focus:border-b-light-main dark:focus:border-b-dark-main bg-transparent apperance-none pr-6 text-lg">
+                <option value="all">Country</option>
+                {countries.map((item,index) => (
+                    <option key={index} value={`${item.name}`}>{item.name}</option>
+                ))}
             </select>
 
             <input
@@ -60,7 +35,7 @@ export default function AssetFilters({ filters, onFilterChange }: { filters: Fil
                 placeholder="Search..."
                 value={filters.search}
                 onChange={(e) => handleChange("search", e.target.value)}
-                className="focus:bg-light-bg focus:outline-none w-full border-light-text-secondary border-1 border-b-2 p-1 border-b-dark-bg dark:border-dark-bg-secondary dark:border-b-dark-main text-light-text dark:text-dark-text dark:focus:bg-dark-bg dark:focus:border-dark-bg  focus:border-light-bg  focus:ring-0 focus:border-b-light-text dark:focus:border-b-dark-main bg-transparent apperance-none pr-6 text-lg"
+                className="focus:bg-light-bg focus:outline-none w-full border-light-text-secondary border-1 border-b-2 p-1 border-b-light-main dark:border-dark-bg-secondary dark:border-b-dark-main text-dark-text-secondary focus:text-light-text dark:text-dark-text-secondary dark:focus:text-dark-text dark:focus:bg-dark-bg dark:focus:border-dark-bg  focus:border-light-bg  focus:ring-0 focus:border-b-light-tertiary dark:focus:border-b-dark-main bg-transparent apperance-none pr-6 text-lg"
             />
         </div>
     );

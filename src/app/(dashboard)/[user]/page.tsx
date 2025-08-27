@@ -1,5 +1,6 @@
 import type {Metadata} from "next";
-
+import PortfolioDashboard from "../components/PortfolioDashboard";
+import "@/app/global.css";
 
 export const metadata: Metadata = {
     title: "Dashboard | Investo",
@@ -8,10 +9,8 @@ export const metadata: Metadata = {
 export default function DashboardPage(){
 
     return(
-        <div className={"container min-h-screen max-w-[100%] bg-gray-100"}>
-            <header className={"w-full bg-white h-[100px] rounded-2xl "}>
-
-            </header>
+        <div className={"container min-h-screen max-w-[100%] bg-light-bg dark:bg-dark-bg tracking-tight"}>
+            <PortfolioDashboard/>
         </div>
     );
 }

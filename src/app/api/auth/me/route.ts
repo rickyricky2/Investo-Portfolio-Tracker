@@ -12,6 +12,7 @@ export async function GET(req:Request){
         // check for token
         if(!token){
             return NextResponse.json({
+                success: false,
                 loggedIn: false,
                 message: "Can't find token"
             },{status: 400});
@@ -33,12 +34,14 @@ export async function GET(req:Request){
 
         if(!user){
             return NextResponse.json({
+                success:false,
                 loggedIn: false,
                 message: "Can't find user"
             },{status:400});
         }
 
         return NextResponse.json({
+            success:true,
             loggedIn: true,
             user:{
                 id: user._id,
@@ -51,6 +54,7 @@ export async function GET(req:Request){
     }catch(error:any){
         console.error(error.message);
         return NextResponse.json({
+            success:false,
             loggedIn: false,
             error:"Internal Server Error"
         },{status:500});

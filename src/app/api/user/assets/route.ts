@@ -4,6 +4,9 @@ import jwt from 'jsonwebtoken';
 import clientPromise from "@/lib/db";
 import {ObjectId} from "mongodb";
 
+const client = await clientPromise;
+const db = client.db("investodb");
+
 const getUserEmail = async ()=>{
     const cookieStore = await cookies();
     const token = cookieStore.get("login_token")?.value;
@@ -19,21 +22,21 @@ const getUserEmail = async ()=>{
 export async function POST(req:Request){
     try{
         const json = await req.json();
-        const rawData = json.rawData;
+        const {rawData, notAddDataManually} = json;
         const userData = {
             type: String(rawData.type),
+            ticker:String(rawData.ticker),
             name: String(rawData.name),
-            symbol: String(rawData.symbol),
             quantity: String(rawData.quantity),
-            unitPrice: String(rawData.unitPrice),
+            purchaseUnitPrice: String(rawData.purchaseUnitPrice),
+            lastUnitPrice: String(rawData.lastUnitPrice),
             currency: String(rawData.currency),
+            country: String(rawData.country),
+            addedManually: !notAddDataManually,
         }
-        const totalValue = Number(userData.unitPrice) * Number(userData.quantity);
 
         const email = await getUserEmail();
 
-        const client = await clientPromise;
-        const db = client.db("investodb");
         const users = db.collection('users');
 
         const user = await users.findOne( {email:email});
@@ -49,13 +52,16 @@ export async function POST(req:Request){
         await assets.insertOne({
             userId: userId,
             type: userData.type,
+            ticker:userData.ticker,
             name: userData.name,
-            symbol: userData.symbol,
             quantity: userData.quantity,
-            unitPrice: userData.unitPrice,
-            totalValue: totalValue,
+            purchaseUnitPrice: userData.purchaseUnitPrice,
+            lastUnitPrice: userData.lastUnitPrice,
             currency: userData.currency,
+            country: userData.country,
+            addedManually:userData.addedManually,
             createdAt: new Date(),
+            updatedAt: new Date(),
         });
 
         return NextResponse.json({success:true},{status:200});
@@ -69,8 +75,6 @@ export async function GET() {
     try{
         const email = await getUserEmail();
 
-        const client = await clientPromise;
-        const db = client.db("investodb");
         const users = db.collection('users');
 
         const user = await users.findOne( {email:email});
@@ -92,44 +96,42 @@ export async function GET() {
     }
 }
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request) {
     try {
         const body = await req.json();
-        const { id, type, name, symbol, quantity, unitPrice, currency} = body;
+        const {editedValues} = body;
 
-        const assetId = new ObjectId(id);
         const email = await getUserEmail();
 
-        const client = await clientPromise;
-        const db = client.db("investodb");
         const users = db.collection('users');
 
         const user = await users.findOne({ email:email });
         if (!user) {
             return NextResponse.json({ success: false, error: "Can't find user" }, { status: 400 });
         }
+        const assetId = new ObjectId(editedValues._id);
         const userId = new ObjectId(user._id);
 
         const assets = db.collection('assets');
-        const asset = await assets.findOne({ _id: assetId, userId });
+        const asset = await assets.findOne({ _id: assetId, userId:userId });
 
         if (!asset) {
             return NextResponse.json({ success: false, error: "Can't find asset or no permission" }, { status: 404 });
         }
 
-        const totalValue = Number(unitPrice) * Number(quantity);
-
         await assets.findOneAndUpdate(
             { _id: assetId, userId: userId },
             {
                 $set: {
-                    type: type,
-                    name: name,
-                    symbol: symbol,
-                    quantity: quantity,
-                    unitPrice: unitPrice,
-                    totalValue: totalValue,
-                    currency: currency,
+                    ticker:editedValues.ticker,
+                    type: editedValues.type,
+                    name: editedValues.name,
+                    quantity: editedValues.quantity,
+                    purchaseUnitPrice: editedValues.purchaseUnitPrice,
+                    lastUnitPrice: editedValues.lastUnitPrice,
+                    currency: editedValues.currency,
+                    country:editedValues.country,
+                    updatedAt: new Date(),
                 }
             });
 
@@ -150,8 +152,6 @@ export async function DELETE(req: Request) {
         const assetId = new ObjectId(id);
         const email = await getUserEmail();
 
-        const client = await clientPromise;
-        const db = client.db("investodb");
         const users = db.collection('users');
 
         const user = await users.findOne({ email:email });
