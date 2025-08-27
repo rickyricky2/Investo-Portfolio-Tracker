@@ -1,11 +1,16 @@
 import "@/app/global.css";
-import Header from "@/components/publicHeader"
-import RestoreAccountClient from "@/components/RestoreAccountClient"
+import Header from "@/components/publicHeader";
+import dynamic from "next/dynamic";
 import {Metadata} from "next";
 export const metadata: Metadata = {
     title: "Restore Account | Investo",
     description: "Investment tracking site",
 };
+
+const RestoreAccountClient = dynamic(
+    () => import("@/components/RestoreAccountClient"),
+    {ssr:false}
+);
 
 export default async function RestoreAccount(){
 
