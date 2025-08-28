@@ -1,6 +1,5 @@
 "use client"
 import {FaPlus, FaSpinner} from "react-icons/fa";
-import { HiOutlinePlus } from "react-icons/hi";
 import React, { useState,useEffect, useRef } from 'react';
 import { useWalletStore } from "@/store/useWalletStore";
 import {z} from "zod";
@@ -191,7 +190,7 @@ export default function AddAssetButton({nav=false}: {nav: boolean}) {
     return(
         <div className={`lg:relative text-light-text-secondary dark:text-dark-text`} ref={wrapperRef}>
             <div className={`bg-light-bg-tertiary dark:bg-dark-secondary lg:dark:bg-dark-main transition-all rounded-full cursor-pointer p-1 z-100 relative group `}  >
-                <FaPlus className={`text-light-text-secondary dark:text-dark-text  z-10 transition-all ${isOpen ? "rotate-45" : ""}`} size={30} onClick={() => setIsOpen(!isOpen)} />
+                <FaPlus className={`${nav ? "text-light-text-tertiary" : "text-light-text-secondary dark:text-dark-text" }   z-10 transition-all ${isOpen ? "rotate-45" : ""}`} size={30} onClick={() => setIsOpen(!isOpen)} />
                 <p className={`${isOpen ? 'hidden' : "hidden lg:block"} absolute bottom-6 -left-7 group-hover:-translate-y-5 shadow-md rounded-md text-lg
                       w-25 p-2 scale-0 text-light-text-tertiary bg-[hsl(266,40%,85%)] dark:text-dark-text dark:bg-dark-secondary font-medium duration-175 overflow-hidden group-hover:scale-100 text-center
                 `}>
