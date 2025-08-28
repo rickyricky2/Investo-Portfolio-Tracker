@@ -29,36 +29,41 @@ export async function GET(req: Request) {
 }
 
 export async function POST() {
-    const usersCollection = await getCollection("users");
-    const users = await usersCollection.find({}).toArray();
+    try {
+        const usersCollection = await getCollection("users");
+        const users = await usersCollection.find({}).toArray();
 
-    // we need to save exchange rates data so we fetch
-    const res = await fetch(`https://api.frankfurter.app/latest?from=USD`);
-    if (!res.ok) {
-        throw new Error("Failed to fetch exchange rates");
-    }
-    const data = await res.json();
-    const rates = data.rates;
+        // we need to save exchange rates data so we fetch
+        const res = await fetch(`https://api.frankfurter.app/latest?from=USD`);
+        if (!res.ok) {
+            return NextResponse.json({success: false, error: "Failed to fetch exchange rates"}, {status: 500});
+        }
+        const data = await res.json();
+        const rates = data.rates;
 
-    for (const user of users) {
-        // we save user assets
-        const assetsCollection = await getCollection("assets");
-        const assets = await assetsCollection.find({ userId: user._id }).toArray();
+        for (const user of users) {
+            // we save user assets
+            const assetsCollection = await getCollection("assets");
+            const assets = await assetsCollection.find({userId: user._id}).toArray();
 
-        // now we count wallet total value in USD (we will change currency to currency preffered by user when passing data to chart)
-        const value = assets.reduce((sum, asset) => {
-            if(asset.currency === "USD"){
-                return sum + Number(asset.lastUnitPrice) * Number(asset.quantity);
-            }
-            return sum + ((Number(asset.lastUnitPrice) / rates[asset.currency])  * Number(asset.quantity));
-        }, 0);
+            // now we count wallet total value in USD (we will change currency to currency preffered by user when passing data to chart)
+            const value = assets.reduce((sum, asset) => {
+                if (asset.currency === "USD") {
+                    return sum + Number(asset.lastUnitPrice) * Number(asset.quantity);
+                }
+                return sum + ((Number(asset.lastUnitPrice) / rates[asset.currency]) * Number(asset.quantity));
+            }, 0);
 
-        // we save value as snapshot
-        const snapshotsCollection = await getCollection("portfolioSnapshots");
-        await snapshotsCollection.insertOne({
-            userId: user._id,
-            date: new Date(),
-            value
-        });
+            // we save value as snapshot
+            const snapshotsCollection = await getCollection("portfolioSnapshots");
+            await snapshotsCollection.insertOne({
+                userId: user._id,
+                date: new Date(),
+                value
+            });
+        }
+        return NextResponse.json({success: true}, {status: 200});
+    }catch(error:unknown){
+        return NextResponse.json({success: false, error}, {status: 500});
     }
 }
