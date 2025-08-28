@@ -30,3 +30,13 @@ jobs:
             exit 1
           fi
           echo "Assety refreshed."
+
+      - name: Create portfolio snapshots
+        run: |
+          echo "Creating portfolio snapshots..."
+          status=$(curl -s -o /dev/null -w "%{http_code}" -X POST https://investo-lit9.vercel.app/api/user/walletSnapshots)
+          if [ "$status" -ne 200 ]; then
+            echo "Failed snapshot creation: $status"
+            exit 1
+          fi
+          echo "Snapshots created."
