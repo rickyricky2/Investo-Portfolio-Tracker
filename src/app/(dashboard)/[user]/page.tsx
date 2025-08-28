@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function DashboardPage(){
 
     return(
-        <div className={"container min-h-screen max-w-[100%] bg-light-bg dark:bg-dark-bg tracking-tight"}>
+        <div className={"container min-h-screen max-w-[100%] tracking-tight"}>
             <PortfolioDashboard/>
         </div>
     );

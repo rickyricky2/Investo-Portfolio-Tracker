@@ -31,6 +31,8 @@ export async function POST(){
                 {_id: asset._id},
                 {$set: {lastUnitPrice: newPrice, updatedAt: new Date()}},
             );
+
+            return NextResponse.json({success:"true"},{status:200});
         }catch{
             return NextResponse.json({success: false, error:"server error occurred"}, {status: 500});
         }

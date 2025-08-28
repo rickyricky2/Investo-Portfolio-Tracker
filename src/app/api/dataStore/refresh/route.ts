@@ -24,5 +24,7 @@ export async function POST(){
             {$set: {lastUnitPrice: data.price}},
         );
 
+        return NextResponse.json({success:"true"},{status:200});
+
     }
 }

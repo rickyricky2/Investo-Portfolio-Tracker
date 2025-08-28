@@ -1,6 +1,6 @@
 "use client";
-import PortfolioDashboardHeader from './PortfolioDashboardHeader';
-import MainChart from "../components/MainChart";
+import PortfolioDashboardHeaderCards from './PortfolioDashboardHeaderCards';
+import MainChart from "./MainChart";
 import PieCharts from "./PieCharts";
 import {typesWithTicker} from "@/content/assetContent";
 import {useEffect, useState} from "react";
@@ -19,9 +19,17 @@ function formatDate(date:Date | string) {
     });
 }
 
+type userData = {
+    id: string;
+    email: string;
+    firstName: string;
+    lastName: string;
+}
+
 export default function PortfolioDashboard(){
     const [assets, setAssets] = useState<Asset[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [user, setUser] = useState<userData>({} as userData);
 
     const [totalInvestedAmount,setTotalInvestedAmount] = useState(0);
     const [numberOfInvestments,setNumberOfInvestments] = useState(0);
@@ -157,6 +165,20 @@ export default function PortfolioDashboard(){
         getAssets();
     }, [refreshTrigger]);
 
+    useEffect( () => {
+        const getUserInfo = async () => {
+            setIsLoading(true);
+            const res = await fetch(`/api/auth/me`);
+            const data = await res.json();
+            if(!data.success){
+                throw Error(data.error);
+            }
+            setUser(data.user);
+            setIsLoading(false);
+        }
+        getUserInfo();
+    },[]);
+
     const headerValues = [
         {
             label: "Total Invested Amount",
@@ -174,19 +196,20 @@ export default function PortfolioDashboard(){
     ];
 
     return(
-        <div>
-        <header className={"my-6 py-2"}>
-            <h2 className={"text-3xl lg:text-5xl font-medium text-center text-light-text dark:text-dark-text-secondary"}>
-                Total Wallet Value:
-                <span className={"text-3xl lg:text-5xl dark:text-dark-text"}> {totalInvestmentsValue} {mainCurrency}</span>
+        <div className={"px-2"}>
+        <header className={"my-5 px-2"}>
+            <h2 className={"text-4xl lg:text-5xl tracking-tight text-left text-light-main font-bold dark:text-dark-main flex flex-col"}>
+                Hi
+                <span className={"mt-2 capitalize"}>
+                {user.firstName} {user.lastName}!
+                </span>
             </h2>
         </header>
         <main className={`
-                bg-light-bg dark:bg-dark-bg
-                text-light-text dark:text-dark-text
+               text-light-text dark:text-dark-text
                 w-full min-h-screen tracking-tight overflow-auto`}
         >
-            <PortfolioDashboardHeader values={headerValues} isLoading={isLoading} currency={mainCurrency}/>
+            <PortfolioDashboardHeaderCards totalBalance={totalInvestmentsValue} values={headerValues} isLoading={isLoading} currency={mainCurrency}/>
             <MainChart mainCurrency={mainCurrency} />
             <PieCharts isLoading={isLoading} assets={assets} />
         </main>

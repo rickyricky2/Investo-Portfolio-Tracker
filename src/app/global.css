@@ -4,13 +4,15 @@
 
 @theme {
 
-    --color-light-bg: var(--color-gray-100);
+    --color-light-bg: hsl(266,40%,92%);
     --color-light-bg-secondary: var(--color-white);
+    --color-light-bg-tertiary: hsl(266,40%,90%);
     --color-light-main: #A882DD;
     --color-light-secondary: #49416D ;
     --color-light-tertiary: #9170bf;
     --color-light-text: #111111;
     --color-light-text-secondary: #FFFFFF;
+    --color-light-text-tertiary: hsl(266,40%,60%);
     --color-light-error-bg: rgba(192, 80, 80, 0.12);  /* lekko czerwony, półprzezroczysty */
     --color-light-error-border: #C05050;              /* ciemniejszy czerwono-różowy, wyraźny */
     --color-light-error-text: #8B2F2F;               /* głęboka, stonowana czerwień */
@@ -32,6 +34,7 @@
     --color-dark-active: #3B3354;
 
     --breakpoint-tiny: 400px;
+    --breakpoint-320: 320px;
 }
 
 .dark{

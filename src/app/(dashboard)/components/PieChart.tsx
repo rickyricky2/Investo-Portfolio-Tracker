@@ -86,7 +86,7 @@ export default function PieChart({isLoading,assets, type}: {isLoading:boolean; a
         }
     }
     return(
-        <div className={`rounded-md bg-light-bg-secondary dark:bg-dark-bg-secondary overflow-visible shadow-sm w-full p-10 min-h-[500px] ${isLoading ? "flex justify-center items-center" : ""}`}>
+        <div className={`shadow-lg rounded-4xl bg-light-bg-secondary dark:bg-dark-bg-secondary overflow-visible w-full p-10 min-h-[500px] ${isLoading ? "flex justify-center items-center" : ""}`}>
             {isLoading ? (
                 <FaSpinner className="animate-spin text-4xl mx-auto text-light-main dark:text-dark-main" size={40} />
             ) : (

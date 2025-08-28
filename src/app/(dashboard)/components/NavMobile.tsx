@@ -4,9 +4,9 @@ import {useEffect, useRef, useState} from "react";
 import SwitchThemeButton from "../components/SwitchThemeButton";
 import {useRouter} from "next/navigation";
 
-import {MdSpaceDashboard} from "react-icons/md";
-import {IoLogoBuffer, IoMdWallet} from "react-icons/io";
-import { MdAccountCircle } from "react-icons/md";
+import {IoLogoBuffer} from "react-icons/io";
+import { HiOutlineWallet } from "react-icons/hi2";
+import { MdAccountCircle,MdOutlineDashboard  } from "react-icons/md";
 
 import AddAssetButton from "../components/addAssetButton";
 
@@ -73,12 +73,12 @@ export default function NavMobile(){
 
     const menuItems = [
         {
-            icons: <MdSpaceDashboard size={30} />,
+            icons: <MdOutlineDashboard size={30} />,
             label: 'Dashboard',
             url: `${userData.id}`
         },
         {
-            icons: <IoMdWallet size={30} />,
+            icons: <HiOutlineWallet size={30} />,
             label: 'Wallet',
             url: `${userData.id}/wallet`
         },
@@ -91,39 +91,43 @@ export default function NavMobile(){
 
     return(
         <div className={" relative"}>
-            <nav className="w-full h-12  fixed bg-light-main dark:bg-dark-main text-light-text-secondary dark:text-dark-text rounded-b-sm shadow-sm bottom-0 z-10 flex items-center justify-center">
+            <nav className="w-full h-14  fixed bg-light-bg-tertiary dark:bg-dark-main text-light-text-tertiary dark:text-dark-text rounded-b-sm shadow-[0_-4px_10px_rgba(0,0,0,0.12)] bottom-0 z-10 flex items-center justify-center">
                 <div className="w-full flex items-center justify-center">
                     <ul className="w-full flex items-center justify-evenly">
-                        <li>
+                        <li className={"flex flex-col justify-center items-center tracking-tighter"}>
                             <Link href={`/${userData.id}`} >
-                                <MdSpaceDashboard size={30} />
+                                <MdOutlineDashboard size={20} />
                             </Link>
+                            <p className={`text-sm font-medium`}>Dashboard</p>
                         </li>
-                        <li>
+                        <li className={"flex flex-col justify-center items-center tracking-tighter"}>
                             <Link href={`/${userData.id}/wallet`} >
-                                <IoMdWallet size={30} />
+                                <HiOutlineWallet size={20} />
                             </Link>
+                            <p className={`text-sm font-medium`}>Wallet</p>
                         </li>
-                        <li>
-                            <AddAssetButton/>
+                        <li className={"flex flex-col justify-center items-center tracking-tighter"}>
+                            <AddAssetButton nav={true}/>
+                            <p className={`text-sm font-medium leading-2 mb-3`}>Add Asset</p>
                         </li>
-                        <li>
+                        <li className={"flex flex-col justify-center items-center tracking-tighter"}>
                             <Link href={`/${userData.id}/account`} >
-                                <MdAccountCircle size={30} />
+                                <MdAccountCircle size={20} />
                             </Link>
+                            <p className={`text-sm font-medium`}>Account</p>
                         </li>
                         <button onClick={handleSidebarToggle} className={`h-full ${open ? "" : ""}`}>
                             <div className={"w-full flex flex-col items-center gap-y-1"}>
-                                <span className={`w-[30px] bg-light-text-secondary dark:bg-dark-text h-[3px] transition duration-170 rounded-full ${open? "translate-y-[7px] rotate-45":""}`}></span>
-                                <span className={`w-[30px] bg-light-text-secondary dark:bg-dark-text h-[3px] transition duration-170 rounded-full ${open? "translate-y-[0px] rotate-45":""}`}></span>
-                                <span className={`w-[30px] bg-light-text-secondary dark:bg-dark-text h-[3px] transition duration-170 rounded-full ${open? "-translate-y-[7px] -rotate-45":""}`}></span>
+                                <span className={`w-[25px] bg-light-text-tertiary dark:bg-dark-text h-[3px] transition duration-170 rounded-full ${open? "translate-y-[7px] rotate-45":""}`}></span>
+                                <span className={`w-[25px] bg-light-text-tertiary dark:bg-dark-text h-[3px] transition duration-170 rounded-full ${open? "translate-y-[0px] rotate-45":""}`}></span>
+                                <span className={`w-[25px] bg-light-text-tertiary dark:bg-dark-text h-[3px] transition duration-170 rounded-full ${open? "-translate-y-[7px] -rotate-45":""}`}></span>
                             </div>
                         </button>
                     </ul>
                 </div>
             </nav>
-            <nav ref={wrapperRef} className={`fixed flex flex-col py-4 justify-end gap-70 right-0 top-0 z-30 shadow-sm  bg-light-main dark:bg-dark-main w-fit sm:w-[150px] md:w-[200px] min-h-screen transition ${open ? "" : "translate-x-100"}`}>
-                    <ul className={"text-light-text-secondary dark:text-dark-text py-5 font-medium"}>
+            <nav ref={wrapperRef} className={`fixed flex flex-col py-4 justify-end gap-70 right-0 top-0 z-30 shadow-sm  bg-light-bg-tertiary dark:bg-dark-main w-fit sm:w-[150px] md:w-[200px] min-h-screen transition ${open ? "" : "translate-x-100"}`}>
+                    <ul className={"text-light-text-tertiary dark:text-dark-text py-5 font-medium"}>
                         {menuItems.map((item, index) => {
                             return(
                                 <li key={index}>
@@ -146,12 +150,12 @@ export default function NavMobile(){
                     <div className={"mx-4"}>
                         <SwitchThemeButton type={"horizontal"}/>
                     </div>
-                    <div className={"mx-4"}>
+                    <div className={"mx-4 text-center"}>
                         <button onClick={handleSidebarToggle} className={`h-full ${open ? "" : ""}`}>
                             <div className={"w-full flex flex-col items-center gap-y-1"}>
-                                <span className={`w-[30px] bg-light-text-secondary dark:bg-dark-text h-[3px] transition duration-170 rounded-full ${open? "translate-y-[7px] rotate-45":""}`}></span>
-                                <span className={`w-[30px] bg-light-text-secondary dark:bg-dark-text h-[3px] transition duration-170 rounded-full ${open? "translate-y-[0px] rotate-45":""}`}></span>
-                                <span className={`w-[30px] bg-light-text-secondary dark:bg-dark-text h-[3px] transition duration-170 rounded-full ${open? "-translate-y-[7px] -rotate-45":""}`}></span>
+                                <span className={`w-[30px] bg-light-text-tertiary dark:bg-dark-text h-[3px] transition duration-170 rounded-full ${open? "translate-y-[7px] rotate-45":""}`}></span>
+                                <span className={`w-[30px] bg-light-text-tertiary dark:bg-dark-text h-[3px] transition duration-170 rounded-full ${open? "translate-y-[0px] rotate-45":""}`}></span>
+                                <span className={`w-[30px] bg-light-text-tertiary dark:bg-dark-text h-[3px] transition duration-170 rounded-full ${open? "-translate-y-[7px] -rotate-45":""}`}></span>
                             </div>
                         </button>
                     </div>

@@ -1,5 +1,6 @@
 "use client"
 import {FaPlus, FaSpinner} from "react-icons/fa";
+import { HiOutlinePlus } from "react-icons/hi";
 import React, { useState,useEffect, useRef } from 'react';
 import { useWalletStore } from "@/store/useWalletStore";
 import {z} from "zod";
@@ -7,7 +8,7 @@ import {formAssets,typesWithTicker,countries, currencies, assetTypes} from "@/co
 
 let assetSchema;
 
-export default function AddAssetButton(){
+export default function AddAssetButton({nav=false}: {nav: boolean}) {
     const [isOpen,setIsOpen]=useState(false);
     const [error, setError]=useState("");
     const [isLoading, setIsLoading]=useState(false);
@@ -189,28 +190,27 @@ export default function AddAssetButton(){
 
     return(
         <div className={`lg:relative text-light-text-secondary dark:text-dark-text`} ref={wrapperRef}>
-            <div className={`bg-light-tertiary scale-120 lg:scale-100 dark:bg-dark-secondary lg:bg-light-main lg:dark:bg-dark-main transition-all rounded-full cursor-pointer p-1 z-100 relative group `}  >
-                <FaPlus className={`text-light-text-secondary dark:text-dark-text z-10 transition-all ${isOpen ? "rotate-45" : ""}`} size={30} onClick={() => setIsOpen(!isOpen)} />
+            <div className={`bg-light-bg-tertiary dark:bg-dark-secondary lg:dark:bg-dark-main transition-all rounded-full cursor-pointer p-1 z-100 relative group `}  >
+                <FaPlus className={`text-light-text-secondary dark:text-dark-text  z-10 transition-all ${isOpen ? "rotate-45" : ""}`} size={30} onClick={() => setIsOpen(!isOpen)} />
                 <p className={`${isOpen ? 'hidden' : "hidden lg:block"} absolute bottom-6 -left-7 group-hover:-translate-y-5 shadow-md rounded-md text-lg
-                      w-25 p-2 scale-0 text-light-text bg-light-text-secondary dark:text-dark-text dark:bg-dark-secondary font-medium duration-175 overflow-hidden group-hover:scale-100 text-center
+                      w-25 p-2 scale-0 text-light-text-tertiary bg-[hsl(266,40%,85%)] dark:text-dark-text dark:bg-dark-secondary font-medium duration-175 overflow-hidden group-hover:scale-100 text-center
                 `}>
                     Add Asset
                 </p>
             </div>
-            <div className={`absolute bg-light-main dark:bg-dark-main z-40 shadow-xl -top-0 max-lg:left-0 right-0 m-auto lg: lg:top-0 lg:right-0 rounded-xl lg:rounded-3xl transition-all p-3 tiny:p-5 w-fit overflow-hidden ${isOpen ? "min-w-[300px] w-[350px] min-h-[400px] max-lg:-translate-y-120 " : "p-0 max-w-0 max-h-0 opacity-0"}`}>
-                <h2 className={"text-3xl font-medium"}>Add Asset</h2>
+            <div className={`absolute bg-light-bg-tertiary dark:bg-dark-main text-light-text-tertiary z-40 shadow-2xl -top-0 max-lg:left-0 right-0 m-auto lg:top-0 lg:right-0 rounded-4xl lg:rounded-3xl transition-all p-5 tiny:p-5 w-fit overflow-hidden ${isOpen ? "min-w-[300px] w-[350px] min-h-[400px] max-lg:-translate-y-120 " : "p-0 max-w-0 max-h-0 opacity-0"}`}>
+                <h2 className={"text-3xl my-2 font-medium text-light-secondary"}>Add Asset</h2>
                 <form onSubmit={handleSubmit} className={"text-xl w-full"}>
                     <select
                         name="type"
                         value={type}
-                        className="w-full font-medium border-b-2 border-b-light-text-secondary dark:border-b-dark-text outline-none focus:scale-x-105 p-1 focus:bg-light-tertiary dark:focus:bg-dark-secondary"
+                        className="w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-main outline-none appearance-none bg-transparent p-1 focus:bg-light-bg-tertiary dark:focus:bg-dark-secondary focus:border-b-light-text-tertiary dark:focus:border-b-dark-main"
                         required
                         onChange={ (e) => {
                             setType(e.target.value);
                             console.log(e.target.value);
                             setNotAddDataManually(typesWithTicker.includes(e.target.value));
-                        }
-                        }
+                        }}
                     >
                         <option value="" disabled>-- Select Asset Type --</option>
                         {assetTypes.map( (e,index) => {
@@ -228,7 +228,7 @@ export default function AddAssetButton(){
                                     placeholder={"ticker"}
                                     name={"ticker"}
                                     required
-                                    className={"w-full font-medium border-b-2 border-b-light-text-secondary dark:border-b-dark-text outline-none focus:scale-x-105 p-1 placeholder:text-light-text-secondary dark:placeholder:text-dark-text focus:placeholder:text-light-tertiary dark:focus:placeholder:text-dark-text-secondary"}/>
+                                    className={"w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-text outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text  dark:focus:placeholder:text-dark-text-secondary"}/>
                             </section>
                             <section className={"flex my-3 relative w-full"}>
                                 <input
@@ -237,12 +237,12 @@ export default function AddAssetButton(){
                                     placeholder={"quantity"}
                                     required
                                     name={"quantity"}
-                                    className={"w-full font-medium border-b-2 border-b-light-text-secondary dark:border-b-dark-text outline-none focus:scale-x-105 p-1 placeholder:text-light-text-secondary dark:placeholder:text-dark-text focus:placeholder:text-light-tertiary dark:focus:placeholder:text-dark-text-secondary"}/>
+                                    className={"w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-text outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text  dark:focus:placeholder:text-dark-text-secondary"}/>
                             </section>
                             <section className={"flex my-3 relative w-full"}>
                                 <select
                                     name="country"
-                                    className="w-full font-medium border-b-2 border-b-light-text-secondary dark:border-b-dark-text outline-none focus:scale-x-105 p-1 focus:bg-light-tertiary dark:focus:bg-dark-secondary"
+                                    className="w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-main outline-none appearance-none bg-transparent p-1 focus:bg-light-tertiary dark:focus:bg-dark-secondary focus:border-b-light-text-tertiary dark:focus:border-b-dark-main"
                                     size={1}
                                     required
                                     defaultValue=""
@@ -262,7 +262,7 @@ export default function AddAssetButton(){
                                         {item.key === "currency" ? (
                                                 <select
                                                     name={item.key}
-                                                    className="w-full font-medium border-b-2 border-b-light-text-secondary dark:border-b-dark-text outline-none focus:scale-x-105 p-1 focus:bg-light-tertiary dark:focus:bg-dark-secondary"
+                                                    className="w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-main outline-none appearance-none bg-transparent p-1 focus:bg-light-tertiary dark:focus:bg-dark-secondary focus:border-b-light-text-tertiary dark:focus:border-b-dark-main"
                                                     required
                                                     defaultValue=""
                                                 >
@@ -279,7 +279,7 @@ export default function AddAssetButton(){
                                                     min={1}
                                                     placeholder={item.label}
                                                     name={item.key}
-                                                    className={"w-full font-medium border-b-2 border-b-light-text-secondary dark:border-b-dark-text outline-none focus:scale-x-105 p-1 placeholder:text-light-text-secondary dark:placeholder:text-dark-text focus:placeholder:text-light-tertiary dark:focus:placeholder:text-dark-text-secondary"}/>
+                                                    className={"w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-text outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text  dark:focus:placeholder:text-dark-text-secondary"}/>
                                         )}
                                         </section>
                                     ) : null
@@ -289,11 +289,13 @@ export default function AddAssetButton(){
                     {error && (
                         <p className={"font-medium my-3 text-light-error-text dark:text-dark-error-text"}>{error}</p>
                     )}
+                    <div className={"flex justify-center items-center"}>
                     {isLoading ?
                         <FaSpinner className="animate-spin text-4xl mx-auto text-light-main dark:text-dark-main" />
                         : <input type="submit" value="Add Asset"
-                                 className={"bg-light-secondary dark:bg-dark-secondary text-light-text-secondary dark:text-dark-text active:bg-light-active dark:active:bg-dark-active rounded-lg px-3 py-2 cursor-pointer transition-all hover:-translate-y-1"}/>
+                                 className={"bg-light-secondary mt-5 dark:bg-dark-secondary text-light-text-secondary dark:text-dark-text active:bg-light-active dark:active:bg-dark-active rounded-2xl px-7 py-3 cursor-pointer transition-all hover:-translate-y-1"}/>
                     }
+                    </div>
                 </form>
             </div>
         </div>

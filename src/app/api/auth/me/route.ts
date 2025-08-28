@@ -14,7 +14,7 @@ export async function GET(){
             return NextResponse.json({
                 success: false,
                 loggedIn: false,
-                message: "Can't find token"
+                error: "Can't find token"
             },{status: 400});
         }
 
@@ -36,7 +36,7 @@ export async function GET(){
             return NextResponse.json({
                 success:false,
                 loggedIn: false,
-                message: "Can't find user"
+                error: "Can't find user"
             },{status:400});
         }
 

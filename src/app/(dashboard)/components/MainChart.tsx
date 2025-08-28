@@ -70,7 +70,7 @@ export default function MainChart({mainCurrency}: {mainCurrency: string}) {
     ];
 
     return (
-        <div className="h-[400px] w-full my-10 rounded-md bg-light-bg-secondary dark:bg-dark-bg-secondary p-6 shadow-sm">
+        <div className="h-[400px] w-full my-10 shadow-lg rounded-4xl bg-light-bg-secondary dark:bg-dark-bg-secondary p-6">
             <ResponsiveLine
                 data={chartData}
                 margin={{ top: 50, right: 50, bottom: 50, left: 60 }}
