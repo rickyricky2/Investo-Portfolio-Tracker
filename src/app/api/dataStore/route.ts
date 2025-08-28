@@ -1,11 +1,5 @@
 import {NextResponse} from "next/server";
-import clientPromise from "@/lib/db";
-
-async function getDataStore() {
-    const client = await clientPromise;
-    const db = client.db("investodb");
-    return db.collection("dataStore");
-}
+import {getCollection} from "@/lib/db";
 
 // const ws = connectWS();
 
@@ -18,25 +12,16 @@ export async function GET(req:Request){
     // connecting to db
     try {
         // check if we have data with this ticker in db
-        const dataStore = await getDataStore();
+        const dataStore = await getCollection("dataStore");
 
         const data = await dataStore.findOne({ticker: ticker, country: country});
 
         if (data) {
-            // if yes we need to check if last update time is more than one hour
-            const lastUpdatedAt:number = data.updatedAt.getTime();
-            const date = new Date().getTime();
-
-            const timeDiff = date - lastUpdatedAt;
-            if( timeDiff >= 1000 * 60 * 60){
-            //     if last price update was more than one hour ago we need to fetch new data
-                return NextResponse.json({success: false,code:"expired",tickerInfo: data, error:"ticker prices expired. need to fetch for last prices"}, {status: 500});
-            }
             // if we have actual data in dataStore we can send it back
             return NextResponse.json({success: true, tickerInfo: data}, {status: 200});
         }
         // if no
-        return NextResponse.json({success: false,code:"no data", error:"we don't store this ticker in database"}, {status: 500});
+        return NextResponse.json({success: false, error:"we don't store this ticker in database"}, {status: 500});
 
     }catch(error:unknown){
         console.error(error);
@@ -51,7 +36,7 @@ export async function POST(req:Request){
 
     try {
         // at first we need to add ticker data to dataStore if not added
-        const dataStore = await getDataStore();
+        const dataStore = await getCollection("dataStore");
 
         const data = await dataStore.findOne({ticker: rawData.ticker,country:rawData.country});
 
@@ -117,7 +102,7 @@ export async function PUT(req:Request){
     const {ticker, country, lastUnitPrice, dailyChange, dailyChangePercent} = await req.json();
 
     try{
-        const dataStore = await getDataStore();
+        const dataStore = await getCollection("dataStore");
 
         await dataStore.findOneAndUpdate(
             {ticker: ticker,

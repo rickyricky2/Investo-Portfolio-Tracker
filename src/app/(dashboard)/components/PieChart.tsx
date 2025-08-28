@@ -72,23 +72,35 @@ export default function PieChart({isLoading,assets, type}: {isLoading:boolean; a
     getData(assets);
 
     const width = useWindowWidth();
+    let minPieChartHeight = "400px";
 
+    if (width !== null) {
+        if (width > 1500) {
+            minPieChartHeight = "600px";
+        } else if (width < 500) {
+            minPieChartHeight = "500px";
+        } else if (width < 600) {
+            minPieChartHeight = "400px";
+        } else if (width < 1024) {
+            minPieChartHeight = "500px";
+        }
+    }
     return(
-        <div className={`rounded-md bg-light-bg-secondary dark:bg-dark-bg-secondary shadow-sm w-full p-10 min-h-[500px] ${isLoading ? "flex justify-center items-center" : ""}`}>
+        <div className={`rounded-md bg-light-bg-secondary dark:bg-dark-bg-secondary overflow-visible shadow-sm w-full p-10 min-h-[500px] ${isLoading ? "flex justify-center items-center" : ""}`}>
             {isLoading ? (
                 <FaSpinner className="animate-spin text-4xl mx-auto text-light-main dark:text-dark-main" size={40} />
             ) : (
                 <>
-                    <AssetFilters filters={filters} onFilterChange={setFilters}/>
-                    <div className={"relative min-h-[300px] "}>
-                        <h2 className="text-3xl font-semibold text-center mt-5 border-b-3 px-4 py-1 w-fit mx-auto border-light-main dark:border-dark-main">
+                    <div className={`relative min-h-[${minPieChartHeight}] `}>
+                        <h2 className="text-3xl font-semibold text-center mb-8 border-b-3 px-4 py-1 w-fit mx-auto border-light-main dark:border-dark-main">
                             {chartTitles[type] || "Chart"}
                         </h2>
-                        <div  className={`relative min-h-[${width !== null && width > 1500 ? "600px" : width !== null && width < 1024 ? width < 600 ? width < 500 ? "500px" : "400px" : "500px" : "400px" }] `}>
+                        <AssetFilters filters={filters} onFilterChange={setFilters}/>
+                        <div  className={`relative min-h-[${minPieChartHeight}] z-1 overflow-visible`}>
                         <ResponsivePie
                             data={data}
                             valueFormat={value => `${( (value / totalCount) * 100).toFixed(1)}%`}
-                            margin={{ top: 80, right: 0, bottom: 80, left: 0 }}
+                            margin={{ top: 80, right: 40, bottom: 80, left: 40 }}
                             innerRadius={0.5}
                             padAngle={0.6}
                             colors={{ datum: "data.color" }}

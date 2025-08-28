@@ -61,7 +61,6 @@ export async function GET(req:Request){
 
         return NextResponse.json({success:false, error:"We couldn't fetch ticker info"},{status:500});
     }else{
-
         const tickerInfoUrl = `https://api.twelvedata.com/quote?symbol=${ticker}&apikey=${twelvedata_token}&country=${country}`;
         const res = await fetch(tickerInfoUrl);
 

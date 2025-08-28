@@ -116,7 +116,7 @@ export default function AddAssetButton(){
             if(data.success){
             //     if we have this ticker data already stored
 
-                const tickerData = data.tickerData;
+                const tickerData = data.tickerInfo;
                 rawData = {
                     ...tickerData,
                     purchaseUnitPrice:tickerData.lastUnitPrice,
@@ -124,109 +124,50 @@ export default function AddAssetButton(){
                     country,
                 }
             }else {
-                if(data.code === "expired"){
-                //     if we have expired prices we need to fetch for new ones and save it to dataStore
-                //     we grab our data
-                    const tickerData = data.tickerData;
-                    rawData = {
-                        ...tickerData,
-                        quantity,
-                        country,
-                    }
+                // if we don't have data stored for this ticker we have to call API
 
-                    // we call for api to fetch for prices
+                // first we fetch for ticker data
+                res = await fetch(`/api/stockMarketAPI?ticker=${ticker}&country=${country}`, {
+                    method: "GET",
+                    headers:{"Content-Type": "application/json"},
+                });
 
-                    res = await fetch(`/api/stockMarketAPI?ticker=${ticker}&country=${country}`, {
-                        method: "GET",
-                        headers:{"Content-Type": "application/json"},
-                    });
+                data = await res.json();
 
-                    data = await res.json();
-
-                    if(!data.success){
-                        setError("We couldn't find ticker");
-                        setIsLoading(false);
-                        return;
-                    }
-
-                    const lastUnitPrice = Number(data.tickerInfo.close).toFixed(2);
-                    const dailyChange = Number(data.tickerInfo.dailyChange).toFixed(2);
-                    const dailyChangePercent = Number(data.tickerInfo.dailyChangePercent).toFixed(2);
-
-                    // we make our data ready to save it
-                    rawData.purchaseUnitPrice = lastUnitPrice;
-
-                    // if we successfully grabbed prices data from API we need to save it to dataStore for other users
-                    res = await fetch("/api/dataStore",{
-                        method:"PUT",
-                        headers:{"Content-Type": "application/json"},
-                        body: JSON.stringify({ticker,country,lastUnitPrice, dailyChange, dailyChangePercent}),
-                    })
-
-                    data = await res.json();
-
-                    if(data.success){
-                        console.log("dataStore for this ticker updated");
-                    }else{
-                        console.log("Couldn't update dataStore for this ticker");
-                    }
-                }
-                else{
-                    // if we don't have data stored for this ticker we have to call API
-
-                    // first we fetch for ticker data
-                    res = await fetch(`/api/stockMarketAPI?ticker=${ticker}&country=${country}`, {
-                        method: "GET",
-                        headers:{"Content-Type": "application/json"},
-                    });
-
-                    data = await res.json();
-
-                    if(!data.success){
-                        setError("We couldn't find ticker u need to add information manually");
-                        setIsLoading(false);
-                        setNotAddDataManually(false);
-                        return;
-                    }
-
-
-                    const tickerInfo = data.tickerInfo;
-                    const lastUnitPrice = Number(tickerInfo.close).toFixed(2);
-
-                    const currency = String(rawData.type).trim() === "crypto" ? String(tickerInfo.symbol).slice(-3) : tickerInfo.currency;
-
-                    rawData = {
-                        ...rawData,
-                        name:tickerInfo.name,
-                        purchaseUnitPrice:lastUnitPrice,
-                        lastUnitPrice:lastUnitPrice,
-                        currency: currency,
-                        country:country,
-                        dailyChange:tickerInfo.change,
-                        dailyChangePercent:tickerInfo.percent_change,
-                    }
-
-                    //     if we successfully grabbed data from API we save this in dataStore for other users
-
-                    res = await fetch("/api/dataStore", {
-                        method: "POST",
-                        headers: {"Content-Type": "application/json"},
-                        body: JSON.stringify({rawData}),
-                    })
-
-                    data = await res.json();
-
-                    if(data.success){
-                        console.log(data.message);
-                    }else{
-                        console.log(data.message);
-                    }
+                if(!data.success){
+                    setError("We couldn't find ticker u need to add information manually");
+                    setIsLoading(false);
+                    setNotAddDataManually(false);
+                    return;
                 }
 
+                const tickerInfo = data.tickerInfo;
+                const lastUnitPrice = Number(tickerInfo.close).toFixed(2);
+
+                const currency = String(rawData.type).trim() === "crypto" ? String(tickerInfo.symbol).slice(-3) : tickerInfo.currency;
+
+                rawData = {
+                    ...rawData,
+                    name:tickerInfo.name,
+                    purchaseUnitPrice:lastUnitPrice,
+                    lastUnitPrice:lastUnitPrice,
+                    currency: currency,
+                    country:country,
+                    dailyChange:tickerInfo.change,
+                    dailyChangePercent:tickerInfo.percent_change,
+                }
+
+                //     if we successfully grabbed data from API we save this in dataStore for other users
+
+                await fetch("/api/dataStore", {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({rawData}),
+                })
             }
 
         }
-        console.log("POSTING: ",notAddDataManually);
+
         const res = await fetch("/api/user/assets",{
             method: "POST",
             headers:{"Content-Type": "application/json"},

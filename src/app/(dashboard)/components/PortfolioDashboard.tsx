@@ -45,7 +45,7 @@ export default function PortfolioDashboard(){
             console.error(data?.error);
         }
 
-        const assets:Asset[] = data.assets;
+        const assets = data.assets;
         let tempNumberOfInvestments = 0;
         let tempTotalInvestedAmount = 0;
         let tempTotalProfitLoss = 0;
@@ -74,18 +74,9 @@ export default function PortfolioDashboard(){
 
                 const dataStore = await res.json();
 
-                let lastUnitPrice;
-                let dailyChange ;
-                let dailyChangePercent ;
-
                 if(!dataStore.success) {
-                    //we have to check if the last update in dataStore was later than hour ago
-                    if(dataStore.code === "expired") {
-                        lastUnitPrice = Number(dataStore.tickerInfo.lastUnitPrice);
-                        dailyChange = Number(dataStore.tickerInfo.dailyChange);
-                        dailyChangePercent = Number(dataStore.tickerInfo.dailyChange);
-                    }
-
+                    // if we dont have asset in data Store we fetch for new data
+                    // probably will never be used but i want it anyway
                     let res = await fetch(`/api/stockMarketAPI?ticker=${ticker}&country=${country}`, {
                         method: "GET",
                         headers:{"Content-Type": "application/json"},
@@ -94,32 +85,23 @@ export default function PortfolioDashboard(){
                     const data = await res.json();
 
                     if(!data.success) {
-                        if(dataStore.code === "expired") {
-                            assets[asset].lastUnitPrice = Number(lastUnitPrice);
-                            assets[asset].dailyChange = Number(dailyChange);
-                            assets[asset].dailyChangePercent = Number(dailyChange);
-                            continue;
-                        }else {
-                            continue;
-                        }
+                        console.error(`could not fetch asset: ${assets[asset]._id} data`);
+                        continue;
                     }
-                    lastUnitPrice = Number(Number(data.tickerInfo.close).toFixed(2));
-                    dailyChange = Number(Number(data.tickerInfo.change).toFixed(2));
-                    dailyChangePercent = Number(Number(data.tickerInfo.percent_change).toFixed(2));
 
-                    assets[asset].lastUnitPrice = lastUnitPrice;
-                    assets[asset].dailyChange =dailyChange;
-                    assets[asset].dailyChangePercent = dailyChangePercent;
+                    assets[asset].lastUnitPrice = Number(data.tickerInfo.close).toFixed(2);
+                    assets[asset].dailyChange = Number(data.tickerInfo.change).toFixed(2);
+                    assets[asset].dailyChangePercent = Number(data.tickerInfo.percent_change).toFixed(2);
 
                     res = await fetch("/api/dataStore",{
-                        method:"PUT",
+                        method:"POST",
                         headers:{"Content-Type": "application/json"},
-                        body: JSON.stringify({ticker,country,lastUnitPrice,dailyChangePercent,dailyChange}),
+                        body: JSON.stringify({asset: assets[asset]}),
                     })
                 }else{
-                    assets[asset].lastUnitPrice = dataStore.tickerInfo.lastUnitPrice;
-                    assets[asset].dailyChange = dataStore.tickerInfo.dailyChange;
-                    assets[asset].dailyChangePercent = dataStore.tickerInfo.dailyChangePercent;
+                    assets[asset].lastUnitPrice = Number(dataStore.tickerInfo.lastUnitPrice).toFixed(2);
+                    assets[asset].dailyChange = Number(dataStore.tickerInfo.dailyChange).toFixed(2);
+                    assets[asset].dailyChangePercent = Number(dataStore.tickerInfo.dailyChangePercent).toFixed(2);
                 }
             }else{
                 if(!(typesWithTicker.includes(assets[asset].type))){

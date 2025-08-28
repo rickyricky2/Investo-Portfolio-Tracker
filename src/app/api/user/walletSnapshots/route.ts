@@ -1,23 +1,19 @@
 import {NextResponse } from "next/server";
-import clientPromise from "@/lib/db";
-
-async function getCollection(str:string) {
-    const client = await clientPromise;
-    const db = client.db("investodb");
-    return db.collection(str);
-}
+import {getCollection} from "@/lib/db";
+import {ObjectId} from "mongodb";
 
 export async function GET(req: Request) {
     const {searchParams} = new URL(req.url);
-    const userId = searchParams.get("userId");
+    const id = searchParams.get("userId");
 
-    if (!userId){
+    if (!id){
         return NextResponse.json({ success: false, error: "Missing userId" },{status:400});
     }
     try {
+        const userId = new ObjectId(id);
         const snapshotsCollection = await getCollection("portfolioSnapshots");
         const snapshots = await snapshotsCollection
-            .find({ userId: userId.toString() })
+            .find({ userId: userId })
             .sort({ date: 1 })
             .toArray();
 

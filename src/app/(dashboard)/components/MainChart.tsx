@@ -34,9 +34,11 @@ export default function MainChart({mainCurrency}: {mainCurrency: string}) {
                 });
 
                 const data = await res.json();
-
-                if (data.success) {
+                console.log(data);
+                if(data.success) {
                     setSnapshots(data.snapshots);
+                }else{
+                    console.error("Failed to get snapshots");
                 }
             } catch (err) {
                 console.error(err);
