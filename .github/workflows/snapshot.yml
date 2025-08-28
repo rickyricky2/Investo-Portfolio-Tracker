@@ -1,0 +1,28 @@
+name: Wallet Snapshot
+
+on:
+  schedule:
+    - cron: '0 * * * *' 
+  workflow_dispatch:
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: API WalletSnapshots Execute
+        env:
+          API_URL: ${{ secrets.WALLET_SNAPSHOT_API_URL }}
+          API_TOKEN: ${{ secrets.WALLET_SNAPSHOT_API_TOKEN }}
+        run: |
+          echo "API request sent"
+          response=$(curl -s -o /dev/null -w "%{http_code}" -X POST "$API_URL" \
+            -H "Authorization: Bearer $API_TOKEN" \
+            -H "Content-Type: application/json")
+          
+          if [ "$response" -ne 200 ]; then
+            echo "API execute error, status: $response"
+            exit 1
+          else
+            echo "Success"
+          fi
