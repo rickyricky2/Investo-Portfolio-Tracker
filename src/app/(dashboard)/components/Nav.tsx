@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { MdAccountCircle } from "react-icons/md";
+import {  MdOutlineAccountCircle  } from "react-icons/md";
 import SwitchThemeButton from "./SwitchThemeButton";
 import { useState,useEffect } from 'react';
 import {useRouter} from "next/navigation";
@@ -80,18 +80,18 @@ export default function Nav() {
 
 
     return (
-        <nav className={`font-medium sticky top-0 shadow-[4px_0_10px_rgba(0,0,0,0.12)] h-screen p-2 flex flex-col duration-500 bg-light-bg-tertiary dark:bg-dark-main dark:text-dark-text text-light-text-tertiary ${open ? 'w-60' : 'w-16'}`}>
+        <nav className={`font-medium sticky top-0 shadow-[4px_0_10px_rgba(0,0,0,0.12)] h-screen p-2 flex flex-col duration-500 bg-light-bg-tertiary dark:bg-dark-bg-tertiary dark:text-dark-text-tertiary text-light-text-tertiary ${open ? 'w-60' : 'w-16'}`}>
 
             {/* Header */}
             <div className=' px-3 py-2 h-20 flex justify-between items-center'>
-                <h2 className={`font-bold transition scale-y-110 text-4xl ${open ? 'w-10 duration-500' : 'w-0 scale-0'} rounded-md`} >
+                <h2 className={`text-light-main dark:text-dark-main font-bold transition scale-y-110 text-4xl ${open ? 'w-10 duration-500' : 'w-0 scale-0'} rounded-md`} >
                     investo
                 </h2>
                 <button onClick={handleSidebarToggle} className={`h-full ${open ? "" : "w-full"}`}>
                     <div className={"w-full flex flex-col items-center gap-y-1"}>
-                        <span className={`w-8 bg-light-text-tertiary dark:bg-dark-text h-1 transition duration-170 rounded-full ${open? "translate-y-3 rotate-45":""}`}></span>
-                        <span className={`w-8 bg-light-text-tertiary dark:bg-dark-text h-1 transition duration-170 rounded-full ${open? "translate-y-1 rotate-45":""}`}></span>
-                        <span className={`w-8 bg-light-text-tertiary dark:bg-dark-text h-1 transition duration-170 rounded-full ${open? "-translate-y-1 -rotate-45":""}`}></span>
+                        <span className={`w-8 bg-light-text-tertiary dark:bg-dark-text-tertiary h-1 transition duration-170 rounded-full ${open? "translate-y-3 rotate-45":""}`}></span>
+                        <span className={`w-8 bg-light-text-tertiary dark:bg-dark-text-tertiary h-1 transition duration-170 rounded-full ${open? "translate-y-1 rotate-45":""}`}></span>
+                        <span className={`w-8 bg-light-text-tertiary dark:bg-dark-text-tertiary h-1 transition duration-170 rounded-full ${open? "-translate-y-1 -rotate-45":""}`}></span>
                     </div>
                 </button>
             </div>
@@ -102,12 +102,12 @@ export default function Nav() {
                 {
                     menuItems.map((item, index) => {
                         return (
-                            <li key={index} className={`px-2 py-2 my-2 hover:bg-[hsl(266,40%,85%)] hover:scale-103 dark:hover:bg-dark-secondary rounded-md duration-300 cursor-pointer flex gap-2 items-center relative group  ${open ? "":"justify-between"}`}>
+                            <li key={index} className={`px-2 py-2 my-2 hover:bg-[hsl(266,40%,85%)] hover:scale-103 dark:hover:bg-[hsl(259,17%,12%)] rounded-md duration-300 cursor-pointer flex gap-2 items-center relative group  ${open ? "":"justify-between"}`}>
                                 <Link href={`/${item.url}`} className={"flex items-center gap-2"}>
                                     <div>{item.icons}</div>
                                     <p className={`${!open && 'w-0 translate-x-24 opacity-0'} duration-500 overflow-hidden`}>{item.label}</p>
                                     <p className={`${open && 'hidden'} absolute left-32 shadow-xl rounded-xl
-                                         w-0 p-0 text-light-text-tertiary dark:text-dark-text bg-[hsl(266,40%,94%)] dark:bg-dark-secondary font-medium duration-100 overflow-hidden group-hover:w-fit group-hover:p-2 group-hover:left-16
+                                         w-0 p-0 text-light-text-tertiary dark:text-dark-text-tertiary bg-[hsl(266,40%,94%)] dark:bg-[hsl(259,17%,25%)] font-medium duration-100 overflow-hidden group-hover:w-fit group-hover:p-2 group-hover:left-16
                                         `}>{item.label}
                                     </p>
                                 </Link>
@@ -127,7 +127,7 @@ export default function Nav() {
             {/* footer */}
             <div className='flex flex-col items-start gap-2 py-2 '>
                 <div className={"flex items-center px-2 gap-2 cursor-default"}>
-                    <div><MdAccountCircle size={30} /></div>
+                    <div>< MdOutlineAccountCircle  className={"text-light-text-tertiary dark:text-dark-text-tertiary"} size={30} /></div>
                     <div className={`leading-5 ${!open && 'w-0 translate-x-24'} duration-500 overflow-hidden`}>
                         <p>
                             {userData.firstName && `${userData.firstName.at(0)!.toUpperCase()}${userData.firstName.slice(1)} `}
@@ -136,12 +136,12 @@ export default function Nav() {
                         <span className='text-xs'>{userData.email}</span>
                     </div>
                 </div>
-                <div className={`w-full px-2 py-2 hover:bg-light-secondary dark:hover:bg-dark-secondary rounded-md duration-300 cursor-pointer flex  items-center relative group  ${open ? "":"justify-between"}`}>
+                <div className={`w-full px-2 py-2 hover:scale-103 hover:bg-[hsl(266,40%,85%)] dark:hover:bg-[hsl(259,17%,12%)] rounded-md duration-300 cursor-pointer flex  items-center relative group  ${open ? "":"justify-between"}`}>
                     <div className={"flex items-center gap-2 "} onClick={handleLogout}>
                         <div><RiLogoutCircleLine size={30} /></div>
                         <p className={`leading-5 ${!open && 'w-0 translate-x-24'} duration-500 overflow-hidden`}>Logout</p>
                         <p className={`${open && 'hidden'} absolute left-32 shadow-md rounded-md
-                                         w-0 p-0 text-light-text dark:text-dark-text bg-light-text-secondary dark:bg-dark-secondary font-medium duration-100 overflow-hidden group-hover:w-fit group-hover:p-2 group-hover:left-16
+                                         w-0 p-0 text-light-text-tertiary dark:text-dark-text-tertiary bg-[hsl(266,40%,94%)] dark:bg-[hsl(259,17%,25%)] font-medium duration-100 overflow-hidden group-hover:w-fit group-hover:p-2 group-hover:left-16
                                         `}>Logout
                         </p>
                     </div>

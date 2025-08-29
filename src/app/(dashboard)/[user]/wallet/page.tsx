@@ -7,6 +7,8 @@ export const metadata: Metadata = {
 };
 export default function WalletPage(){
     return(
-        <WalletPageClient />
+        <div className={"w-full min-h-screen"}>
+            <WalletPageClient />
+        </div>
     );
 }

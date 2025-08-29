@@ -102,7 +102,7 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
     return (
         <React.Fragment>
             <main className={`
-                bg-light-bg-secondary dark:bg-dark-bg-secondary
+                bg-light-bg-secondary dark:bg-dark-bg-tertiary
                 text-light-text dark:text-dark-text
                 w-full min-h-screen rounded-2xl shadow-sm tracking-tight overflow-auto
             `}>
@@ -114,9 +114,9 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                             <th key={index}
                                 // className={index > 2 ? "hidden lg:table-cell" : ""}>
                                 className={index > 9 ? "hidden" : index > 2 ? "hidden lg:table-cell" : ""}>
-                                <div className={"flex items-center gap-1 justify-center text-lg my-2 font-medium"}>
+                                <div className={"flex items-center gap-1 justify-center text-lg my-2 font-medium px-1 tiny:px-2 text-dark-text-secondary"}>
                                     {item.label}
-                                    <FaSort onClick={() => handleSort(item.key)} className={"dark:text-dark-main cursor-pointer "} />
+                                    <FaSort onClick={() => handleSort(item.key)} className={"text-light-main dark:text-dark-main cursor-pointer "} />
                                 </div>
                             </th>
                         ))}
@@ -139,7 +139,7 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                             return (
                                 <React.Fragment key={asset._id}>
                                     <tr
-                                        className="cursor-default rounded-4xl text-center text-xl font-medium odd:bg-light-bg odd:dark:bg-dark-secondary text-light-text dark:text-dark-text"
+                                        className="cursor-default rounded-4xl text-center text-xl font-medium odd:bg-light-bg odd:dark:bg-[hsl(258,21%,30%)] text-light-text dark:text-dark-text"
                                     >
                                         <td className="w-8 px-2">
                                             <button
@@ -209,18 +209,17 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                         </td>
                                     </tr>
                                     {isExpanded && (
-                                        <tr className={"odd:bg-light-bg odd:dark:bg-dark-secondary text-light-text dark:text-dark-text"}>
+                                        <tr className={"odd:bg-light-bg odd:dark:bg-[hsl(258,21%,30%)] text-light-text dark:text-dark-text"}>
                                             <td colSpan={tableHeaders.length + 2} className="p-0 ">
                                                 <div
                                                     className={`
                                                         flex flex-col lg:flex-row lg:items-center gap-2 lg:gap-20
                                                         px-4 py-4 text-lg font-medium
-                                                        even:bg-light-bg dark:bg-dark-bg-secondary
                                                         text-light-text dark:text-dark-text`}>
                                                     {asset.quantity ? (
                                                         <div className={`flex items-center lg:hidden`}>
-                                                            <FaSort onClick={() => handleSort("quantity")} className={"dark:text-dark-main cursor-pointer mr-1 "} />
-                                                            <span className="font-semibold">Quantity:&nbsp;</span>
+                                                            <FaSort onClick={() => handleSort("quantity")} className={"text-light-text-tertiary dark:text-dark-main cursor-pointer mr-1 "} />
+                                                            <span className="font-semibold text-dark-text-secondary">Quantity:&nbsp;</span>
                                                             {isEditing && editedValues
                                                                 ? <span className={"p-1"}> {editableInput("quantity", editedValues.quantity)}</span>
                                                                 : <span className={"text-xl"}>{asset.quantity}</span>}
@@ -228,8 +227,8 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                     ) : null}
                                                     {asset.purchaseUnitPrice ? (
                                                         <div className={`flex items-center lg:hidden`}>
-                                                            <FaSort onClick={() => handleSort("purchaseUnitPrice")} className={"dark:text-dark-main cursor-pointer mr-1 "} />
-                                                            <span className="font-semibold">Purchase Unit Price:&nbsp;</span>
+                                                            <FaSort onClick={() => handleSort("purchaseUnitPrice")} className={"text-light-text-tertiary dark:text-dark-main cursor-pointer mr-1 "} />
+                                                            <span className="font-semibold text-dark-text-secondary">Purchase Unit Price:&nbsp;</span>
                                                             {isEditing && editedValues
                                                                 ? <span className={"p-1"}> {editableInput("purchaseUnitPrice", editedValues.purchaseUnitPrice)}</span>
                                                                 : <span className={"text-xl"}>{asset.purchaseUnitPrice}</span>}
@@ -237,7 +236,7 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                     ) : null}
                                                     {asset.lastUnitPrice ? (
                                                         <div className={`flex items-center lg:hidden`}>
-                                                            <FaSort onClick={() => handleSort("lastUnitPrice")} className={"dark:text-dark-main cursor-pointer mr-1 "} />
+                                                            <FaSort onClick={() => handleSort("lastUnitPrice")} className={"text-light-text-tertiary dark:text-dark-main cursor-pointer mr-1 "} />
                                                             <span className="font-semibold">Last Unit Price:&nbsp;</span>
                                                             {asset.addedManually && isEditing && editedValues
                                                                 ? <span className={"p-1"}> {editableInput("lastUnitPrice", editedValues.lastUnitPrice)}</span>
@@ -246,8 +245,8 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                     ) : null}
                                                     {asset.totalValue ? (
                                                         <div className={`flex items-center lg:hidden`}>
-                                                            <FaSort onClick={() => handleSort("totalValue")} className={"dark:text-dark-main cursor-pointer mr-1 "} />
-                                                            <span className="font-semibold">Total Value:&nbsp;</span>
+                                                            <FaSort onClick={() => handleSort("totalValue")} className={"text-light-text-tertiary dark:text-dark-main cursor-pointer mr-1 "} />
+                                                            <span className="font-semibold text-dark-text-secondary">Total Value:&nbsp;</span>
                                                             {asset.addedManually && isEditing && editedValues
                                                                 ? <span className={"p-1"}> {editableInput("totalValue", editedValues.totalValue!)}</span>
                                                                 : <span className={"text-xl"}>{asset.totalValue}</span>}
@@ -255,8 +254,8 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                     ) : null}
                                                     {asset.currency ? (
                                                         <div className={`flex items-center lg:hidden`}>
-                                                            <FaSort onClick={() => handleSort("currency")} className={"dark:text-dark-main cursor-pointer mr-1 "} />
-                                                            <span className="font-semibold">Currency:&nbsp;</span>
+                                                            <FaSort onClick={() => handleSort("currency")} className={"text-light-text-tertiary dark:text-dark-main cursor-pointer mr-1 "} />
+                                                            <span className="font-semibold text-dark-text-secondary">Currency:&nbsp;</span>
                                                             {asset.addedManually && isEditing && editedValues
                                                                 ? <span className={"p-1"}> {editableInput("currency", editedValues.currency)}</span>
                                                                 : <span className={"text-xl"}>{asset.currency}</span>}
@@ -264,8 +263,8 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                     ) : null}
                                                     {asset.dailyChange ? (
                                                         <div className={`flex items-center lg:hidden`}>
-                                                            <FaSort onClick={() => handleSort("dailyChange")} className={"dark:text-dark-main cursor-pointer mr-1 "} />
-                                                            <span className="font-semibold">Daily Change:&nbsp;</span>
+                                                            <FaSort onClick={() => handleSort("dailyChange")} className={"text-light-text-tertiary dark:text-dark-main cursor-pointer mr-1 "} />
+                                                            <span className="font-semibold text-dark-text-secondary">Daily Change:&nbsp;</span>
                                                             <span className={`text-xl ${ (asset.dailyChange > 0) ? "text-green-500" : "text-light-error-text dark:text-dark-error-text"}`}>
                                                                 {`${asset.dailyChange > 0 ? "+" : ""}${asset.dailyChange} (${asset.dailyChangePercent && (asset.dailyChangePercent > 0) ? "+" : ""}${asset.dailyChangePercent}%)`}
                                                             </span>
@@ -273,8 +272,8 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                     ) : null}
                                                     {asset.profit_loss ? (
                                                         <div className={`flex items-center lg:hidden`}>
-                                                            <FaSort onClick={() => handleSort("profit_loss")} className={"dark:text-dark-main cursor-pointer mr-1 "} />
-                                                            <span className="font-semibold">Profit/Loss:&nbsp;</span>
+                                                            <FaSort onClick={() => handleSort("profit_loss")} className={"text-light-text-tertiary dark:text-dark-main cursor-pointer mr-1 "} />
+                                                            <span className="font-semibold text-dark-text-secondary">Profit/Loss:&nbsp;</span>
                                                             <span className={`text-xl ${ (asset.profit_loss > 0) ? "text-green-500" : "text-light-error-text dark:text-dark-error-text"}`}>
                                                                 {`${asset.profit_loss > 0 ? "+" : ""}${asset.profit_loss} (${asset.profit_lossPercent && (asset.profit_lossPercent > 0 )? "+" : ""}${asset.profit_lossPercent}%)`}
                                                             </span>
@@ -282,8 +281,8 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                     ) : null}
                                                     {asset.country ? (
                                                         <div className={`flex items-center `}>
-                                                            <FaSort onClick={() => handleSort("country")} className={"dark:text-dark-main cursor-pointer mr-1 "} />
-                                                            <span className="font-semibold">Country:&nbsp;</span>
+                                                            <FaSort onClick={() => handleSort("country")} className={"text-light-main dark:text-dark-main cursor-pointer mr-1 "} />
+                                                            <span className="font-semibold text-dark-text-secondary">Country:&nbsp;</span>
                                                             {asset.addedManually && isEditing && editedValues
                                                                 ? <span className={"p-1"}> {editableInput("country", editedValues.country)}</span>
                                                                 : <span className={"text-xl"}>{asset.country}</span>}
@@ -291,8 +290,8 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                     ) : null}
                                                     {asset.createdAt ? (
                                                         <div className={`flex items-center `}>
-                                                            <FaSort onClick={() => handleSort("createdAt")} className={"dark:text-dark-main cursor-pointer mr-1 "} />
-                                                            <span className="font-semibold">Created At:&nbsp;</span>
+                                                            <FaSort onClick={() => handleSort("createdAt")} className={"text-light-text-tertiary dark:text-dark-main cursor-pointer mr-1 "} />
+                                                            <span className="font-semibold text-dark-text-secondary">Created At:&nbsp;</span>
                                                             <span className={"text-xl"}>{String(asset.createdAt)}</span>
                                                         </div>
                                                     ) : null}

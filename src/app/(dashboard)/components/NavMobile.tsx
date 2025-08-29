@@ -6,7 +6,7 @@ import {useRouter} from "next/navigation";
 
 import {IoLogoBuffer} from "react-icons/io";
 import { HiOutlineWallet } from "react-icons/hi2";
-import { MdAccountCircle,MdOutlineDashboard  } from "react-icons/md";
+import { MdOutlineAccountCircle,MdOutlineDashboard  } from "react-icons/md";
 
 import AddAssetButton from "../components/addAssetButton";
 
@@ -91,7 +91,7 @@ export default function NavMobile(){
 
     return(
         <div className={" relative"}>
-            <nav className="w-full h-14  fixed bg-light-bg-tertiary dark:bg-dark-main text-light-text-tertiary dark:text-dark-text rounded-b-sm shadow-[0_-4px_10px_rgba(0,0,0,0.12)] bottom-0 z-10 flex items-center justify-center">
+            <nav className="w-full h-14  fixed bg-light-bg-tertiary  text-light-text-tertiary dark:bg-dark-bg-tertiary dark:text-dark-text-tertiary rounded-b-sm shadow-[0_-4px_10px_rgba(0,0,0,0.12)] bottom-0 z-10 flex items-center justify-center">
                 <div className="w-full flex items-center justify-center">
                     <ul className="w-full flex items-center justify-evenly">
                         <li className={"flex flex-col justify-center items-center tracking-tighter"}>
@@ -107,27 +107,27 @@ export default function NavMobile(){
                             <p className={`text-sm font-medium`}>Wallet</p>
                         </li>
                         <li className={"flex flex-col justify-center items-center tracking-tighter"}>
-                            <AddAssetButton nav={true}/>
+                            <AddAssetButton mobile={true}/>
                             <p className={`text-sm font-medium leading-2 mb-3`}>Add Asset</p>
                         </li>
                         <li className={"flex flex-col justify-center items-center tracking-tighter"}>
                             <Link href={`/${userData.id}/account`} >
-                                <MdAccountCircle size={20} />
+                                <MdOutlineAccountCircle size={20} />
                             </Link>
                             <p className={`text-sm font-medium`}>Account</p>
                         </li>
                         <button onClick={handleSidebarToggle} className={`h-full ${open ? "" : ""}`}>
                             <div className={"w-full flex flex-col items-center gap-y-1"}>
-                                <span className={`w-[25px] bg-light-text-tertiary dark:bg-dark-text h-[3px] transition duration-170 rounded-full ${open? "translate-y-[7px] rotate-45":""}`}></span>
-                                <span className={`w-[25px] bg-light-text-tertiary dark:bg-dark-text h-[3px] transition duration-170 rounded-full ${open? "translate-y-[0px] rotate-45":""}`}></span>
-                                <span className={`w-[25px] bg-light-text-tertiary dark:bg-dark-text h-[3px] transition duration-170 rounded-full ${open? "-translate-y-[7px] -rotate-45":""}`}></span>
+                                <span className={`w-[25px] bg-light-text-tertiary dark:bg-dark-text-tertiary h-[3px] transition duration-170 rounded-full ${open? "translate-y-[7px] rotate-45":""}`}></span>
+                                <span className={`w-[25px] bg-light-text-tertiary dark:bg-dark-text-tertiary h-[3px] transition duration-170 rounded-full ${open? "translate-y-[0px] rotate-45":""}`}></span>
+                                <span className={`w-[25px] bg-light-text-tertiary dark:bg-dark-text-tertiary h-[3px] transition duration-170 rounded-full ${open? "-translate-y-[7px] -rotate-45":""}`}></span>
                             </div>
                         </button>
                     </ul>
                 </div>
             </nav>
-            <nav ref={wrapperRef} className={`fixed flex flex-col py-4 justify-end gap-70 right-0 top-0 z-30 shadow-sm  bg-light-bg-tertiary dark:bg-dark-main w-fit sm:w-[150px] md:w-[200px] min-h-screen transition ${open ? "" : "translate-x-100"}`}>
-                    <ul className={"text-light-text-tertiary dark:text-dark-text py-5 font-medium"}>
+            <nav ref={wrapperRef} className={`fixed flex flex-col py-4 justify-end gap-70 right-0 top-0 z-30 shadow-sm  bg-light-bg-tertiary text-light-text-tertiary dark:bg-dark-bg-tertiary dark:text-dark-text-tertiary w-fit sm:w-[150px] md:w-[200px] min-h-screen transition ${open ? "" : "translate-x-100"}`}>
+                    <ul className={"py-5 font-medium"}>
                         {menuItems.map((item, index) => {
                             return(
                                 <li key={index}>
@@ -153,9 +153,9 @@ export default function NavMobile(){
                     <div className={"mx-4 text-center"}>
                         <button onClick={handleSidebarToggle} className={`h-full ${open ? "" : ""}`}>
                             <div className={"w-full flex flex-col items-center gap-y-1"}>
-                                <span className={`w-[30px] bg-light-text-tertiary dark:bg-dark-text h-[3px] transition duration-170 rounded-full ${open? "translate-y-[7px] rotate-45":""}`}></span>
-                                <span className={`w-[30px] bg-light-text-tertiary dark:bg-dark-text h-[3px] transition duration-170 rounded-full ${open? "translate-y-[0px] rotate-45":""}`}></span>
-                                <span className={`w-[30px] bg-light-text-tertiary dark:bg-dark-text h-[3px] transition duration-170 rounded-full ${open? "-translate-y-[7px] -rotate-45":""}`}></span>
+                                <span className={`w-[30px] bg-light-text-tertiary dark:bg-dark-text-tertiary h-[3px] transition duration-170 rounded-full ${open? "translate-y-[7px] rotate-45":""}`}></span>
+                                <span className={`w-[30px] bg-light-text-tertiary dark:bg-dark-text-tertiary h-[3px] transition duration-170 rounded-full ${open? "translate-y-[0px] rotate-45":""}`}></span>
+                                <span className={`w-[30px] bg-light-text-tertiary dark:bg-dark-text-tertiary h-[3px] transition duration-170 rounded-full ${open? "-translate-y-[7px] -rotate-45":""}`}></span>
                             </div>
                         </button>
                     </div>

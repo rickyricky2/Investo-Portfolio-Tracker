@@ -70,7 +70,11 @@ export default function MainChart({mainCurrency}: {mainCurrency: string}) {
     ];
 
     return (
-        <div className="h-[400px] w-full my-10 shadow-lg rounded-4xl bg-light-bg-secondary dark:bg-dark-bg-secondary p-6">
+        <div className="min-h-[400px] w-full my-5 shadow-lg rounded-4xl bg-light-bg-secondary dark:bg-dark-bg-tertiary p-6">
+            <h2 className={"text-xl font-medium px-2"}>
+                Summary
+            </h2>
+            <div className={"h-[400px]"}>
             <ResponsiveLine
                 data={chartData}
                 margin={{ top: 50, right: 50, bottom: 50, left: 60 }}
@@ -134,6 +138,7 @@ export default function MainChart({mainCurrency}: {mainCurrency: string}) {
                 useMesh={true}
                 enableSlices="x"
             />
+            </div>
         </div>
     );
 }

@@ -76,23 +76,25 @@ export default function PieChart({isLoading,assets, type}: {isLoading:boolean; a
 
     if (width !== null) {
         if (width > 1500) {
-            minPieChartHeight = "600px";
+            minPieChartHeight = "400px";
+        }else if( width < 400){
+            minPieChartHeight = "300px";
         } else if (width < 500) {
-            minPieChartHeight = "500px";
+            minPieChartHeight = "400px";
         } else if (width < 600) {
             minPieChartHeight = "400px";
         } else if (width < 1024) {
-            minPieChartHeight = "500px";
+            minPieChartHeight = "450px";
         }
     }
     return(
-        <div className={`shadow-lg rounded-4xl bg-light-bg-secondary dark:bg-dark-bg-secondary overflow-visible w-full p-10 min-h-[500px] ${isLoading ? "flex justify-center items-center" : ""}`}>
+        <div className={`shadow-lg rounded-4xl bg-light-bg-secondary dark:bg-dark-bg-tertiary overflow-hidden w-full py-10 px-3 tiny:px-5 sm:px-10 min-h-[400px] ${isLoading ? "flex justify-center items-center" : ""}`}>
             {isLoading ? (
                 <FaSpinner className="animate-spin text-4xl mx-auto text-light-main dark:text-dark-main" size={40} />
             ) : (
                 <>
-                    <div className={`relative min-h-[${minPieChartHeight}] `}>
-                        <h2 className="text-3xl font-semibold text-center mb-8 border-b-3 px-4 py-1 w-fit mx-auto border-light-main dark:border-dark-main">
+                    <div className={`relative min-h-[400px]`}>
+                        <h2 className="text-3xl dark:text-dark-main font-semibold tracking-tight text-center mb-5 px-4 py-1 w-fit mx-auto ">
                             {chartTitles[type] || "Chart"}
                         </h2>
                         <AssetFilters filters={filters} onFilterChange={setFilters}/>
@@ -100,7 +102,7 @@ export default function PieChart({isLoading,assets, type}: {isLoading:boolean; a
                         <ResponsivePie
                             data={data}
                             valueFormat={value => `${( (value / totalCount) * 100).toFixed(1)}%`}
-                            margin={{ top: 80, right: 40, bottom: 80, left: 40 }}
+                            margin={{ top: 30, right: 40, bottom: 30, left: 40 }}
                             innerRadius={0.5}
                             padAngle={0.6}
                             colors={{ datum: "data.color" }}
@@ -117,7 +119,7 @@ export default function PieChart({isLoading,assets, type}: {isLoading:boolean; a
                             }}
                             cornerRadius={2}
                             enableArcLabels={true}
-                            enableArcLinkLabels={width !== null && width > 500}
+                            enableArcLinkLabels={(width !== null && width > 700 && width < 1025) || (width !== null &&  width > 1500 )}
                             activeOuterRadiusOffset={8}
                             arcLinkLabelsSkipAngle={10}
                             // arcLinkLabelsTextColor="#333333"
@@ -145,7 +147,7 @@ export default function PieChart({isLoading,assets, type}: {isLoading:boolean; a
                                 <div
                                     className={`
                                                 px-3 py-2 rounded-lg shadow
-                                                bg-light-bg-secondary dark:bg-dark-bg-secondary
+                                                bg-light-bg-tertiary dark:bg-dark-bg-secondary
                                                 text-light-text dark:text-dark-text
                                               `}
                                 >
@@ -157,9 +159,9 @@ export default function PieChart({isLoading,assets, type}: {isLoading:boolean; a
                         </div>
                     </div>
                     {/*legend*/}
-                    <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                    <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2">
                         {data.map(d => (
-                            <div key={d.id} className="flex items-center gap-2 text-sm">
+                            <div key={d.id} className="flex items-center gap-2 text-sm font-medium text-dark-text-secondary">
                                 <span className="w-3 h-3 rounded-full" style={{ backgroundColor: d.color }} />
                                 {d.label} ({((d.value / totalCount) * 100).toFixed(1)}%)
                             </div>

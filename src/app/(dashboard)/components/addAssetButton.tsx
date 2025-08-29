@@ -7,7 +7,7 @@ import {formAssets,typesWithTicker,countries, currencies, assetTypes} from "@/co
 
 let assetSchema;
 
-export default function AddAssetButton({nav=false}: {nav: boolean}) {
+export default function AddAssetButton({mobile}: {mobile: boolean}) {
     const [isOpen,setIsOpen]=useState(false);
     const [error, setError]=useState("");
     const [isLoading, setIsLoading]=useState(false);
@@ -189,21 +189,21 @@ export default function AddAssetButton({nav=false}: {nav: boolean}) {
 
     return(
         <div className={`lg:relative text-light-text-secondary dark:text-dark-text`} ref={wrapperRef}>
-            <div className={`bg-light-bg-tertiary dark:bg-dark-secondary lg:dark:bg-dark-main transition-all rounded-full cursor-pointer p-1 z-100 relative group `}  >
-                <FaPlus className={`${nav ? "text-light-text-tertiary" : "text-light-text-secondary dark:text-dark-text" }   z-10 transition-all ${isOpen ? "rotate-45" : ""}`} size={30} onClick={() => setIsOpen(!isOpen)} />
+            <div className={`${mobile ? "bg-transparent" : "bg-light-bg-tertiary dark:bg-dark-main"} transition-all rounded-full cursor-pointer p-1 z-100 relative group `}  >
+                <FaPlus className={`${mobile ? "text-light-text-tertiary dark:text-dark-text-tertiary" : "text-light-text-secondary dark:text-dark-text" }   z-10 transition-all ${isOpen ? "rotate-45" : ""}`} size={30} onClick={() => setIsOpen(!isOpen)} />
                 <p className={`${isOpen ? 'hidden' : "hidden lg:block"} absolute bottom-6 -left-7 group-hover:-translate-y-5 shadow-md rounded-md text-lg
                       w-25 p-2 scale-0 text-light-text-tertiary bg-[hsl(266,40%,85%)] dark:text-dark-text dark:bg-dark-secondary font-medium duration-175 overflow-hidden group-hover:scale-100 text-center
                 `}>
                     Add Asset
                 </p>
             </div>
-            <div className={`absolute bg-light-bg-tertiary dark:bg-dark-main text-light-text-tertiary z-40 shadow-2xl -top-0 max-lg:left-0 right-0 m-auto lg:top-0 lg:right-0 rounded-4xl lg:rounded-3xl transition-all p-5 tiny:p-5 w-fit overflow-hidden ${isOpen ? "min-w-[300px] w-[350px] min-h-[400px] max-lg:-translate-y-120 " : "p-0 max-w-0 max-h-0 opacity-0"}`}>
-                <h2 className={"text-3xl my-2 font-medium text-light-secondary"}>Add Asset</h2>
+            <div className={`absolute bg-light-bg-tertiary dark:bg-dark-bg-tertiary text-light-text-tertiary dark:text-dark-text-tertiary z-40 shadow-2xl -top-0 max-lg:left-0 right-0 m-auto lg:top-0 lg:right-0 rounded-4xl lg:rounded-3xl transition-all p-5 tiny:p-5 w-fit overflow-hidden ${isOpen ? "min-w-[300px] w-[350px] min-h-[400px] max-lg:-translate-y-120 " : "p-0 max-w-0 max-h-0 opacity-0"}`}>
+                <h2 className={"text-3xl my-2 font-medium text-light-secondary dark:text-dark-tertiary"}>Add Asset</h2>
                 <form onSubmit={handleSubmit} className={"text-xl w-full"}>
                     <select
                         name="type"
                         value={type}
-                        className="w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-main outline-none appearance-none bg-transparent p-1 focus:bg-light-bg-tertiary dark:focus:bg-dark-secondary focus:border-b-light-text-tertiary dark:focus:border-b-dark-main"
+                        className="text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none appearance-none bg-transparent p-1 focus:bg-light-bg-tertiary dark:focus:bg-dark-bg-tertiary focus:border-b-light-text-tertiary dark:focus:border-b-dark-main"
                         required
                         onChange={ (e) => {
                             setType(e.target.value);
@@ -227,7 +227,7 @@ export default function AddAssetButton({nav=false}: {nav: boolean}) {
                                     placeholder={"ticker"}
                                     name={"ticker"}
                                     required
-                                    className={"w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-text outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text  dark:focus:placeholder:text-dark-text-secondary"}/>
+                                    className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
                             </section>
                             <section className={"flex my-3 relative w-full"}>
                                 <input
@@ -236,12 +236,12 @@ export default function AddAssetButton({nav=false}: {nav: boolean}) {
                                     placeholder={"quantity"}
                                     required
                                     name={"quantity"}
-                                    className={"w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-text outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text  dark:focus:placeholder:text-dark-text-secondary"}/>
+                                    className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
                             </section>
                             <section className={"flex my-3 relative w-full"}>
                                 <select
                                     name="country"
-                                    className="w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-main outline-none appearance-none bg-transparent p-1 focus:bg-light-tertiary dark:focus:bg-dark-secondary focus:border-b-light-text-tertiary dark:focus:border-b-dark-main"
+                                    className="text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none appearance-none bg-transparent p-1 focus:bg-light-bg-tertiary dark:focus:bg-dark-bg-tertiary focus:border-b-light-text-tertiary dark:focus:border-b-dark-main"
                                     size={1}
                                     required
                                     defaultValue=""
@@ -261,7 +261,7 @@ export default function AddAssetButton({nav=false}: {nav: boolean}) {
                                         {item.key === "currency" ? (
                                                 <select
                                                     name={item.key}
-                                                    className="w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-main outline-none appearance-none bg-transparent p-1 focus:bg-light-tertiary dark:focus:bg-dark-secondary focus:border-b-light-text-tertiary dark:focus:border-b-dark-main"
+                                                    className="text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none appearance-none bg-transparent p-1 focus:bg-light-bg-tertiary dark:focus:bg-dark-bg-tertiary focus:border-b-light-text-tertiary dark:focus:border-b-dark-main"
                                                     required
                                                     defaultValue=""
                                                 >
@@ -272,13 +272,27 @@ export default function AddAssetButton({nav=false}: {nav: boolean}) {
                                                         <option key={index} value={c.value}>{c.label}</option>
                                                     ))}
                                                 </select>
+                                        ) : item.key === "country" ? (
+                                            <select
+                                                name="country"
+                                                className="text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none appearance-none bg-transparent p-1 focus:bg-light-bg-tertiary dark:focus:bg-dark-bg-tertiary focus:border-b-light-text-tertiary dark:focus:border-b-dark-main"
+                                                size={1}
+                                                required
+                                                defaultValue=""
+                                            >
+                                                <option value="" disabled>-- Select Country --</option>
+                                                {countries.map((c,index) => (
+                                                    <option key={index} value={c.name}>{c.name}</option>
+                                                ))}
+                                            </select>
                                         ) : (
-                                                <input
-                                                    type={item.type}
-                                                    min={1}
-                                                    placeholder={item.label}
-                                                    name={item.key}
-                                                    className={"w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-text outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text  dark:focus:placeholder:text-dark-text-secondary"}/>
+                                            <input
+                                                type={item.type}
+                                                min={1}
+                                                required
+                                                placeholder={item.label}
+                                                name={item.key}
+                                                className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
                                         )}
                                         </section>
                                     ) : null
@@ -292,7 +306,7 @@ export default function AddAssetButton({nav=false}: {nav: boolean}) {
                     {isLoading ?
                         <FaSpinner className="animate-spin text-4xl mx-auto text-light-main dark:text-dark-main" />
                         : <input type="submit" value="Add Asset"
-                                 className={"bg-light-secondary mt-5 dark:bg-dark-secondary text-light-text-secondary dark:text-dark-text active:bg-light-active dark:active:bg-dark-active rounded-2xl px-7 py-3 cursor-pointer transition-all hover:-translate-y-1"}/>
+                                 className={"bg-light-secondary mt-5 dark:bg-dark-main font-medium text-light-text-secondary dark:text-dark-text-secondary active:bg-light-active dark:active:bg-dark-active rounded-2xl px-7 py-3 cursor-pointer transition-all hover:-translate-y-1"}/>
                     }
                     </div>
                 </form>

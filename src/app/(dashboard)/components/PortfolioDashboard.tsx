@@ -39,9 +39,7 @@ export default function PortfolioDashboard(){
     const [mainCurrency,setMainCurrency] = useState("");
 
     const getAssets = async () =>{
-
         setIsLoading(true);
-
         const res = await fetch("/api/user/assets",{
             method: "GET",
         });

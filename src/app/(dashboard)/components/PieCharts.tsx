@@ -29,7 +29,7 @@ export default function PieCharts({isLoading, assets} : {isLoading: boolean; ass
 
     return(
         <div>
-            <section className={"my-10 grid lg:grid-cols-2 gap-10"}>
+            <section className={"grid lg:grid-cols-2 gap-10"}>
                 <PieChart isLoading={isLoading} assets={assets} type={"value"} />
                 <PieChart isLoading={isLoading} assets={assets} type={"quantity"}/>
                 <PieChart isLoading={isLoading} assets={assets} type={"type"} />

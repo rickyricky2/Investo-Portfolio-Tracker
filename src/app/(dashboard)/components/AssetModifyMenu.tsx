@@ -20,7 +20,7 @@ export default function AssetModifyMenu({id,refresh, handleEdit}: {id: string;re
     }
 
     return(
-        <div className="flex items-center justify-evenly gap-2 w-full">
+        <div className="flex items-center justify-evenly gap-2 w-full px-2">
             <IoPencil  className={"text-light-tertiary dark:text-dark-text cursor-pointer"} onClick={() => handleEdit(id)} size={20} />
             <FaRegTrashAlt className={"text-light-error-text dark:text-dark-error-text cursor-pointer"} onClick={() => handleDelete(id)} size={20} />
         </div>
