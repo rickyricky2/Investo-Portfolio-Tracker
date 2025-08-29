@@ -28,10 +28,10 @@ export default function HeaderOnScroll() {
                     <Logo></Logo>
                 </Link>
                 <div className={"flex gap-3 h-full flex-wrap justify-center items-center my-4 sm:m-0 md:gap-4 lg:gap-10"}>
-                    <Link href={"/login"} className={"text-2xl bg-light-secondary dark:bg-dark-secondary py-2 px-3 rounded-lg text-light-text-secondary dark:text-dark-text transition-transform hover:-translate-y-2"}>
+                    <Link href={"/login"} className={"text-2xl bg-light-secondary dark:bg-dark-bg-tertiary py-2 px-3 rounded-lg text-light-text-secondary dark:text-dark-text-secondary transition-transform hover:-translate-y-2"}>
                         Log In
                     </Link>
-                    <Link href={"/product"} className={"text-2xl  bg-light-secondary dark:bg-dark-secondary py-2 px-3 rounded-lg text-light-text-secondary dark:text-dark-text transition-transform hover:-translate-y-2"}>
+                    <Link href={"/product"} className={"text-2xl bg-light-secondary dark:bg-dark-bg-tertiary py-2 px-3 rounded-lg text-light-text-secondary dark:text-dark-text-secondary transition-transform hover:-translate-y-2"}>
                         Register
                     </Link>
                     <SwitchThemeButton type={"horizontal"}/>
