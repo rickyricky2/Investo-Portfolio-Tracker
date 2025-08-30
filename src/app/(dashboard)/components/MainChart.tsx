@@ -72,8 +72,6 @@ export default function MainChart({mainCurrency}: {mainCurrency: string}) {
     ];
     console.log(chartData);
 
-    const theme = localStorage.getItem('theme') || 'dark';
-
     return (
         <div className="min-h-[500px] w-full my-5 shadow-lg rounded-4xl bg-light-bg-secondary dark:bg-dark-bg-tertiary p-6">
             <h2 className={"text-2xl font-medium px-2"}>
