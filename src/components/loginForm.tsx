@@ -25,6 +25,8 @@ export default function LoginForm(){
         e.preventDefault();
         setIsLoading(true);
 
+        const baseURL = process.env.PUBLIC_BASE_URL || "http://localhost:3000";
+
         function clearPassword(){
             if(passwordRef.current){
                 passwordRef.current.value = "";
@@ -40,7 +42,7 @@ export default function LoginForm(){
         };
 
         try {
-            const res = await fetch("api/login", {
+            const res = await fetch(`${baseURL}/api/login`, {
                 method: "POST",
                 headers: {'Content-Type': 'application/json'},
                 body: JSON.stringify(rawData),

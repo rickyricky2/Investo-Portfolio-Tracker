@@ -12,7 +12,7 @@ function useWindowWidth() {
 
     useEffect(() => {
         const handleResize = () => setWidth(window.innerWidth);
-        handleResize(); // ustawia od razu po załadowaniu
+        handleResize();
         window.addEventListener("resize", handleResize);
         return () => window.removeEventListener("resize", handleResize);
     }, []);

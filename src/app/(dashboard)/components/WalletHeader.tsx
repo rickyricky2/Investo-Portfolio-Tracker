@@ -7,7 +7,7 @@ export default function WalletHeader({filters,onFilterChange}: {filters:Filters;
     return(
         <header className={"w-full flex items-center bg-light-bg-secondary dark:bg-dark-bg-tertiary min-h-[80px] lg:min-h-[100px] rounded-4xl shadow-sm "}>
             <div className={"w-full h-full flex items-center justify-between p-5 gap-5"}>
-                <div className={"w-full"}>
+                <div className={"w-full grid lg:grid-cols-2"}>
                     <AssetFilters filters={filters} onFilterChange={onFilterChange}/>
                 </div>
                 <div className={"hidden lg:block"}>

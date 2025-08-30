@@ -45,10 +45,12 @@ export default function WalletAssets({filters}: {filters: Filters}){
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [sortConfig,setSortConfig] = useState<SortConfig>({key:null, direction:"asc"});
 
+    const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+
     const getAssets = async () =>{
         setIsLoading(true);
 
-        const res = await fetch("/api/user/assets",{
+        const res = await fetch(`${baseURL}/api/user/assets`,{
             method: "GET",
         });
 
@@ -62,56 +64,11 @@ export default function WalletAssets({filters}: {filters: Filters}){
         }
 
         const assets = data.assets;
-        // for every asset
+
         for(const asset in assets){
-            // check if asset was added manualy
             assets[asset].createdAt =  formatDate(assets[asset].createdAt);
 
-            if(!assets[asset].addedManually) {
-                //  check if we have this ticker in dataStore
-                const ticker = assets[asset].ticker;
-                const country = assets[asset].country;
-
-                const res = await fetch(`/api/dataStore?ticker=${encodeURIComponent(ticker)}&country=${country}`, {
-                    method: "GET",
-                    headers: {"Content-Type": "application/json"},
-                });
-
-                const dataStore = await res.json();
-
-                if(!dataStore.success) {
-                    // if we dont have asset in data Store we fetch for new data
-                    // probably will never be used but i want it anyway
-                    let res = await fetch(`/api/stockMarketAPI?ticker=${ticker}&country=${country}`, {
-                        method: "GET",
-                        headers:{"Content-Type": "application/json"},
-                    });
-
-                    const data = await res.json();
-
-                    if(!data.success) {
-                        console.error(`could not fetch asset: ${assets[asset]._id} data`);
-                        continue;
-                    }
-
-                    assets[asset].lastUnitPrice = Number(data.tickerInfo.close).toFixed(2);
-                    assets[asset].dailyChange = Number(data.tickerInfo.change).toFixed(2);
-                    assets[asset].dailyChangePercent = Number(data.tickerInfo.percent_change).toFixed(2);
-
-                    res = await fetch("/api/dataStore",{
-                        method:"POST",
-                        headers:{"Content-Type": "application/json"},
-                        body: JSON.stringify({asset: assets[asset]}),
-                    })
-                }else{
-                    assets[asset].lastUnitPrice = Number(dataStore.tickerInfo.lastUnitPrice).toFixed(2);
-                    assets[asset].dailyChange = Number(dataStore.tickerInfo.dailyChange).toFixed(2);
-                    assets[asset].dailyChangePercent = Number(dataStore.tickerInfo.dailyChangePercent).toFixed(2);
-                }
-            }else{
-                if(!(typesWithTicker.includes(assets[asset].type))){
-                    assets[asset].lastUnitPrice = assets[asset].purchaseUnitPrice;
-                }
+            if(assets[asset].addedManually){
                 assets[asset].dailyChange = "";
                 assets[asset].dailyChangePercent = "";
             }

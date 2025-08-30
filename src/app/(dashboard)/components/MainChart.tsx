@@ -6,7 +6,7 @@ import { FaSpinner } from "react-icons/fa";
 
 type Snapshot = {
     date: string;
-    totalValue: number;
+    value: number;
 };
 
 
@@ -14,11 +14,13 @@ export default function MainChart({mainCurrency}: {mainCurrency: string}) {
     const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
+    const baseURL = process.env.PUBLIC_BASE_URL || "http://localhost:3000";
+
     useEffect(() => {
         const fetchSnapshots = async () => {
             try {
                 setIsLoading(true);
-                let res = await fetch(`/api/auth/me`,{
+                let res = await fetch(`${baseURL}/api/auth/me`,{
                     method: "GET",
                     headers: { "Content-Type": "application/json" },
                 });
@@ -28,7 +30,7 @@ export default function MainChart({mainCurrency}: {mainCurrency: string}) {
                     return;
                 }
                 const userId =  userData.user.id;
-                res = await fetch(`/api/user/walletSnapshots?userId=${userId}`,{
+                res = await fetch(`${baseURL}/api/user/walletSnapshots?userId=${userId}`,{
                     method: "GET",
                     headers: { "Content-Type": "application/json" },
                 });
@@ -64,34 +66,37 @@ export default function MainChart({mainCurrency}: {mainCurrency: string}) {
             color: "hsl(260, 70%, 50%)",
             data: snapshots.map((s) => ({
                 x: new Date(s.date).toLocaleDateString(),
-                y: s.totalValue,
+                y: Number(s.value.toFixed(2)),
             })),
         },
     ];
+    console.log(chartData);
+
+    const theme = localStorage.getItem('theme') || 'dark';
 
     return (
-        <div className="min-h-[400px] w-full my-5 shadow-lg rounded-4xl bg-light-bg-secondary dark:bg-dark-bg-tertiary p-6">
-            <h2 className={"text-xl font-medium px-2"}>
+        <div className="min-h-[500px] w-full my-5 shadow-lg rounded-4xl bg-light-bg-secondary dark:bg-dark-bg-tertiary p-6">
+            <h2 className={"text-2xl font-medium px-2"}>
                 Summary
             </h2>
             <div className={"h-[400px]"}>
             <ResponsiveLine
                 data={chartData}
-                margin={{ top: 50, right: 50, bottom: 50, left: 60 }}
+                margin={{ top: 50, right: 50, bottom: 60, left: 60 }}
                 xScale={{ type: "point" }}
                 yScale={{
                     type: "linear",
                     min: "auto",
                     max: "auto",
-                    stacked: false,
+                    stacked: true,
                     reverse: false,
                 }}
                 axisBottom={{
                     tickSize: 5,
                     tickPadding: 5,
-                    tickRotation: -45,
+                    tickRotation: -40,
                     legend: "Date",
-                    legendOffset: 40,
+                    legendOffset: 50,
                     legendPosition: "middle",
                 }}
                 axisLeft={{
@@ -103,10 +108,23 @@ export default function MainChart({mainCurrency}: {mainCurrency: string}) {
                     legendPosition: "middle",
                 }}
                 theme={{
+                    crosshair:{
+                        line:{
+                            stroke: "var(--color-light-main)",
+                            strokeWidth:2,
+                            strokeDasharray:"8 5",
+                        },
+                    },
+                    grid:{
+                        line:{
+                            stroke: "var(--color-dark-tertiary)",
+                            strokeWidth: 0.5,
+                        },
+                    },
                     axis: {
                         ticks: {
                             text: {
-                                fill: "var(--color-light-text)",
+                                fill: "var(--color-dark-text-secondary)",
                             },
                         },
                         legend: {
@@ -122,21 +140,28 @@ export default function MainChart({mainCurrency}: {mainCurrency: string}) {
                             fontSize: 14
                         },
                     },
-                    tooltip: {
-                        container: {
-                            color: '#ffffff',
-                            background: "var(--color-light-text)",
-                        },
-                    },
                 }}
-                colors={{ scheme: "purple_blue" }}
-                pointSize={8}
-                pointColor={{ theme: "background" }}
+                colors={"var(--color-light-main)"}
+                pointSize={5}
+                pointColor={ "var(--color-light-main)"}
                 pointBorderWidth={2}
-                pointBorderColor={{ from: "serieColor" }}
+                pointBorderColor={{ from: "seriesColor" }}
                 pointLabelYOffset={-12}
                 useMesh={true}
-                enableSlices="x"
+                enableSlices={false}
+                tooltip={({ point }) => (
+                    <div
+                        className={`
+                                   px-4 py-3 rounded-lg shadow
+                                   bg-light-bg-tertiary dark:bg-dark-bg-tertiary
+                                   text-light-text dark:text-dark-text-secondary
+                                   `}
+                    >
+                        <strong>{point.seriesId}</strong><br />
+                        Date: {point.data.xFormatted}<br/>
+                        <span>Value:</span> ${point.data.yFormatted}
+                    </div>
+                )}
             />
             </div>
         </div>

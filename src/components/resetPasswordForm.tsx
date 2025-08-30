@@ -13,11 +13,13 @@ export default function ResetPasswordForm() {
         e.preventDefault();
         setIsLoading(true);
 
+        const baseURL = process.env.PUBLIC_BASE_URL || "http://localhost:3000";
+
         const formData = new FormData(e.currentTarget);
         const email = formData.get('email');
 
         try {
-            const res = await fetch("/api/reset-password", {
+            const res = await fetch(`${baseURL}/api/reset-password`, {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json',

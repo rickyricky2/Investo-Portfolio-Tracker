@@ -7,18 +7,6 @@ import {useEffect, useState} from "react";
 import {Asset} from "@/types/assets";
 import {useWalletStore} from "@/store/useWalletStore";
 
-function formatDate(date:Date | string) {
-    const formatedDate = new Date(date);
-    return formatedDate.toLocaleString("pl-PL",{
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-    });
-}
-
 type userData = {
     id: string;
     email: string;
@@ -38,9 +26,11 @@ export default function PortfolioDashboard(){
     const [totalProfitLossPercent,setTotalProfitLossPercent] = useState(0);
     const [mainCurrency,setMainCurrency] = useState("");
 
+    const baseURL = process.env.PUBLIC_BASE_URL || "http://localhost:3000";
+
     const getAssets = async () =>{
         setIsLoading(true);
-        const res = await fetch("/api/user/assets",{
+        const res = await fetch(`${baseURL}/api/user/assets`,{
             method: "GET",
         });
 
@@ -59,68 +49,20 @@ export default function PortfolioDashboard(){
         let tempMainCurrency= "";
         let tempTotalProfitLossPercent = 0;
 
-        // for every asset
         for(const asset in assets){
-            // first we save some info for dashboard
-            tempNumberOfInvestments = tempNumberOfInvestments + 1;
 
+            tempNumberOfInvestments = tempNumberOfInvestments + 1;
             tempTotalInvestedAmount = tempTotalInvestedAmount + (Number(assets[asset].purchaseUnitPrice) * Number(assets[asset].quantity));
 
-            assets[asset].createdAt =  formatDate(assets[asset].createdAt);
-            // check if asset was added manualy
-            if(!assets[asset].addedManually) {
-                //  check if we have this ticker in dataStore
-                const ticker = assets[asset].ticker;
-                const country = assets[asset].country;
-
-                const res = await fetch(`/api/dataStore?ticker=${encodeURIComponent(ticker!)}&country=${country}`, {
-                    method: "GET",
-                    headers: {"Content-Type": "application/json"},
-                });
-
-                const dataStore = await res.json();
-
-                if(!dataStore.success) {
-                    // if we dont have asset in data Store we fetch for new data
-                    // probably will never be used but i want it anyway
-                    let res = await fetch(`/api/stockMarketAPI?ticker=${ticker}&country=${country}`, {
-                        method: "GET",
-                        headers:{"Content-Type": "application/json"},
-                    });
-
-                    const data = await res.json();
-
-                    if(!data.success) {
-                        console.error(`could not fetch asset: ${assets[asset]._id} data`);
-                        continue;
-                    }
-
-                    assets[asset].lastUnitPrice = Number(data.tickerInfo.close).toFixed(2);
-                    assets[asset].dailyChange = Number(data.tickerInfo.change).toFixed(2);
-                    assets[asset].dailyChangePercent = Number(data.tickerInfo.percent_change).toFixed(2);
-
-                    res = await fetch("/api/dataStore",{
-                        method:"POST",
-                        headers:{"Content-Type": "application/json"},
-                        body: JSON.stringify({asset: assets[asset]}),
-                    })
-                }else{
-                    assets[asset].lastUnitPrice = Number(dataStore.tickerInfo.lastUnitPrice).toFixed(2);
-                    assets[asset].dailyChange = Number(dataStore.tickerInfo.dailyChange).toFixed(2);
-                    assets[asset].dailyChangePercent = Number(dataStore.tickerInfo.dailyChangePercent).toFixed(2);
-                }
-            }else{
-                if(!(typesWithTicker.includes(assets[asset].type))){
-                    assets[asset].lastUnitPrice = assets[asset].purchaseUnitPrice;
-                }
+            if(assets[asset].addedManually){
                 assets[asset].dailyChange = 0;
                 assets[asset].dailyChangePercent = 0;
             }
-            // we take main currency from localStorage or we use default currency
-            tempMainCurrency = localStorage.getItem("MainCurrency") || "USD";
+
+            tempMainCurrency = localStorage.getItem("mainCurrency") || "USD";
 
             if(assets[asset].currency !== tempMainCurrency){
-                const res = await fetch(`/api/exchangeRates?base=${assets[asset].currency}&mainCurrency=${tempMainCurrency}`,{
+                const res = await fetch(`${baseURL}/api/exchangeRates?base=${assets[asset].currency}&mainCurrency=${tempMainCurrency}`,{
                     method: "GET",
                     headers: {"Content-Type": "application/json"},
                 });
@@ -166,7 +108,7 @@ export default function PortfolioDashboard(){
     useEffect( () => {
         const getUserInfo = async () => {
             setIsLoading(true);
-            const res = await fetch(`/api/auth/me`);
+            const res = await fetch(`${baseURL}/api/auth/me`);
             const data = await res.json();
             if(!data.success){
                 throw Error(data.error);
@@ -199,7 +141,7 @@ export default function PortfolioDashboard(){
             <h2 className={"text-4xl lg:text-5xl tracking-tight text-left text-light-main font-bold dark:text-dark-main flex flex-col"}>
                 Hi
                 <span className={"mt-2 capitalize"}>
-                {user.firstName} {user.lastName}!
+                {user.firstName + (user.lastName ? " " + user.lastName : "")}!
                 </span>
             </h2>
         </header>

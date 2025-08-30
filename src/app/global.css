@@ -45,5 +45,6 @@
 
 .dark{
     --color-light-text: var(--color-dark-text);
+    --color-light-main: var(--color-dark-main);
 }
 

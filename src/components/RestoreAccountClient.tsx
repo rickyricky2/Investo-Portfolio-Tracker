@@ -19,6 +19,8 @@ export default function RestoreAccountClient({token}: {token?: string;}){
     const[error, setError] = useState("");
     const[status,setStatus] = useState("loading");
 
+    const baseURL = process.env.PUBLIC_BASE_URL || "http://localhost:3000";
+
     useEffect( ()=>{
         const verify_token = async () => {
             if(!token){
@@ -27,7 +29,7 @@ export default function RestoreAccountClient({token}: {token?: string;}){
                 return;
             }
             try {
-                const res = await fetch("/api/restore-account-token", {
+                const res = await fetch(`${baseURL}/api/restore-account-token`, {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify({token}),
@@ -77,7 +79,7 @@ export default function RestoreAccountClient({token}: {token?: string;}){
             return;
         }
 
-        const res = await fetch("/api/restore-account",{
+        const res = await fetch(`${baseURL}/api/restore-account`,{
             method: "POST",
             headers:{"Content-Type": "application/json"},
             body: JSON.stringify({token,password1}),
