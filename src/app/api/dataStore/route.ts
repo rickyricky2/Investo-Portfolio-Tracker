@@ -48,6 +48,8 @@ export async function POST(req:Request){
                 {
                     $set: {
                         lastUnitPrice: Number(rawData.lastUnitPrice),
+                        dailyChange: Number(rawData.dailyChange),
+                        dailyChangePercent: Number(rawData.dailyChangePercent),
                         updatedAt: new Date(),
                     }
                 }
@@ -64,9 +66,8 @@ export async function POST(req:Request){
                     lastUnitPrice: Number(rawData.lastUnitPrice),
                     currency: rawData.currency,
                     country: rawData.country,
-                    dailyChange: rawData.dailyChange,
-                    dailyChangePercent: rawData.dailyChangePercent,
-                    websocket:false,
+                    dailyChange: Number(rawData.dailyChange),
+                    dailyChangePercent: Number(rawData.dailyChangePercent),
                     createdAt: new Date(),
                     updatedAt: new Date(),
                 }

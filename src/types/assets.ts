@@ -10,8 +10,8 @@ export type Asset = {
     lastUnitPrice:number;
     totalValue?:number;
     currency:string;
-    dailyChange?:number;
-    dailyChangePercent?:number;
+    dailyChange:number;
+    dailyChangePercent:number;
     profit_loss?:number;
     profit_lossPercent?:number;
 

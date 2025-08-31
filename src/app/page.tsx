@@ -25,7 +25,7 @@ const aboutContent: {icons: React.ReactNode; info:string}[] = [
 export default async function Home() {
 
     return (
-      <div className={"w-full min-h-screen bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text-secondary"}>
+      <div className={"w-full min-h-screen  text-light-text dark:text-dark-text-secondary"}>
           <HeaderOnScroll/>
       {/*    Hero*/}
           <div className={"text-center p-5 md:p-20 sm:w-9/10 m-auto"}>
@@ -57,7 +57,7 @@ export default async function Home() {
               <div className={"flex flex-wrap gap-15 justify-center items-center my-10"}>
                   {subscriptionPlans.map((item,index) => {
                       return(
-                          <div key={index} className={`shadow-2xl p-10 min-w-70 w-90 max-w-100 min-h-[500px] dark:bg-dark-bg-tertiary rounded-4xl
+                          <div key={index} className={`shadow-2xl p-10 min-w-70 w-90 max-w-100 min-h-[500px] bg-light-bg dark:bg-dark-bg-tertiary rounded-4xl
                               transition-all hover:scale-101 hover:-translate-y-3 hover:shadow-2xl`}>
                               <div className={"text-left border-b-1 border-gray-400 dark:border-dark-secondary py-1 pb-2"}>
                                   <h2 className={"text-5xl dark:text-dark-text-secondary"}>{item.name}</h2>
@@ -88,7 +88,7 @@ export default async function Home() {
           <div className={"text-center mt-20 p-10 w-full sm:w-9/10 m-auto"}>
               <h2 className={"text-5xl"}>Any questions? Contact us using form below ;)</h2>
               <div className={" w-full sm:w-9/10 lg:w-8/10 m-auto"}>
-                  <form method="post" className={"contactForm"}>
+                  <form method="post" className={"contactForm dark:placeholder:text-dark-text-tertiary"}>
                       <div className={"text-3xl py-10 sm:px-10 w-full"}>
                           <div className={"flex flex-col md:flex-row sm:gap-5 lg:gap-10 mb-5"}>
                               <section className={"flex flex-col items-start gap-3 w-full md:w-1/2"}>

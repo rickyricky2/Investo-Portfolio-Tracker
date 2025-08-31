@@ -28,11 +28,13 @@ export async function POST(req:Request){
             ticker:String(rawData.ticker),
             name: String(rawData.name),
             quantity: String(rawData.quantity),
-            purchaseUnitPrice: String(rawData.purchaseUnitPrice),
-            lastUnitPrice: String(rawData.lastUnitPrice),
+            purchaseUnitPrice: Number(rawData.purchaseUnitPrice),
+            lastUnitPrice: Number(rawData.lastUnitPrice),
             currency: String(rawData.currency),
             country: String(rawData.country),
             addedManually: !notAddDataManually,
+            dailyChange: Number(rawData.dailyChange) || 0,
+            dailyChangePercent: Number(rawData.dailyChangePercent) || 0,
         }
 
         const email = await getUserEmail();
@@ -60,6 +62,8 @@ export async function POST(req:Request){
             currency: userData.currency,
             country: userData.country,
             addedManually:userData.addedManually,
+            dailyChange: userData.dailyChange,
+            dailyChangePercent: userData.dailyChangePercent,
             createdAt: new Date(),
             updatedAt: new Date(),
         });
@@ -126,9 +130,9 @@ export async function PUT(req: Request) {
                     ticker:editedValues.ticker,
                     type: editedValues.type,
                     name: editedValues.name,
-                    quantity: editedValues.quantity,
-                    purchaseUnitPrice: editedValues.purchaseUnitPrice,
-                    lastUnitPrice: editedValues.lastUnitPrice,
+                    quantity: Number(editedValues.quantity),
+                    purchaseUnitPrice: Number(editedValues.purchaseUnitPrice),
+                    lastUnitPrice: Number(editedValues.lastUnitPrice),
                     currency: editedValues.currency,
                     country:editedValues.country,
                     updatedAt: new Date(),

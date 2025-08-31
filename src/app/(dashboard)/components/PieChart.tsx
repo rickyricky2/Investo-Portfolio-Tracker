@@ -94,9 +94,12 @@ export default function PieChart({isLoading,assets, type}: {isLoading:boolean; a
             ) : (
                 <>
                     <div className={`relative min-h-[400px]`}>
-                        <h2 className="text-3xl dark:text-dark-main font-semibold tracking-tight text-center mb-5 px-4 py-1 w-fit mx-auto ">
+                        <h2 className="text-3xl dark:text-dark-main font-semibold tracking-tight text-center mb-2 px-4 py-1 w-fit mx-auto ">
                             {chartTitles[type] || "Chart"}
                         </h2>
+                        <h3 className={"text-2xl text-center mb-4 font-medium"}>
+                            <span className={"dark:text-dark-text-secondary"}>Total value:</span> {totalCount}
+                        </h3>
                         <AssetFilters filters={filters} onFilterChange={setFilters}/>
                         <div  className={`relative min-h-[${minPieChartHeight}] z-1 overflow-visible`}>
                         <ResponsivePie

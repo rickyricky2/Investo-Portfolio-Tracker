@@ -54,7 +54,6 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
     };
 
     const saveChanges = async () => {
-        console.log(editedValues);
         const res = await fetch("/api/user/assets", {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
@@ -187,11 +186,9 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                 ? editableInput("currency", editedValues.currency)
                                                 : asset.currency}
                                         </td>
-                                        {asset.dailyChange ? (
                                         <td className={`hidden lg:table-cell ${ (asset.dailyChange > 0) ? "text-green-500" : "text-light-error-text dark:text-dark-error-text"}`}>
-                                            {`${asset.dailyChange > 0 ? "+" : ""}${asset.dailyChange} (${asset.dailyChangePercent && (asset.dailyChangePercent > 0) ? "+" : ""}${asset.dailyChangePercent}%)`}
+                                            {`${asset.dailyChange > 0 ? "+" : ""}${asset.dailyChange} ${asset.dailyChangePercent && `(${asset.dailyChangePercent > 0 ? "+" : ""}${asset.dailyChangePercent}%)`}`}
                                         </td>
-                                            ) : null}
                                         {asset.profit_loss ? (
                                         <td className={`hidden lg:table-cell ${ (asset.profit_loss > 0) ? "text-green-500" : "text-light-error-text dark:text-dark-error-text"}`}>
                                             {`${asset.profit_loss > 0 ? "+" : ""}${asset.profit_loss} (${asset.profit_lossPercent && (asset.profit_lossPercent > 0 )? "+" : ""}${asset.profit_lossPercent}%)`}

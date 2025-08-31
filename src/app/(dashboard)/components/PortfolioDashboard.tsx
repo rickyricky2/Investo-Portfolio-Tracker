@@ -55,8 +55,11 @@ export default function PortfolioDashboard(){
             tempTotalInvestedAmount = tempTotalInvestedAmount + (Number(assets[asset].purchaseUnitPrice) * Number(assets[asset].quantity));
 
             if(assets[asset].addedManually){
-                assets[asset].dailyChange = 0;
-                assets[asset].dailyChangePercent = 0;
+                assets[asset].dailyChange = "";
+                assets[asset].dailyChangePercent = "";
+            }else{
+                assets[asset].dailyChange = Number(Number(assets[asset].dailyChange).toFixed(2));
+                assets[asset].dailyChangePercent =  Number(Number(assets[asset].dailyChangePercent).toFixed(2));
             }
 
             tempMainCurrency = localStorage.getItem("mainCurrency") || "USD";
@@ -78,8 +81,6 @@ export default function PortfolioDashboard(){
 
             assets[asset].profit_loss = Number(Number(assets[asset].lastUnitPrice - assets[asset].purchaseUnitPrice).toFixed(2));
             assets[asset].profit_lossPercent = Number(Number( (assets[asset].lastUnitPrice - assets[asset].purchaseUnitPrice) / assets[asset].purchaseUnitPrice * 100).toFixed(2));
-            assets[asset].dailyChange = Number(Number(assets[asset].dailyChange).toFixed(2));
-            assets[asset].dailyChangePercent =  Number(Number(assets[asset].dailyChangePercent).toFixed(2));
             assets[asset].totalValue = assets[asset].lastUnitPrice ? assets[asset].lastUnitPrice * assets[asset].quantity : assets[asset].purchaseUnitPrice * assets[asset].quantity;
 
             tempTotalInvestmentsValue = tempTotalInvestmentsValue + (Number(assets[asset].lastUnitPrice) * Number(assets[asset].quantity)) ;
@@ -90,7 +91,7 @@ export default function PortfolioDashboard(){
         setAssets(assets);
 
         setNumberOfInvestments( tempNumberOfInvestments );
-        setTotalInvestedAmount( tempTotalInvestedAmount );
+        setTotalInvestedAmount( Number(tempTotalInvestedAmount.toFixed(2)) );
         setTotalProfitLoss( tempTotalProfitLoss);
         setTotalProfitLossPercent(tempTotalProfitLossPercent);
         setTotalInvestmentsValue( tempTotalInvestmentsValue);

@@ -13,6 +13,8 @@ export default function AddAssetButton({mobile}: {mobile: boolean}) {
     const [isLoading, setIsLoading]=useState(false);
     const wrapperRef = useRef<HTMLDivElement>(null);
 
+    const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+
     const triggerRefresh = useWalletStore((state) => state.triggerRefresh);
 
     useEffect(() => {
@@ -50,7 +52,7 @@ export default function AddAssetButton({mobile}: {mobile: boolean}) {
                 name: formData.get('name') as string,
                 quantity: Number(formData.get('quantity')),
                 purchaseUnitPrice: Number(formData.get('purchaseUnitPrice')),
-                lastUnitPrice: Number(formData.get('lastUnitPrice')),
+                lastUnitPrice: Number(formData.get('lastUnitPrice') || formData.get('purchaseUnitPrice')),
                 currency: formData.get('currency') as string,
                 country: formData.get('country') as string || "",
                 notAddedManually:  notAddDataManually,
@@ -62,7 +64,8 @@ export default function AddAssetButton({mobile}: {mobile: boolean}) {
                 type: z.string().min(1, "Asset type is required"),
                 name: z.string().min(1,"Asset name is required"),
                 quantity: z.number().min(1,"Quantity must be at least 1"),
-                purchaseUnitPrice: z.number().positive("Unit price must be positive"),
+                purchaseUnitPrice: z.coerce.number().positive("Unit price must be positive").refine( (val) => Number.isFinite(val), { message: `Invalid number, try typing with "." `}),
+                lastUnitPrice: z.coerce.number().positive("Unit price must be positive").refine( (val) => Number.isFinite(val), { message: `Invalid number, try typing with "." `}),
                 currency: z.string().min(1, "U must chose currency"),
                 country: z.string().optional(),
             });
@@ -106,7 +109,7 @@ export default function AddAssetButton({mobile}: {mobile: boolean}) {
             const ticker = rawData.ticker as string;
             const country = rawData.country as string;
 
-            let res = await fetch(`/api/dataStore?ticker=${encodeURIComponent(ticker)}&country=${country}`, {
+            let res = await fetch(`${baseURL}/api/dataStore?ticker=${encodeURIComponent(ticker)}&country=${country}`, {
                 method:"GET",
                 headers:{"Content-Type": "application/json"},
             });
@@ -127,7 +130,7 @@ export default function AddAssetButton({mobile}: {mobile: boolean}) {
                 // if we don't have data stored for this ticker we have to call API
 
                 // first we fetch for ticker data
-                res = await fetch(`/api/stockMarketAPI?ticker=${ticker}&country=${country}`, {
+                res = await fetch(`${baseURL}/api/stockMarketAPI?ticker=${ticker}&country=${country}`, {
                     method: "GET",
                     headers:{"Content-Type": "application/json"},
                 });
@@ -153,13 +156,13 @@ export default function AddAssetButton({mobile}: {mobile: boolean}) {
                     lastUnitPrice:lastUnitPrice,
                     currency: currency,
                     country:country,
-                    dailyChange:tickerInfo.change,
-                    dailyChangePercent:tickerInfo.percent_change,
+                    dailyChange: Number(tickerInfo.change),
+                    dailyChangePercent: Number(tickerInfo.percent_change),
                 }
 
                 //     if we successfully grabbed data from API we save this in dataStore for other users
 
-                await fetch("/api/dataStore", {
+                await fetch(`${baseURL}/api/dataStore`, {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify({rawData}),
@@ -168,7 +171,7 @@ export default function AddAssetButton({mobile}: {mobile: boolean}) {
 
         }
 
-        const res = await fetch("/api/user/assets",{
+        const res = await fetch(`${baseURL}/api/user/assets`,{
             method: "POST",
             headers:{"Content-Type": "application/json"},
             body: JSON.stringify({rawData, notAddDataManually}),
@@ -182,6 +185,7 @@ export default function AddAssetButton({mobile}: {mobile: boolean}) {
 
         triggerRefresh();
         setIsOpen(false);
+        setIsLoading(false);
     }
 
     const [type, setType] = useState("");
@@ -287,9 +291,7 @@ export default function AddAssetButton({mobile}: {mobile: boolean}) {
                                             </select>
                                         ) : (
                                             <input
-                                                type={item.type}
                                                 min={1}
-                                                required
                                                 placeholder={item.label}
                                                 name={item.key}
                                                 className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>

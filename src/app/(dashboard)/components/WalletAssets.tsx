@@ -66,18 +66,19 @@ export default function WalletAssets({filters}: {filters: Filters}){
         const assets = data.assets;
 
         for(const asset in assets){
-            assets[asset].createdAt =  formatDate(assets[asset].createdAt);
+            assets[asset].createdAt = formatDate(assets[asset].createdAt);
 
             if(assets[asset].addedManually){
                 assets[asset].dailyChange = "";
                 assets[asset].dailyChangePercent = "";
+            }else{
+                assets[asset].dailyChange = Number(Number(assets[asset].dailyChange).toFixed(2));
+                assets[asset].dailyChangePercent =  Number(Number(assets[asset].dailyChangePercent).toFixed(2));
             }
+
             assets[asset].totalValue = assets[asset].lastUnitPrice ? assets[asset].lastUnitPrice * assets[asset].quantity : assets[asset].purchaseUnitPrice * assets[asset].quantity  ;
             assets[asset].profit_loss = Number(assets[asset].totalValue - assets[asset].purchaseUnitPrice * assets[asset].quantity).toFixed(2);
             assets[asset].profit_lossPercent = Number( (assets[asset].totalValue - assets[asset].purchaseUnitPrice * assets[asset].quantity) / assets[asset].purchaseUnitPrice * 100).toFixed(2);
-            assets[asset].lastUnitPrice = Number(assets[asset].lastUnitPrice).toFixed(2);
-            assets[asset].dailyChange = Number(assets[asset].dailyChange).toFixed(2);
-            assets[asset].dailyChangePercent =  Number(assets[asset].dailyChangePercent).toFixed(2);
         }
         setAssets(assets);
     }

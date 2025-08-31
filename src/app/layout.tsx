@@ -34,7 +34,7 @@ export default function RootLayout({
             }} />
         </head>
           <body
-            className={`antialiased tracking-tight`}
+            className={`antialiased tracking-tight bg-gradient`}
           >
             <ThemeProvider>
                 {children}
