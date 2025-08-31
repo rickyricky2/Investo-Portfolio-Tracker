@@ -2,7 +2,7 @@
 import PortfolioDashboardHeaderCards from './PortfolioDashboardHeaderCards';
 import MainChart from "./MainChart";
 import PieCharts from "./PieCharts";
-import {typesWithTicker} from "@/content/assetContent";
+//import {typesWithTicker} from "@/content/assetContent";
 import {useEffect, useState} from "react";
 import {Asset} from "@/types/assets";
 import {useWalletStore} from "@/store/useWalletStore";

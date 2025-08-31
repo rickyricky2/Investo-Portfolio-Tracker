@@ -4,7 +4,7 @@ import {Asset,SortKey,SortConfig} from "@/types/assets";
 import WalletTable from "../components/WalletTable";
 import {walletProps} from "@/types/wallet";
 import {useWalletStore} from "@/store/useWalletStore";
-import {typesWithTicker} from "@/content/assetContent";
+//import {typesWithTicker} from "@/content/assetContent";
 import {Filters} from "./walletPageClient";
 
 export const tableHeaders: {label:string, key:SortKey}[] = [
