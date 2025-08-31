@@ -13,7 +13,7 @@ export default function UserPageClient({children}: { children: React.ReactNode; 
             <div className={"lg:hidden"}>
                 <NavMobile/>
             </div>
-            <div className={"w-full min-h-screen lg:py-5 lg:px-5"}>
+            <div className={"w-full min-h-screen lg:py-5 lg:px-5 bg-gradient"}>
                 {children}
             </div>
         </div>

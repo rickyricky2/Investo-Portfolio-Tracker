@@ -237,7 +237,7 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                     {asset.lastUnitPrice ? (
                                                         <div className={`flex items-center lg:hidden`}>
                                                             <FaSort onClick={() => handleSort("lastUnitPrice")} className={"text-light-text-tertiary dark:text-dark-main cursor-pointer mr-1 "} />
-                                                            <span className="font-semibold">Last Unit Price:&nbsp;</span>
+                                                            <span className="font-semibold text-dark-text-secondary">Last Unit Price:&nbsp;</span>
                                                             {asset.addedManually && isEditing && editedValues
                                                                 ? <span className={"p-1"}> {editableInput("lastUnitPrice", editedValues.lastUnitPrice)}</span>
                                                                 : <span className={"text-xl"}>{asset.lastUnitPrice}</span>}

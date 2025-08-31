@@ -73,14 +73,14 @@ export default function MainChart({mainCurrency}: {mainCurrency: string}) {
     console.log(chartData);
 
     return (
-        <div className="min-h-[500px] w-full my-5 shadow-lg rounded-4xl bg-light-bg-secondary dark:bg-dark-bg-tertiary p-6">
+        <div className="min-h-[500px] w-full my-5 shadow-lg rounded-4xl bg-light-bg-secondary dark:bg-dark-bg-tertiary py-6 px-2 tiny:px-6 select-none">
             <h2 className={"text-2xl font-medium px-2"}>
                 Summary
             </h2>
             <div className={"h-[400px]"}>
             <ResponsiveLine
                 data={chartData}
-                margin={{ top: 50, right: 50, bottom: 60, left: 60 }}
+                margin={{ top: 50, right: 20, bottom: 60, left: 60 }}
                 xScale={{ type: "point" }}
                 yScale={{
                     type: "linear",
@@ -151,13 +151,14 @@ export default function MainChart({mainCurrency}: {mainCurrency: string}) {
                     <div
                         className={`
                                    px-4 py-3 rounded-lg shadow
-                                   bg-light-bg-tertiary dark:bg-dark-bg-tertiary
+                                   bg-light-bg-tertiary dark:bg-dark-bg
                                    text-light-text dark:text-dark-text-secondary
+                                   font-medium
                                    `}
                     >
                         <strong>{point.seriesId}</strong><br />
                         Date: {point.data.xFormatted}<br/>
-                        <span>Value:</span> ${point.data.yFormatted}
+                        Value: {point.data.yFormatted} {mainCurrency}
                     </div>
                 )}
             />

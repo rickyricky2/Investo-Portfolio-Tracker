@@ -48,3 +48,13 @@
     --color-light-main: var(--color-dark-main);
 }
 
+.bg-gradient{
+    background: linear-gradient(94deg, var(--color-light-bg),hsl(266,60%,80%), var(--color-light-bg));
+    background-size:200% 200%;
+}
+
+
+.dark .bg-gradient{
+    background: linear-gradient(91deg, var(--color-dark-bg),#3a2f4d, var(--color-dark-bg));
+    background-size:200% 200%;
+}
