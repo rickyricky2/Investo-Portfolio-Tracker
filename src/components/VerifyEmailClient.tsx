@@ -9,7 +9,7 @@ export default function VerifyEmailClient({token}:{token?:string}) {
     const [email, setEmail] = useState("");
     const [resendStatus, setResendStatus] = useState({ type: "idle", message: "" });
 
-    const baseURL = process.env.PUBLIC_BASE_URL || "http://localhost:3000";
+    const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
     useEffect(() => {
         const verify = async () => {

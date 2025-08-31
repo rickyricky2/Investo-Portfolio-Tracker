@@ -13,7 +13,7 @@ export default function ResetPasswordForm() {
         e.preventDefault();
         setIsLoading(true);
 
-        const baseURL = process.env.PUBLIC_BASE_URL || "http://localhost:3000";
+        const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
         const formData = new FormData(e.currentTarget);
         const email = formData.get('email');

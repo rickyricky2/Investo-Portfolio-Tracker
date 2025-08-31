@@ -14,7 +14,7 @@ export default function MainChart({mainCurrency}: {mainCurrency: string}) {
     const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    const baseURL = process.env.PUBLIC_BASE_URL || "http://localhost:3000";
+    const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
     useEffect(() => {
         const fetchSnapshots = async () => {

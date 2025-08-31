@@ -26,8 +26,7 @@ export default function PortfolioDashboard(){
     const [totalProfitLossPercent,setTotalProfitLossPercent] = useState(0);
     const [mainCurrency,setMainCurrency] = useState("");
 
-    const baseURL = process.env.PUBLIC_BASE_URL || "http://localhost:3000";
-    console.log(baseURL);
+    const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
     const getAssets = async () =>{
         setIsLoading(true);
