@@ -7,7 +7,7 @@ import { FaWallet } from "react-icons/fa";
 export default function PortfolioDashboardHeaderCards({totalBalance, values, isLoading, currency}: {totalBalance: number; values: {label:string, value:number, percent?:number;}[]; isLoading:boolean; currency:string } ) {
     return(
         <div>
-            <section className={"min-h-[150px] bg-[linear-gradient(130deg,var(--color-light-main),hsl(300,70%,80%))] dark:bg-[linear-gradient(130deg,var(--color-dark-main),hsl(266,70%,78%))] w-full shadow-lg rounded-4xl overflow-hidden font-medium"}>
+            <section className={"min-h-[150px] bg-[linear-gradient(130deg,var(--color-light-main),hsl(300,70%,80%))] dark:bg-[linear-gradient(100deg,hsl(266,70%,25%),var(--color-dark-main))] w-full shadow-lg rounded-4xl overflow-hidden font-medium"}>
                 <div className={"text-2xl p-5 "}>
                     <div className={`w-[40px] h-[40px] rounded-2xl flex justify-center items-center bg-[hsl(266,56%,80%)] text-white dark:bg-[hsl(266,20%,30%)] dark:text-dark-text-secondary`}>
                         <FaWallet size={25}/>

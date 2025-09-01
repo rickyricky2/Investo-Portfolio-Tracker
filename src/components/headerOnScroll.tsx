@@ -2,7 +2,6 @@
 import Link from 'next/link';
 import Logo from '../components/Logo'
 import {useEffect, useState} from "react";
-import SwitchThemeButton from "@/app/(dashboard)/components/SwitchThemeButton";
 
 export default function HeaderOnScroll() {
     const [ scrolled,setScrolled ] = useState(false);
