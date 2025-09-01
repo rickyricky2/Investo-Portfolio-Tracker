@@ -6,6 +6,7 @@ import { MdAttachMoney } from "react-icons/md";
 import ScrollReveal from "../components/scrollAnimation";
 import HeaderOnScroll from "../components/headerOnScroll";
 import {subscriptionPlans} from "@/lib/subscriptionPlans";
+import SwitchThemeButton from "@/app/(dashboard)/components/SwitchThemeButton";
 
 const aboutContent: {icons: React.ReactNode; info:string}[] = [
     {
@@ -25,8 +26,11 @@ const aboutContent: {icons: React.ReactNode; info:string}[] = [
 export default async function Home() {
 
     return (
-      <div className={"w-full min-h-screen  text-light-text dark:text-dark-text-secondary"}>
+      <div className={"w-full min-h-screen text-light-text dark:text-dark-text-secondary relative"}>
           <HeaderOnScroll/>
+          <div className={"fixed bottom-10 right-2 z-50"}>
+              <SwitchThemeButton type={"horizontal"}/>
+          </div>
       {/*    Hero*/}
           <div className={"text-center p-5 md:p-20 sm:w-9/10 m-auto"}>
               <h1 className={"text-5xl dark:text-dark-text-secondary sm:text-6xl md:text-8xl my-10"}>All your investments in one place</h1>
@@ -41,9 +45,9 @@ export default async function Home() {
               <div className={"flex flex-col flex-wrap w-full lg:max-w-[60%] m-auto text-4xl justify-center items-left my-20"}>
                   {aboutContent.map((item,index) => {
                       return(
-                          <article key={index} className={"dark:text-dark-main hover:scale-110 hover:-translate-y-5 transition-all duration-600 flex flex-col lg:flex-row w-full justify-start items-center border-gray-400 dark:border-dark-main border-b-1 rounded-1 pb-10 my-10"}>
+                          <article key={index} className={"text-light-text-tertiary dark:text-dark-main hover:scale-110 hover:-translate-y-5 transition-all duration-600 flex flex-col lg:flex-row w-full justify-start items-center border-light-text-tertiary dark:border-dark-main border-b-1 rounded-1 pb-10 my-10"}>
                               {item.icons}
-                              <p className={"dark:text-dark-text-tertiary"}>{item.info}</p>
+                              <p className={"text-light-text dark:text-dark-text-tertiary"}>{item.info}</p>
                           </article>
                       );
                   })}
@@ -59,7 +63,7 @@ export default async function Home() {
                       return(
                           <div key={index} className={`shadow-2xl p-10 min-w-70 w-90 max-w-100 min-h-[500px] bg-light-bg dark:bg-dark-bg-tertiary rounded-4xl
                               transition-all hover:scale-101 hover:-translate-y-3 hover:shadow-2xl`}>
-                              <div className={"text-left border-b-1 border-gray-400 dark:border-dark-secondary py-1 pb-2"}>
+                              <div className={"text-left border-b-1 border-dark-secondary dark:border-dark-secondary py-1 pb-2"}>
                                   <h2 className={"text-5xl dark:text-dark-text-secondary"}>{item.name}</h2>
                                   <p className={"text-4xl"}>{item.monthlyPrice}$/<span className={"text-3xl text-dark-text-tertiary"}>Month</span></p>
                               </div>
@@ -76,7 +80,7 @@ export default async function Home() {
                               {item.name === "Free" ? (
                                   <p className={"text-light-text dark:text-dark-text-tertiary tracking-normal text-lg"}>No credit card info needed!</p>
                               ) : ""}
-                              <Link href={"/product"} className={"mt-4 inline-block text-3xl bg-light-secondary dark:bg-dark-main text-light-text-secondary dark:text-dark-text-secondary py-2 px-5 rounded-lg font-medium hover:bg-light-secondary dark:hover:bg-dark-secondary"}>Select</Link>
+                              <Link href={"/product"} className={"mt-4 inline-block text-3xl bg-light-secondary dark:bg-dark-bg-secondary text-light-bg dark:text-dark-text-secondary py-2 px-5 rounded-lg font-medium hover:bg-light-secondary dark:hover:bg-dark-secondary"}>Select</Link>
                           </div>
                       );
                   })}

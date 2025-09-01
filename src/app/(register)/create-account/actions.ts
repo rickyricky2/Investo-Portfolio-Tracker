@@ -44,7 +44,7 @@ const createAccountSchema = z.object({
     firstName: z.string().min(2, "First name is required"),
     lastName: z.string().min(2, "Last name is required"),
     terms: z.literal("on", {
-        errorMap: () => ({message:"You must accept the terms to create an settings"})
+        errorMap: () => ({message:"You must accept the terms to create an account"})
     }),
 });
 
@@ -125,7 +125,7 @@ export async function createAccount(
             },
             createdAt: new Date(),
         });
-        // checking if settings was created
+        // checking if account was created
         const user = await users.findOne({email:rawData.email});
         if(!user){
             return{
@@ -139,7 +139,7 @@ export async function createAccount(
 
         return {
             success: true,
-            message: "Created settings",
+            message: "Created account",
         };
     } catch(error){
         console.error("An error occurred ",error);

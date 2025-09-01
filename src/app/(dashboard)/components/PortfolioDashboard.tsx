@@ -139,9 +139,9 @@ export default function PortfolioDashboard(){
     return(
         <div className={"px-2"}>
         <header className={"my-5 px-2"}>
-            <h2 className={"text-4xl lg:text-5xl tracking-tight text-left text-light-main font-bold dark:text-dark-main flex flex-col"}>
+            <h2 className={"text-4xl bg-[linear-gradient(130deg,var(--color-light-main),hsl(300,70%,78%))] dark:bg-[linear-gradient(130deg,var(--color-dark-main),hsl(266,70%,25%))] bg-clip-text text-transparent lg:text-5xl tracking-tight text-left font-bold  flex flex-col"}>
                 Hi
-                <span className={"mt-2 capitalize"}>
+                <span className={"my-2 capitalize"}>
                 {user.firstName + (user.lastName ? " " + user.lastName : "")}!
                 </span>
             </h2>

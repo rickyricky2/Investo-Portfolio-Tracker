@@ -10,10 +10,10 @@ export const metadata: Metadata = {
 
 export default function CreateAccountPage(){
     return(
-        <div className="w-full tracking-tight min-h-screen bg-light-bg dark:bg-dark-bg text-light-text dark:text-dark-text">
+        <div className="w-full tracking-tight min-h-screen text-light-text dark:text-dark-text-secondary">
             <PublicHeader/>
-            <div className="flex justify-center items-center">
-                <main className="my-10 tracking-tight">
+            <div className="flex justify-center items-center px-2 tiny:px-5">
+                <main className="my-10 tracking-tight flex flex-col gap-10">
                     <h1 className="text-6xl text-center">Create An Account</h1>
                     <CreateAccountForm />
                 </main>

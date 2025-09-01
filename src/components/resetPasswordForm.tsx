@@ -56,7 +56,7 @@ export default function ResetPasswordForm() {
                     <div className={"text-center"}>
                         <button type={"submit"}
                                disabled={isSend}
-                               className={"px-10 py-3 mt-4 m-auto bg-light-secondary dark:bg-dark-secondary active:bg-light-active dark:active:bg-dark-active text-light-text-secondary dark:text-dark-text rounded-lg transition hover:-translate-y-2 hover:shadow-2xl"}>
+                               className={"px-10 py-3 my-4 m-auto bg-light-secondary dark:bg-dark-bg-secondary active:bg-light-text-tertiary dark:active:bg-dark-text-tertiary text-light-text-secondary dark:text-dark-text rounded-lg transition hover:-translate-y-2 hover:scale-105 hover:shadow-xl"}>
                             {isLoading ? <FaSpinner size={30} className={"animate-spin mx-auto"} /> : "Login"}
                         </button>
                     </div>

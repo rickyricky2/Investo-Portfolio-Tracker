@@ -79,13 +79,13 @@ export default function LoginForm(){
                             // required
                                name={"terms"}
                                onChange={() => setIsChecked(!isChecked)}
-                               className={`absolute left-[160px] top-[8px] border-2 appearance-none w-5 h-5 dark:focus:border-dark-secondary ${isChecked ? "border-light-main dark:border-dark-main" : "border-light-secondary dark:border-dark-text"} `}/>
+                               className={`absolute left-[160px] top-[8px] border-2 appearance-none w-5 h-5 dark:focus:border-dark-secondary ${isChecked ? "border-light-main dark:border-dark-main" : "border-light-secondary dark:border-dark-text-secondary"} `}/>
                         <div className={`absolute left-[162px] top-[18px] ${isChecked ? "" : "hidden"}`}>
                             <span className={`bg-light-text dark:bg-dark-text w-[10px] h-[2px] rounded-full absolute transition rotate-45`}></span>
                             <span className={`bg-light-text dark:bg-dark-text w-[10px] h-[2px] rounded-full absolute transition translate-x-[60%] rotate-135`}></span>
                         </div>
                     </div>
-                    <Link href={"/reset-password"} className={"hover:text-light-main dark:hover:text-dark-main active:text-light-active dark:active:text-dark-active transition-all hover:translate-x-5 inline-block"}>Forgot password?</Link>
+                    <Link href={"/reset-password"} className={"hover:text-light-text-tertiary dark:hover:text-dark-tertiary active:text-light-active dark:active:text-dark-active transition-all hover:translate-x-5 inline-block"}>Forgot password?</Link>
                 </div>
                 { (errors?.email || errors?.password) && (
                     <p className={"my-3 text-xl text-light-error-text dark:text-dark-error-text rounded-lg p-1 font-medium"}>
@@ -94,7 +94,7 @@ export default function LoginForm(){
                 )}
                 <button type={"submit"}
                         disabled={isLoading}
-                       className={"cursor-pointer px-5 py-4 mt-3 m-auto bg-light-secondary dark:bg-dark-secondary text-light-text-secondary dark:text-dark-text active:bg-light-active dark:active:bg-dark-active rounded-lg transition hover:-translate-y-2 hover:shadow-2xl"}>
+                       className={"cursor-pointer px-4 py-3 mt-3 m-auto bg-light-secondary dark:bg-dark-bg-secondary text-light-bg dark:text-dark-text-secondary active:bg-light-active dark:active:bg-dark-active rounded-lg transition hover:-translate-y-2 hover:scale-105 hover:shadow-2xl"}>
                     { isLoading ? <FaSpinner size={30} className={"animate-spin mx-auto"} /> : "Login"}
                 </button>
             </div>

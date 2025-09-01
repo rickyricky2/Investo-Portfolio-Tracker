@@ -57,7 +57,7 @@ export async function POST(request: Request){
                 inputs: safeInputs,
             }, { status: 400 });
         }
-        // checking if user is verified/settings is active
+        // checking if user is verified/account is active
         if(!user.emailVerified){
             return NextResponse.json({
                 success: false,

@@ -2,7 +2,7 @@
 
 export default function Logo() {
     return(
-        <div className={"text-6xl text-center text-light-text-secondary dark:text-dark-text-secondary font-semibold pb-2 relative"}>
+        <div className={"text-6xl text-center text-light-bg dark:text-dark-bg font-semibold pb-2 relative"}>
             investo
         </div>
     );

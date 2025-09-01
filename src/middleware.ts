@@ -45,6 +45,6 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/:user((?!api|_next|favicon.ico)[^/]+)','/:user((?!api|_next|favicon.ico)[^/]+)/:path*', '/login', '/create-settings', '/product', '/verify-email', '/verify-notice' , '/'],
+    matcher: ['/:user((?!api|_next|favicon.ico)[^/]+)','/:user((?!api|_next|favicon.ico)[^/]+)/:path*', '/login', '/create-account', '/product', '/verify-email', '/verify-notice' , '/'],
 
 };

@@ -6,7 +6,7 @@ import NavMobile from "../components/NavMobile";
 export default function UserPageClient({children}: { children: React.ReactNode; }) {
 
     return (
-        <div className="w-full min-h-screen  bg-light-bg dark:bg-dark-bg flex">
+        <div className="w-full min-h-screen flex">
             <div className={"hidden lg:block"}>
                 <Nav/>
             </div>

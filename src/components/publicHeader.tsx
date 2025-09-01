@@ -6,20 +6,18 @@ import {useState} from "react";
 export default function PublicHeader(){
     const [isOpen, setIsOpen] = useState(false);
 
+    const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+
     return(
-        <header className={`transition-[max-height] max-w-screen ${isOpen ? "max-h-[130px]" : "max-h-[70px]"}  pb-1 sm:pb-1 bg-light-main dark:bg-dark-main rounded-b-sm sm:sticky shadow-sm tracking-tight z-20 flex flex-col gap-2 tiny:gap-0 tiny:flex-row tiny:justify-between items-center px-2 md:px-5 lg:px-10`}>
-            <div className={"flex items-center flex-1"}>
-                <Link href={"/"}>
-                    <div className={"text-6xl inline-block text-light-text-secondary dark:text-dark-bg-tertiary font-semibold"}>
+        <header className={`transition-[max-height] max-w-screen ${isOpen ? "max-h-[130px]" : "max-h-[70px]"}  pb-1 sm:pb-1 bg-light-main dark:bg-dark-main  shadow-md tracking-tight z-20 flex gap-2 tiny:gap-0 items-center justify-center px-2 md:px-5 lg:px-10 py-1`}>
+            <div className={""}>
+                <Link href={baseURL}>
+                    <div className={"text-5xl sm:text-6xl text-center inline-block text-light-bg dark:text-dark-bg font-semibold"}>
                         investo
                     </div>
                 </Link>
-                <div className={"justify-self-end tiny:hidden w-full relative top-[6px] -right-[15px]"} onClick={()=>{setIsOpen(!isOpen)}} >
-                    <span className={`bg-light-text-secondary dark:bg-dark-text w-[30px] h-[5px] rounded-full absolute transition ${isOpen ? "rotate-45" : "-rotate-45"}`}></span>
-                    <span className={`bg-light-text-secondary dark:bg-dark-text w-[30px] h-[5px] rounded-full absolute transition translate-x-[60%] ${isOpen ? "rotate-135" : "rotate-225"}`}></span>
-                </div>
             </div>
-            <div className={`transition-all ${isOpen ? "opacity-100" : "opacity-0 -translate-y-2"} tiny:opacity-100 tiny:translate-0`}>
+            <div className={`transition-all fixed bottom-10 right-2`}>
                 <SwitchThemeButton type={"horizontal"}/>
             </div>
         </header>

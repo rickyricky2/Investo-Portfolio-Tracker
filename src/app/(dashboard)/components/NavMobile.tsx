@@ -126,7 +126,7 @@ export default function NavMobile(){
                     </ul>
                 </div>
             </nav>
-            <nav ref={wrapperRef} className={`fixed flex flex-col py-4 justify-end gap-70 right-0 top-0 z-30 shadow-sm  bg-light-bg-tertiary text-light-text-tertiary dark:bg-dark-bg-tertiary dark:text-dark-text-tertiary w-fit sm:w-[150px] md:w-[200px] min-h-screen transition ${open ? "" : "translate-x-100"}`}>
+            <nav ref={wrapperRef} className={`fixed flex flex-col py-4 justify-end items-center gap-70 right-0 top-0 z-30 shadow-md  bg-light-bg-tertiary text-light-text-tertiary dark:bg-dark-bg-tertiary dark:text-dark-text-tertiary w-fit sm:w-[150px] md:w-[200px] min-h-screen transition ${open ? "" : "translate-x-100"}`}>
                     <ul className={"py-5 font-medium"}>
                         {menuItems.map((item, index) => {
                             return(
@@ -147,7 +147,7 @@ export default function NavMobile(){
                         </li>
                     </ul>
                 <div className={"flex flex-col gap-5"}>
-                    <div className={"mx-4"}>
+                    <div className={"m-auto"}>
                         <SwitchThemeButton type={"horizontal"}/>
                     </div>
                     <div className={"mx-4 text-center"}>

@@ -34,9 +34,9 @@ export default function SwitchThemeButton({type}:{type:string}){
 
     if(type === "horizontal"){
         return(
-            <div className={"rounded-full bg-light-bg-tertiary dark:bg-dark-bg-tertiary border-2 border-light-text-tertiary dark:border-dark-text-tertiary flex flex-col items-start shadow-sm justify-between h-[50px] w-[80px] overflow-hidden"}>
-                <div className={` bg-transparent text-light-text-tertiary  dark:text-dark-text-tertiary w-[50px] h-full rounded-full overflow-hidden flex items-center justify-center transition 
-                ${theme === "dark" ? "translate-x-[26px] " : ""}` }
+            <div className={"rounded-full bg-light-bg-tertiary dark:bg-dark-bg-tertiary border-2 border-light-text-tertiary dark:border-dark-text-tertiary flex flex-col items-start shadow-sm justify-between h-[50px] overflow-hidden"}>
+                <div className={` bg-transparent text-light-text-tertiary  dark:text-dark-text-tertiary w-[45px] h-full rounded-full overflow-hidden flex items-center justify-center transition 
+                ` }
                      onClick={handleThemeClick}>
                     {theme === "light" ? (
                         <FaSun size={20}  />

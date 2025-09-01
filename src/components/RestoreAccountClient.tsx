@@ -111,7 +111,7 @@ export default function RestoreAccountClient({token}: {token?: string;}){
                             type={"submit"}
                             value={"Change password"}
                             disabled={!(status === "loading")}
-                            className={"px-10 py-3 mt-3 m-auto bg-light-secondary dark:bg-dark-secondary active:bg-light-active dark:active:bg-dark-active text-light-text-secondary dark:text-dark-text rounded-lg transition hover:-translate-y-2 hover:shadow-2xl"}>
+                            className={"px-10 py-3 mt-3 m-auto bg-light-secondary dark:bg-dark-bg-secondary active:bg-light-active dark:active:bg-dark-text-tertiary text-light-text-secondary dark:text-dark-text rounded-lg transition hover:-translate-y-2 hover:scale-105 hover:shadow-2xl"}>
 
                             {isLoading ? <FaSpinner size={30} className={"animate-spin mx-auto"} /> : "Login"}
 
@@ -123,7 +123,7 @@ export default function RestoreAccountClient({token}: {token?: string;}){
                             (
                                 <>
                                     <h2 className={"text-center"}>
-                                        Successfuly updated your password
+                                        Successfully updated your password
                                     </h2>
                                     <FaCheck className={"text-9xl m-auto my-10 text-light-main dark:text-dark-main"}/>
                                 </>

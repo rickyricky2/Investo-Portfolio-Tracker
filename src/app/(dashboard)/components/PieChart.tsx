@@ -93,8 +93,8 @@ export default function PieChart({isLoading,assets, type}: {isLoading:boolean; a
                 <FaSpinner className="animate-spin text-4xl mx-auto text-light-main dark:text-dark-main" size={40} />
             ) : (
                 <>
-                    <div className={`relative min-h-[400px]`}>
-                        <h2 className="text-3xl dark:text-dark-main font-semibold tracking-tight text-center mb-2 px-4 py-1 w-fit mx-auto ">
+                    <div className={`relative min-h-[300px]`}>
+                        <h2 className="text-4xl dark:text-dark-main font-semibold tracking-tight text-center mb-2 px-4 py-1 w-fit mx-auto ">
                             {chartTitles[type] || "Chart"}
                         </h2>
                         <h3 className={"text-2xl text-center mb-4 font-medium"}>
@@ -152,10 +152,12 @@ export default function PieChart({isLoading,assets, type}: {isLoading:boolean; a
                                                 px-3 py-2 rounded-lg shadow
                                                 bg-light-bg-tertiary dark:bg-dark-bg-secondary
                                                 text-light-text dark:text-dark-text
+                                                min-w-30
                                               `}
                                 >
                                     <strong>{datum.id}</strong><br />
-                                    {type === "value" ? `Value: ${datum.value}` : `Quantity: ${datum.value}`}
+                                    {type === "value" ? `Value: ${datum.value}` : `Quantity: ${datum.value}`}<br/>
+                                    Percent: <span className={"font-medium"}>{((datum.value / totalCount) * 100).toFixed(1)}%</span>
                                 </div>
                             )}
                         />
