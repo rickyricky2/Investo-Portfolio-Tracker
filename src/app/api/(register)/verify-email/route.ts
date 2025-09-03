@@ -16,7 +16,7 @@ const sendConfirmationEmail = async  (to: string) => {
         },
     });
 
-    const mail = await transporter.sendMail({
+    await transporter.sendMail({
         from: `"Investo Team" <${process.env.SMTP_USERNAME}>`,
         to,
         subject: "Your email has been confirmed",
