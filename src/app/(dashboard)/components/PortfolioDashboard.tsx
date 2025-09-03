@@ -42,12 +42,12 @@ export default function PortfolioDashboard(){
         const assets = data.assets;
         let tempMainCurrency= "";
 
-        const promises = assets.map( async (asset) =>{
+        const promises = assets.map( async (asset:Asset) =>{
             const temp = {...asset};
 
             if(temp.addedManually){
-                temp.dailyChange = "";
-                temp.dailyChangePercent = "";
+                temp.dailyChange = 0;
+                temp.dailyChangePercent = 0;
             }else{
                 temp.dailyChange = Number(Number(temp.dailyChange).toFixed(2));
                 temp.dailyChangePercent =  Number(Number(temp.dailyChangePercent).toFixed(2));
