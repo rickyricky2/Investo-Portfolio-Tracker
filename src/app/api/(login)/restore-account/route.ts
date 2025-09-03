@@ -17,7 +17,7 @@ const sendEmail = async  (to: string) => {
         },
     });
 
-    const mail = await transporter.sendMail({
+    await transporter.sendMail({
         from: `"Investo Team" <${process.env.SMTP_USERNAME}>`,
         to,
         subject: "Password Change",
