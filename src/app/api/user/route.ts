@@ -2,11 +2,13 @@ import {NextResponse} from "next/server";
 import {getCollection} from "@/lib/db";
 import {ObjectId} from "mongodb";
 
-export async function GET(req:Reqeust){
+export async function GET(req:Request){
     try {
         const {searchParams} = new URL(req.url);
         const userId = searchParams.get("id");
-
+        if(!userId){
+            return NextResponse.json({success: false, error:"no user id found"}, {status: 400});
+        }
         const users = await getCollection("users");
         const id = new ObjectId(userId);
 
