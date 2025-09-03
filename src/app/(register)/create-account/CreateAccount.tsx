@@ -48,7 +48,7 @@ export default function CreateAccountPage(){
             <div className={"flex justify-center items-center"}>
                 <main className={"my-20 tracking-tight"}>
                     <h1 className={"text-6xl text-center"}>Create An Account</h1>
-                    <div className={"md:w-[600] min-h-[600] my-10 border-2 border-gray-300 transition-all hover:border-[#A882DD] p-5 rounded-lg inline-block"}>
+                    <div className={"md:w-[600] min-h-[600] my-10 border-2 border-gray-300 transition-all hover:border-[#A882DD] p-5 rounded-sm inline-block"}>
                         <form action={action}>
                             <input type={"hidden"} value={subscriptionTypeState} name={"subscriptionType"}/>
                             <input type={"hidden"} value={subscriptionDurationState} name={"subscriptionDuration"}/>

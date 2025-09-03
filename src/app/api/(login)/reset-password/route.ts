@@ -26,7 +26,6 @@ const sendVerificationEmail = async  (to: string,token:string) => {
                 <p>If you did not request a password reset, you can ignore this email.</p>
                 <p>The Investo Team</p>`
     });
-    console.log("message sent: ", mail.messageId);
 }
 
 export async function POST(request:Request){

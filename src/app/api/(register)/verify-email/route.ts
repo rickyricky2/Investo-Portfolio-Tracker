@@ -25,7 +25,6 @@ const sendConfirmationEmail = async  (to: string) => {
                 <p>Now u can enjoy our app. Log in from link below.</p>
                 <a href="http://localhost:3000/login" style="background:#4CAF50; color:white; padding:10px 20px; border-radius:4px; text-decoration:none;">Log in here</a>`
     });
-    console.log("message sent: ", mail.messageId);
 }
 
 

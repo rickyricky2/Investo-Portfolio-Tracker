@@ -19,6 +19,8 @@ export default function Nav() {
         lastName: "",
     });
 
+    const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
+
     const router = useRouter();
 
     const menuItems = [
@@ -48,14 +50,13 @@ export default function Nav() {
 
     useEffect( () => {
         const getUserInfo = async () => {
-            const res = await fetch("/api/auth/me", {
+            const res = await fetch(`${baseURL}/api/auth/me`, {
                 method: "GET",
             });
 
             const data = await res.json();
 
             if(!data.loggedIn){
-                console.log(data?.message);
                 router.push("/login");
             }
 
@@ -71,7 +72,7 @@ export default function Nav() {
     }
 
     const handleLogout = async () => {
-        await fetch("/api/auth/logout", {
+        await fetch(`${baseURL}/api/auth/logout`, {
             method: "POST",
         })
         router.push("/login");

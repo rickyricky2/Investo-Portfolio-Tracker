@@ -25,7 +25,6 @@ const sendVerificationEmail = async  (to: string,token:string) => {
                 <p>Click on link below to verify your investo account</p>
                 <a href="http://localhost:3000/verify-email?token=${token}" style="background:#4CAF50; color:white; padding:10px 20px; border-radius:4px; text-decoration:none;">Verify here</a>`
     });
-    console.log("message sent: ", mail.messageId);
 }
 
 export async function POST(request:Request){
@@ -49,7 +48,6 @@ export async function POST(request:Request){
             }
         );
 
-        console.log(emailToken);
         await sendVerificationEmail(email, emailToken);
 
         return NextResponse.json({success: true, message: "New verification email has been sent"}, {status: 200});

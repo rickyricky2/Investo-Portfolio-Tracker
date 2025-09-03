@@ -36,7 +36,7 @@ export default function MainChart({mainCurrency}: {mainCurrency: string}) {
                 });
 
                 const data = await res.json();
-                console.log(data);
+
                 if(data.success) {
                     setSnapshots(data.snapshots);
                 }else{
@@ -70,7 +70,6 @@ export default function MainChart({mainCurrency}: {mainCurrency: string}) {
             })),
         },
     ];
-    console.log(chartData);
 
     return (
         <div className="min-h-[500px] w-full my-5 shadow-lg rounded-4xl bg-light-bg-secondary dark:bg-dark-bg-tertiary py-6 px-2 tiny:px-6 select-none">

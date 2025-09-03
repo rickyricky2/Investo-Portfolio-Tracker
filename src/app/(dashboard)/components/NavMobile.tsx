@@ -13,7 +13,7 @@ import AddAssetButton from "../components/addAssetButton";
 export default function NavMobile(){
     const router = useRouter();
     const wrapperRef = useRef<HTMLDivElement>(null);
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
     const [userData, setUserData] = useState({
         id: "",
         email: "",
@@ -50,7 +50,6 @@ export default function NavMobile(){
             const data = await res.json();
 
             if(!data.loggedIn){
-                console.log(data?.message);
                 router.push("/login");
             }
 

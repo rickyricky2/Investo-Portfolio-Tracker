@@ -28,12 +28,10 @@ const sendEmail = async  (to: string) => {
                 <p>If you didn’t change your password, please reset it immediately or contact support.</p>
                 <p>The Investo Team</p>`
     });
-    console.log("message sent: ", mail.messageId);
 }
 
 export async function POST(req:Request) {
     const {token,password1} = await req.json();
-    console.log(token, password1);
 
     if(!token || !password1) {
         return NextResponse.json({success:false,error:"Internal Error Occurred"},{status: 500});

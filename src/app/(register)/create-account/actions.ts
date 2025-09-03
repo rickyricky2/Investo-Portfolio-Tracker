@@ -30,7 +30,6 @@ const sendWelcomeEmail = async  (to: string, emailToken:string) => {
                 <a href="http://localhost:3000/verify-email?token=${emailToken}" style="background:#4CAF50; color:white; padding:10px 20px; border-radius:4px; text-decoration:none;">Confirm your email</a>
                 <p>If you didn’t create this account, you can ignore this email.</p>`,
     });
-    console.log("message sent: ", mail.messageId);
 }
 
 // schemat do walidacji

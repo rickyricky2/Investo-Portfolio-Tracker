@@ -19,8 +19,6 @@ export async function POST(){
 
         const data = await res.json();
 
-        console.log(data);
-
         await dataStoreCollection.updateOne(
             {_id: asset._id},
             {$set: {

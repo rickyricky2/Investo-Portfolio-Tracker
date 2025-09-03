@@ -2,7 +2,7 @@
 import jwt from "jsonwebtoken";
 import {cookies} from "next/headers";
 import {NextResponse} from "next/server";
-import clientPromise from "@/lib/db";
+import {getCollection} from "@/lib/db";
 
 export async function GET(){
     try{
@@ -24,9 +24,7 @@ export async function GET(){
         };
 
     //     grab user data here
-        const client = await clientPromise;
-        const db = client.db("investodb");
-        const users = db.collection('users');
+        const users = await getCollection("users");
 
         const email = decoded.email;
 

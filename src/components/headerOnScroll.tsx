@@ -20,7 +20,7 @@ export default function HeaderOnScroll() {
     }, []);
 
     return(
-        <header className={`bg-light-main dark:bg-dark-main sm:sticky top-0 tracking-tight z-20 shadow-md backdrop-blur-xl opacity-99 transition-all duration-1000`}>
+        <header className={`main-gradient sm:sticky top-0 tracking-tight z-20 shadow-md backdrop-blur-xl opacity-99 transition-all duration-1000`}>
             <div className={`sm:flex justify-between transition-all duration-1000 px-4 lg:px-10 py-1 items-center w-full
                 ${scrolled ? "sm:py-0 ":"sm:py-2"}`}>
                 <Link href={"/"} className={"lg:ml-10"}>

@@ -59,3 +59,10 @@
     background-size:200% 200%;
 }
 
+.main-gradient{
+    background: linear-gradient(180deg,var(--color-light-main),hsl(300,70%,80%));
+}
+.dark .main-gradient{
+    background: linear-gradient(180deg,var(--color-dark-main),hsl(266,50%,28%));
+}
+

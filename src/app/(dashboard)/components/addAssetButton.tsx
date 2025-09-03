@@ -215,7 +215,6 @@ export default function AddAssetButton({mobile}: {mobile: boolean;}) {
                         required
                         onChange={ (e) => {
                             setType(e.target.value);
-                            console.log(e.target.value);
                             setNotAddDataManually(typesWithTicker.includes(e.target.value));
                         }}
                     >

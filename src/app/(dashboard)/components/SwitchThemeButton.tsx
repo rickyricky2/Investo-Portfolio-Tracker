@@ -49,7 +49,7 @@ export default function SwitchThemeButton({type}:{type:string}){
     }
     else if(type === "vertical"){
         return(
-            <div className={"rounded-full bg-light-bg-tertiary dark:bg-dark-bg-tertiary border-2 border-light-text-tertiary dark:border-dark-text-tertiary flex shrink-0 flex-col items-center shadow-sm justify-between h-[90px] mb-5 w-[48px] overflow-hidden"}>
+            <div className={"rounded-full z-[1000] bg-light-bg-tertiary dark:bg-dark-bg-tertiary border-2 border-light-text-tertiary dark:border-dark-text-tertiary flex shrink-0 flex-col items-center shadow-sm justify-between h-[90px] mb-5 w-[48px] overflow-hidden"}>
                 <div className={` bg-transparent text-light-text-tertiary  dark:text-dark-text-tertiary  w-full h-[44px] rounded-full overflow-hidden flex items-center justify-center transition 
                 ${theme === "dark" ? "translate-y-[42px]" : ""}` }
                      onClick={handleThemeClick}>
