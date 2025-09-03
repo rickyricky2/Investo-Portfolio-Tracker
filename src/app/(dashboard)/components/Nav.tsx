@@ -1,13 +1,12 @@
 "use client";
 import Link from "next/link";
-import {  MdOutlineAccountCircle  } from "react-icons/md";
+import {  MdOutlineAccountCircle, MdOutlineDashboard  } from "react-icons/md";
 import SwitchThemeButton from "./SwitchThemeButton";
 import { useState,useEffect } from 'react';
 import {useRouter} from "next/navigation";
 // icons
 
 import { CiSettings } from "react-icons/ci";
-import { MdOutlineDashboard } from "react-icons/md";
 import { RiLogoutCircleLine } from "react-icons/ri";
 import { HiOutlineWallet } from "react-icons/hi2";
 
@@ -35,7 +34,7 @@ export default function Nav() {
         },
         {
             icons: <CiSettings size={30} />,
-            label: 'Setting',
+            label: 'Settings',
             url: `${userData.id}/settings`
         },
     ]
@@ -106,7 +105,7 @@ export default function Nav() {
                                 <Link href={`/${item.url}`} className={"flex items-center gap-2"}>
                                     <div>{item.icons}</div>
                                     <p className={`${!open && 'w-0 translate-x-24 opacity-0'} duration-500 overflow-hidden`}>{item.label}</p>
-                                    <p className={`${open && 'hidden'} absolute left-32 shadow-xl rounded-xl
+                                    <p className={`${open && 'hidden'}  absolute left-32 shadow-xl rounded-xl
                                          w-0 p-0 text-light-text-tertiary dark:text-dark-text-tertiary bg-[hsl(266,40%,94%)] dark:bg-[hsl(259,17%,25%)] font-medium duration-100 overflow-hidden group-hover:w-fit group-hover:p-2 group-hover:left-16
                                         `}>{item.label}
                                     </p>

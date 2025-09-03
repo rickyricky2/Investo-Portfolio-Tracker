@@ -11,7 +11,7 @@ export default function WalletHeader({filters,onFilterChange}: {filters:Filters;
                     <AssetFilters filters={filters} onFilterChange={onFilterChange}/>
                 </div>
                 <div className={"hidden lg:block"}>
-                    <AddAssetButton mobile={false} />
+                    <AddAssetButton mobile={false}/>
                 </div>
             </div>
         </header>

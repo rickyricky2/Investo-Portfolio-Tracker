@@ -4,7 +4,6 @@ import {Asset,SortKey,SortConfig} from "@/types/assets";
 import WalletTable from "../components/WalletTable";
 import {walletProps} from "@/types/wallet";
 import {useWalletStore} from "@/store/useWalletStore";
-//import {typesWithTicker} from "@/content/assetContent";
 import {Filters} from "./walletPageClient";
 
 export const tableHeaders: {label:string, key:SortKey}[] = [
@@ -39,7 +38,7 @@ function formatDate(date:string) {
     });
 }
 
-export default function WalletAssets({filters}: {filters: Filters}){
+export default function WalletAssets({filters}: {filters: Filters;}){
     const [assets, setAssets] = useState<Asset[]>([]);
     const [error, setError] = useState<string>("");
     const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -77,8 +76,8 @@ export default function WalletAssets({filters}: {filters: Filters}){
             }
 
             assets[asset].totalValue = assets[asset].lastUnitPrice ? assets[asset].lastUnitPrice * assets[asset].quantity : assets[asset].purchaseUnitPrice * assets[asset].quantity  ;
-            assets[asset].profit_loss = Number(assets[asset].totalValue - assets[asset].purchaseUnitPrice * assets[asset].quantity).toFixed(2);
-            assets[asset].profit_lossPercent = Number( (assets[asset].totalValue - assets[asset].purchaseUnitPrice * assets[asset].quantity) / assets[asset].purchaseUnitPrice * 100).toFixed(2);
+            assets[asset].profit_loss = Number(assets[asset].totalValue - (assets[asset].purchaseUnitPrice * assets[asset].quantity)).toFixed(2);
+            assets[asset].profit_lossPercent = Number( (assets[asset].profit_loss / (assets[asset].purchaseUnitPrice * assets[asset].quantity)) * 100).toFixed(2);
         }
         setAssets(assets);
     }

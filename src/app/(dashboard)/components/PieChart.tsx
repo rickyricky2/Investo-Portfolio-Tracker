@@ -59,6 +59,7 @@ export default function PieChart({isLoading,assets, type}: {isLoading:boolean; a
 
             }
         }
+        totalCount = Number(totalCount.toFixed(2));
 
         data = Object.entries(map).map( ([key, val]) => ({
             id:key,

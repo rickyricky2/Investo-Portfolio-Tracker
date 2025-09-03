@@ -2,7 +2,6 @@
 import Nav from "../components/Nav";
 import NavMobile from "../components/NavMobile";
 
-
 export default function UserPageClient({children}: { children: React.ReactNode; }) {
 
     return (

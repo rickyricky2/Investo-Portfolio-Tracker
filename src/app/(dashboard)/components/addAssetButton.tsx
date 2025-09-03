@@ -4,14 +4,17 @@ import React, { useState,useEffect, useRef } from 'react';
 import { useWalletStore } from "@/store/useWalletStore";
 import {z} from "zod";
 import {formAssets,typesWithTicker,countries, currencies, assetTypes} from "@/content/assetContent";
+import {useNotification} from "./changeNotification";
 
 let assetSchema;
 
-export default function AddAssetButton({mobile}: {mobile: boolean}) {
+export default function AddAssetButton({mobile}: {mobile: boolean;}) {
     const [isOpen,setIsOpen]=useState(false);
     const [error, setError]=useState("");
     const [isLoading, setIsLoading]=useState(false);
     const wrapperRef = useRef<HTMLDivElement>(null);
+
+    const { showNotification } = useNotification();
 
     const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
@@ -183,6 +186,7 @@ export default function AddAssetButton({mobile}: {mobile: boolean}) {
             setError("could not save data");
         }
 
+        showNotification(`Asset has been added!`);
         triggerRefresh();
         setIsOpen(false);
         setIsLoading(false);

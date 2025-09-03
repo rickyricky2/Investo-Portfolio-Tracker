@@ -4,9 +4,9 @@ import {useEffect, useRef, useState} from "react";
 import SwitchThemeButton from "../components/SwitchThemeButton";
 import {useRouter} from "next/navigation";
 
-import {IoLogoBuffer} from "react-icons/io";
 import { HiOutlineWallet } from "react-icons/hi2";
-import { MdOutlineAccountCircle,MdOutlineDashboard  } from "react-icons/md";
+import { IoSettingsOutline } from "react-icons/io5";
+import { MdOutlineDashboard  } from "react-icons/md";
 
 import AddAssetButton from "../components/addAssetButton";
 
@@ -83,9 +83,9 @@ export default function NavMobile(){
             url: `${userData.id}/wallet`
         },
         {
-            icons: <IoLogoBuffer size={30} />,
-            label: 'Account',
-            url: `${userData.id}/`
+            icons: <IoSettingsOutline size={30} />,
+            label: 'Settings',
+            url: `${userData.id}/settings`
         },
     ]
 
@@ -111,10 +111,10 @@ export default function NavMobile(){
                             <p className={`text-sm font-medium leading-2 mb-3`}>Add Asset</p>
                         </li>
                         <li className={"flex flex-col justify-center items-center tracking-tighter"}>
-                            <Link href={`/${userData.id}/account`} >
-                                <MdOutlineAccountCircle size={20} />
+                            <Link href={`/${userData.id}/settings`} >
+                                <IoSettingsOutline size={20} />
                             </Link>
-                            <p className={`text-sm font-medium`}>Account</p>
+                            <p className={`text-sm font-medium`}>Settings</p>
                         </li>
                         <button onClick={handleSidebarToggle} className={`h-full ${open ? "" : ""}`}>
                             <div className={"w-full flex flex-col items-center gap-y-1"}>
@@ -126,7 +126,10 @@ export default function NavMobile(){
                     </ul>
                 </div>
             </nav>
-            <nav ref={wrapperRef} className={`fixed flex flex-col py-4 justify-end items-center gap-70 right-0 top-0 z-30 shadow-md  bg-light-bg-tertiary text-light-text-tertiary dark:bg-dark-bg-tertiary dark:text-dark-text-tertiary w-fit sm:w-[150px] md:w-[200px] min-h-screen transition ${open ? "" : "translate-x-100"}`}>
+            <nav ref={wrapperRef} className={`fixed flex flex-col py-4 justify-between items-center  right-0 top-0 z-30 shadow-md  bg-light-bg-tertiary text-light-text-tertiary dark:bg-dark-bg-tertiary dark:text-dark-text-tertiary w-fit sm:w-[150px] md:w-[200px] h-screen transition ${open ? "" : "translate-x-100"}`}>
+                <div className={"text-3xl font-medium"}>
+                    investo
+                </div>
                     <ul className={"py-5 font-medium"}>
                         {menuItems.map((item, index) => {
                             return(

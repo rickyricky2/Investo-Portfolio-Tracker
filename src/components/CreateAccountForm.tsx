@@ -137,7 +137,7 @@ export default function CreateAccountForm() {
                     <button type={"submit"}
                             disabled={isPending}
                             className={"text-2xl px-5 py-4 m-auto bg-light-secondary dark:bg-dark-bg-secondary active:bg-light-tertiary dark:active:bg-[#4a426ec9] text-light-text-secondary dark:text-dark-text rounded-lg transition hover:scale-105 hover:-translate-y-2 hover:shadow-2xl"}>
-                        {isPending ? 'Creating account..' : 'Create Account' }</button>
+                        {isPending ? 'Creating settings..' : 'Create Account' }</button>
                 </article>
 
             </form>

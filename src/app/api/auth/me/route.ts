@@ -47,7 +47,7 @@ export async function GET(){
                 id: user._id,
                 email: user.email,
                 firstName: user.firstName,
-                lastName: user.lasttName,
+                lastName: user.lastName,
             }
         },{status:200});
 

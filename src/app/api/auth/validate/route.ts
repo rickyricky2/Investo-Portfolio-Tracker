@@ -8,7 +8,6 @@ export async function GET(request: Request) {
     if (!token) {
         return NextResponse.json({ loggedIn: false }, { status: 401 });
     }
-
     try {
         const decoded = jwt.verify(token, process.env.LOGIN_SECRET!) as {
             userId: string;

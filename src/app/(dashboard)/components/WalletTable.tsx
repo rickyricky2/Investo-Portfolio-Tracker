@@ -6,11 +6,15 @@ import {walletProps} from "@/types/wallet";
 import React, {useState} from "react";
 import {useWalletStore} from "@/store/useWalletStore";
 import {Asset} from "@/types/assets";
+import {useNotification} from "@/app/(dashboard)/components/changeNotification";
 
 export default function WalletTable({tableHeaders, isLoading, handleSort, sortedFilteredAssets, error, getAssets}: walletProps) {
     const [editingId, setEditingId] = useState<string | null>(null);
     const [editedValues, setEditedValues] = useState<Asset>({} as Asset);
     const [expandedRows, setExpandedRows] = useState<Record<string, boolean>>({});
+
+    const { showNotification } = useNotification();
+
     const triggerRefresh = useWalletStore((state) => state.triggerRefresh);
 
     // quantity of items on page
@@ -65,6 +69,7 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
         if (!data.success) {
             console.error(data.error);
         }
+        showNotification("Asset have been modified");
         cancelEditing();
         triggerRefresh();
     };
@@ -201,7 +206,7 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                     <MdCancel size={26} className={"text-light-error-text dark:text-dark-error-text cursor-pointer"} onClick={cancelEditing} />
                                                 </div>
                                             ) : (
-                                                <AssetModifyMenu id={asset._id} refresh={getAssets} handleEdit={() => startEditing(asset)} />
+                                                <AssetModifyMenu id={asset._id} refresh={getAssets} showNotification={showNotification} handleEdit={() => startEditing(asset)} />
                                             )}
                                         </td>
                                     </tr>

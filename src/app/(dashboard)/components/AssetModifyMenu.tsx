@@ -2,7 +2,7 @@
 import { FaRegTrashAlt } from "react-icons/fa";
 import { IoPencil } from "react-icons/io5";
 
-export default function AssetModifyMenu({id,refresh, handleEdit}: {id: string;refresh: () => void; handleEdit: (id:string) => void}) {
+export default function AssetModifyMenu({id,refresh,showNotification, handleEdit}: {id: string;refresh: () => void;showNotification: (message?: string) => void; handleEdit: (id:string) => void}) {
     const handleDelete = async (id:string) =>{
 
         const res = await fetch("/api/user/assets",{
@@ -16,6 +16,7 @@ export default function AssetModifyMenu({id,refresh, handleEdit}: {id: string;re
         if(!data.success){
             console.error(data?.error);
         }
+        showNotification("Asset have been deleted!");
         refresh();
     }
 

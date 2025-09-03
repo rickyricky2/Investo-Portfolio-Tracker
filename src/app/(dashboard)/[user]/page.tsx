@@ -9,7 +9,7 @@ export const metadata: Metadata = {
 export default function DashboardPage(){
 
     return(
-        <div className={"container min-h-screen max-w-[100%] tracking-tight"}>
+        <div className={"min-h-screen w-full tracking-tight"}>
             <PortfolioDashboard/>
         </div>
     );

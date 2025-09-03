@@ -2,8 +2,7 @@
 import PortfolioDashboardHeaderCards from './PortfolioDashboardHeaderCards';
 import MainChart from "./MainChart";
 import PieCharts from "./PieCharts";
-//import {typesWithTicker} from "@/content/assetContent";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {Asset} from "@/types/assets";
 import {useWalletStore} from "@/store/useWalletStore";
 
@@ -29,7 +28,6 @@ export default function PortfolioDashboard(){
     const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
     const getAssets = async () =>{
-        setIsLoading(true);
         const res = await fetch(`${baseURL}/api/user/assets`,{
             method: "GET",
         });
@@ -42,83 +40,88 @@ export default function PortfolioDashboard(){
         }
 
         const assets = data.assets;
-        let tempNumberOfInvestments = 0;
-        let tempTotalInvestedAmount = 0;
-        let tempTotalProfitLoss = 0;
-        let tempTotalInvestmentsValue = 0;
         let tempMainCurrency= "";
-        let tempTotalProfitLossPercent = 0;
 
-        for(const asset in assets){
+        const promises = assets.map( async (asset) =>{
+            const temp = {...asset};
 
-            tempNumberOfInvestments = tempNumberOfInvestments + 1;
-            tempTotalInvestedAmount = tempTotalInvestedAmount + (Number(assets[asset].purchaseUnitPrice) * Number(assets[asset].quantity));
-
-            if(assets[asset].addedManually){
-                assets[asset].dailyChange = "";
-                assets[asset].dailyChangePercent = "";
+            if(temp.addedManually){
+                temp.dailyChange = "";
+                temp.dailyChangePercent = "";
             }else{
-                assets[asset].dailyChange = Number(Number(assets[asset].dailyChange).toFixed(2));
-                assets[asset].dailyChangePercent =  Number(Number(assets[asset].dailyChangePercent).toFixed(2));
+                temp.dailyChange = Number(Number(temp.dailyChange).toFixed(2));
+                temp.dailyChangePercent =  Number(Number(temp.dailyChangePercent).toFixed(2));
             }
 
             tempMainCurrency = localStorage.getItem("mainCurrency") || "USD";
 
-            if(assets[asset].currency !== tempMainCurrency){
-                const res = await fetch(`${baseURL}/api/exchangeRates?base=${assets[asset].currency}&mainCurrency=${tempMainCurrency}`,{
+            if(temp.currency !== tempMainCurrency){
+                const res = await fetch(`${baseURL}/api/exchangeRates?base=${temp.currency}&mainCurrency=${tempMainCurrency}`,{
                     method: "GET",
                     headers: {"Content-Type": "application/json"},
                 });
-
                 const data = await res.json();
-
-                if(!data.success) {
-                    console.error("ERROR");
+                if(data.success) {
+                    temp.purchaseUnitPrice = Number(Number(temp.purchaseUnitPrice * data.rate).toFixed(2));
+                    temp.lastUnitPrice = Number(Number(temp.lastUnitPrice * data.rate).toFixed(2));
                 }
-                assets[asset].purchaseUnitPrice = Number(Number(assets[asset].purchaseUnitPrice * data.rate).toFixed(2));
-                assets[asset].lastUnitPrice = Number(Number(assets[asset].lastUnitPrice * data.rate).toFixed(2));
             }
 
-            assets[asset].profit_loss = Number(Number(assets[asset].lastUnitPrice - assets[asset].purchaseUnitPrice).toFixed(2));
-            assets[asset].profit_lossPercent = Number(Number( (assets[asset].lastUnitPrice - assets[asset].purchaseUnitPrice) / assets[asset].purchaseUnitPrice * 100).toFixed(2));
-            assets[asset].totalValue = assets[asset].lastUnitPrice ? assets[asset].lastUnitPrice * assets[asset].quantity : assets[asset].purchaseUnitPrice * assets[asset].quantity;
+            if(temp.purchaseUnitPrice && Number(temp.purchaseUnitPrice) > 0){
+                temp.profit_loss = Number(Number(temp.lastUnitPrice - temp.purchaseUnitPrice).toFixed(2));
+                temp.profit_lossPercent = Number(Number( (temp.lastUnitPrice - temp.purchaseUnitPrice) / temp.purchaseUnitPrice * 100).toFixed(2));
+            }else{
+                temp.profit_loss = 0;
+                temp.profit_lossPercent = 0;
+            }
+            temp.totalValue = temp.lastUnitPrice ? temp.lastUnitPrice * temp.quantity : temp.purchaseUnitPrice * temp.quantity;
 
-            tempTotalInvestmentsValue = tempTotalInvestmentsValue + (Number(assets[asset].lastUnitPrice) * Number(assets[asset].quantity)) ;
-            tempTotalProfitLoss = tempTotalProfitLoss + assets[asset].profit_loss!;
-            tempTotalProfitLossPercent = tempTotalProfitLossPercent + assets[asset].profit_loss! / Number(assets[asset].purchaseUnitPrice) * 100;
-        }
+            return temp;
+        });
 
-        setAssets(assets);
+        const normalizedAssets = await Promise.all(promises);
 
-        setNumberOfInvestments( tempNumberOfInvestments );
-        setTotalInvestedAmount( Number(tempTotalInvestedAmount.toFixed(2)) );
-        setTotalProfitLoss( tempTotalProfitLoss);
-        setTotalProfitLossPercent(tempTotalProfitLossPercent);
-        setTotalInvestmentsValue( tempTotalInvestmentsValue);
+        let totalInvestedAmount = 0;
+        let totalInvestmentsValue = 0;
+        let totalNumberOfInvestments = 0;
+
+        normalizedAssets.forEach((asset) => {
+            totalInvestedAmount += (Number(asset.purchaseUnitPrice) || 0) * (Number(asset.quantity) || 0);
+            totalInvestmentsValue += asset.totalValue || 0;
+            totalNumberOfInvestments += 1;
+        });
+
+        const totalProfitLoss = totalInvestedAmount > 0 ? totalInvestmentsValue - totalInvestedAmount : 0;
+        const totalProfitLossPercent = totalInvestedAmount > 0 ? (totalProfitLoss/totalInvestedAmount) * 100 : 0;
+
+        setAssets(normalizedAssets);
+        setNumberOfInvestments( totalNumberOfInvestments );
+        setTotalInvestedAmount( Number(totalInvestedAmount.toFixed(2)) );
+        setTotalProfitLoss( totalProfitLoss);
+        setTotalProfitLossPercent( totalProfitLossPercent);
+        setTotalInvestmentsValue( totalInvestmentsValue);
         setMainCurrency(tempMainCurrency);
 
-        setIsLoading(false);
+    }
+    const getUserInfo = async () => {
+        const res = await fetch(`${baseURL}/api/auth/me`);
+        const data = await res.json();
+        if(!data.success){
+            throw Error(data.error);
+        }
+        setUser(data.user);
     }
 
     const { refreshTrigger } = useWalletStore();
 
     useEffect(()=> {
-        getAssets();
-    }, [refreshTrigger]);
-
-    useEffect( () => {
-        const getUserInfo = async () => {
+        const fetchData = async () => {
             setIsLoading(true);
-            const res = await fetch(`${baseURL}/api/auth/me`);
-            const data = await res.json();
-            if(!data.success){
-                throw Error(data.error);
-            }
-            setUser(data.user);
+            await Promise.all([getUserInfo(),getAssets()]);
             setIsLoading(false);
         }
-        getUserInfo();
-    },[]);
+        fetchData();
+    }, [refreshTrigger]);
 
     const headerValues = [
         {
@@ -138,22 +141,26 @@ export default function PortfolioDashboard(){
 
     return(
         <div className={"px-2"}>
-        <header className={"my-5 px-2"}>
-            <h2 className={"text-4xl bg-[linear-gradient(130deg,var(--color-light-main),hsl(300,70%,78%))] dark:bg-[linear-gradient(130deg,var(--color-dark-main),hsl(266,70%,25%))] bg-clip-text text-transparent lg:text-5xl tracking-tight text-left font-bold  flex flex-col"}>
-                Hi
-                <span className={"my-2 capitalize"}>
-                {user.firstName + (user.lastName ? " " + user.lastName : "")}!
-                </span>
-            </h2>
-        </header>
-        <main className={`
-               text-light-text dark:text-dark-text
-                w-full min-h-screen tracking-tight overflow-auto`}
-        >
-            <PortfolioDashboardHeaderCards totalBalance={totalInvestmentsValue} values={headerValues} isLoading={isLoading} currency={mainCurrency}/>
-            <MainChart mainCurrency={mainCurrency} />
-            <PieCharts isLoading={isLoading} assets={assets} />
-        </main>
+            <header className={"my-5 px-2"}>
+                <h2 className={"text-4xl bg-[linear-gradient(130deg,var(--color-light-main),hsl(300,70%,78%))] dark:bg-[linear-gradient(130deg,var(--color-dark-main),hsl(266,50%,35%))] bg-clip-text text-transparent lg:text-5xl tracking-tight text-left font-bold  flex flex-col"}>
+                    Hi
+                    <span className={"my-2 capitalize"}>
+                        {isLoading ? (
+                            <div className="w-24 h-6 bg-transparent rounded animate-pulse"/>
+                        ) : (
+                            <span>{user.firstName}!</span>
+                        )}
+                    </span>
+                </h2>
+            </header>
+            <main className={`
+                   text-light-text dark:text-dark-text
+                    w-full min-h-screen tracking-tight overflow-auto`}
+            >
+                <PortfolioDashboardHeaderCards totalBalance={totalInvestmentsValue} values={headerValues} isLoading={isLoading} currency={mainCurrency}/>
+                <MainChart mainCurrency={mainCurrency} />
+                <PieCharts isLoading={isLoading} assets={assets} />
+            </main>
         </div>
     );
 }
