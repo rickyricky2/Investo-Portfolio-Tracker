@@ -20,7 +20,7 @@ const sendWelcomeEmail = async  (to: string, emailToken:string) => {
         },
     });
 
-    const mail = await transporter.sendMail({
+    await transporter.sendMail({
         from: `"Investo Team" <${process.env.SMTP_USERNAME}>`,
         to,
         subject: "Welcome to investo",
