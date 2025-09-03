@@ -16,7 +16,7 @@ const sendVerificationEmail = async  (to: string,token:string) => {
         },
     });
 
-    const mail = await transporter.sendMail({
+    await transporter.sendMail({
         from: `"Investo Team" <${process.env.SMTP_USERNAME}>`,
         to,
         subject: "New verification link",
