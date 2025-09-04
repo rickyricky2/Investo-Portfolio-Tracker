@@ -5,6 +5,7 @@ import PieCharts from "./PieCharts";
 import React, {useEffect, useState} from "react";
 import {Asset} from "@/types/assets";
 import {useWalletStore} from "@/store/useWalletStore";
+import {useAuth} from "@/app/(dashboard)/components/AuthContext";
 
 type userData = {
     id: string;
@@ -25,6 +26,8 @@ export default function PortfolioDashboard(){
     const [totalProfitLossPercent,setTotalProfitLossPercent] = useState(0);
     const [mainCurrency,setMainCurrency] = useState("");
 
+    const { data } = useAuth();
+
     const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
     const getAssets = async () =>{
@@ -40,7 +43,7 @@ export default function PortfolioDashboard(){
         }
 
         const assets = data.assets;
-        let tempMainCurrency= "";
+        const tempMainCurrency = localStorage.getItem("mainCurrency") || "USD";
 
         const promises = assets.map( async (asset:Asset) =>{
             const temp = {...asset};
@@ -53,16 +56,29 @@ export default function PortfolioDashboard(){
                 temp.dailyChangePercent =  Number(Number(temp.dailyChangePercent).toFixed(2));
             }
 
-            tempMainCurrency = localStorage.getItem("mainCurrency") || "USD";
-
             if(temp.currency !== tempMainCurrency){
-                const res = await fetch(`${baseURL}/api/exchangeRates?base=${temp.currency}&mainCurrency=${tempMainCurrency}`,{
+                let res = await fetch(`${baseURL}/api/historicalRates?purchaseDate=${temp.purchaseDate}`,{
                     method: "GET",
                     headers: {"Content-Type": "application/json"},
                 });
-                const data = await res.json();
+                let data = await res.json();
+                if(data.success){
+                    if(temp.currency === "USD"){
+                        temp.purchaseUnitPrice = Number(Number(temp.purchaseUnitPrice * data.rates[tempMainCurrency]).toFixed(2));
+                    }else{
+                        if(tempMainCurrency === "USD"){
+                            temp.purchaseUnitPrice = Number(Number(temp.purchaseUnitPrice / data.rates[temp.currency]).toFixed(2));
+                        }else{
+                            temp.purchaseUnitPrice = Number(Number((temp.purchaseUnitPrice / data.rates[temp.currency]) * data.rates[tempMainCurrency]).toFixed(2));
+                        }
+                    }
+                }
+                res = await fetch(`${baseURL}/api/exchangeRates?base=${temp.currency}&mainCurrency=${tempMainCurrency}`,{
+                    method: "GET",
+                    headers: {"Content-Type": "application/json"},
+                });
+                data = await res.json();
                 if(data.success) {
-                    temp.purchaseUnitPrice = Number(Number(temp.purchaseUnitPrice * data.rate).toFixed(2));
                     temp.lastUnitPrice = Number(Number(temp.lastUnitPrice * data.rate).toFixed(2));
                 }
             }
@@ -101,15 +117,11 @@ export default function PortfolioDashboard(){
         setTotalProfitLossPercent( totalProfitLossPercent);
         setTotalInvestmentsValue( totalInvestmentsValue);
         setMainCurrency(tempMainCurrency);
-
     }
     const getUserInfo = async () => {
-        const res = await fetch(`${baseURL}/api/auth/me`);
-        const data = await res.json();
-        if(!data.success){
-            throw Error(data.error);
+        if(data && data.loggedIn){
+            setUser(data.user!);
         }
-        setUser(data.user);
     }
 
     const { refreshTrigger } = useWalletStore();
@@ -121,7 +133,7 @@ export default function PortfolioDashboard(){
             setIsLoading(false);
         }
         fetchData();
-    }, [refreshTrigger]);
+    }, [refreshTrigger, data]);
 
     const headerValues = [
         {

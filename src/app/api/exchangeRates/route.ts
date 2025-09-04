@@ -1,16 +1,10 @@
 import { NextResponse } from "next/server";
-import clientPromise from "@/lib/db";
+import {getCollection} from "@/lib/db";
 
 
 function isOlderThanOneHour(updatedAt: Date): boolean {
     const oneHour = 1000 * 60 * 60;
     return new Date().getTime() - new Date(updatedAt).getTime() > oneHour;
-}
-
-async function getExchangeRates() {
-    const client = await clientPromise;
-    const db = client.db("investodb");
-    return db.collection("exchangeRates");
 }
 
 export async function GET(req: Request) {
@@ -23,7 +17,7 @@ export async function GET(req: Request) {
             return NextResponse.json({success:false, error: "Missing base or mainCurrency" }, { status: 400 });
         }
 
-        const exchangeRates = await getExchangeRates();
+        const exchangeRates = await getCollection("exchangeRates");
         const existing = await exchangeRates.findOne({ base, mainCurrency });
 
         if (!existing) {

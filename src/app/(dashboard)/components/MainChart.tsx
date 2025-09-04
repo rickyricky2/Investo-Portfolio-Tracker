@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ResponsiveLine } from "@nivo/line";
 import { FaSpinner } from "react-icons/fa";
+import {useAuth} from "@/app/(dashboard)/components/AuthContext";
 
 type Snapshot = {
     date: string;
@@ -14,31 +15,28 @@ export default function MainChart({mainCurrency}: {mainCurrency: string}) {
     const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
+    const {data} = useAuth();
+
     const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
     useEffect(() => {
         const fetchSnapshots = async () => {
             try {
                 setIsLoading(true);
-                let res = await fetch(`${baseURL}/api/auth/me`,{
-                    method: "GET",
-                    headers: { "Content-Type": "application/json" },
-                });
-                const userData = await res.json();
-                if(!userData.success){
-                    console.error(userData);
+                if(!data || !data.loggedIn){
+                    console.warn("token not found");
                     return;
                 }
-                const userId =  userData.user.id;
-                res = await fetch(`${baseURL}/api/user/walletSnapshots?userId=${userId}`,{
+                const userId =  data.user!.id;
+                const res = await fetch(`${baseURL}/api/user/walletSnapshots?userId=${userId}`,{
                     method: "GET",
                     headers: { "Content-Type": "application/json" },
                 });
 
-                const data = await res.json();
+                const json = await res.json();
 
-                if(data.success) {
-                    setSnapshots(data.snapshots);
+                if(json.success) {
+                    setSnapshots(json.snapshots);
                 }else{
                     console.error("Failed to get snapshots");
                 }
@@ -50,7 +48,7 @@ export default function MainChart({mainCurrency}: {mainCurrency: string}) {
         };
 
         fetchSnapshots();
-    }, []);
+    }, [data]);
 
     if (isLoading) {
         return (

@@ -23,6 +23,7 @@ export type Asset = {
 
     addedManually:boolean;
     createdAt:Date | string;
+    purchaseDate:string;
     updatedAt:Date;
 };
 

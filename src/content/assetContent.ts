@@ -8,6 +8,7 @@ export const formAssets: {label:string, key:string, type:string}[] = [
     { label:"Last Price", key:"lastUnitPrice", type:"number" },
     { label:"Currency", key:"currency", type:"text" },
     { label:"Country", key:"country", type:"text" },
+    {label:"Purchase Date", key:"purchaseDate", type:"date" },
 ];
 
 export const typesWithTicker = [

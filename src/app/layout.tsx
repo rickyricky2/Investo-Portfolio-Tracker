@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import ThemeProvider from "@/components/ThemeProvider";
 import {NotificationProvider} from "@/app/(dashboard)/components/changeNotification";
+import {AuthProvider} from "@/app/(dashboard)/components/AuthContext";
 
 export const metadata: Metadata = {
   title: "Investo",
@@ -41,11 +42,13 @@ export default function RootLayout({
         <body
             className={`antialiased tracking-tight bg-gradient`}
             >
-            <NotificationProvider>
-                <ThemeProvider>
-                    {children}
-                </ThemeProvider>
-            </NotificationProvider>
+            <AuthProvider>
+                <NotificationProvider>
+                    <ThemeProvider>
+                        {children}
+                    </ThemeProvider>
+                </NotificationProvider>
+            </AuthProvider>
         </body>
     </html>
   );

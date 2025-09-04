@@ -10,6 +10,7 @@ import {z} from "zod";
 import bcrypt from "bcryptjs";
 import {useNotification} from "./changeNotification";
 import {ReactElement} from "react";
+import {useAuth} from "@/app/(dashboard)/components/AuthContext";
 
 const emailSchema = z.object({
     email: z.string().email("Incorrect email format, try example@email.com").min(1, "Enter your email address"),
@@ -75,24 +76,21 @@ export default function SettingsClient(){
     const [password, setPassword] = useState<string>("");
 
     const { showNotification } = useNotification();
+    const { data } = useAuth();
 
     const grabUserCredentials = async () => {
-        const res = await fetch(`${baseURL}/api/auth/me`,{
-            method: "GET",
-        });
-        const data = await res.json();
-        if(!data.success){
-            console.error(data.error);
+        if(!data || !data.loggedIn){
+            console.error("Could not fetch user credentials from api");
         }else{
             setSettings( prev => ({
                 ...prev,
                 userCredentials: {
                     ...prev.userCredentials,
-                    data: data.user.firstName + " " + data.user.lastName,
+                    data: data.user!.firstName + " " + data.user!.lastName,
                 },
                 email: {
                     ...prev.email,
-                    data: data.user.email,
+                    data: data.user!.email,
                 },
             }));
         }

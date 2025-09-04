@@ -23,7 +23,7 @@ if (process.env.NODE_ENV === "development") {
     client = new MongoClient(uri);
     clientPromise = client.connect();
 }
-export async function getCollection(str: "users"|"assets"|"dataStore"|"exchangeRates"|"portfolioSnapshots") {
+export async function getCollection(str: "users"|"assets"|"dataStore"|"exchangeRates"|"portfolioSnapshots"|"historicalRates") {
     const client = await clientPromise;
     const db = client.db("investodb");
     return db.collection(str);

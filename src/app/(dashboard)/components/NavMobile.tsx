@@ -9,6 +9,7 @@ import { IoSettingsOutline } from "react-icons/io5";
 import { MdOutlineDashboard  } from "react-icons/md";
 
 import AddAssetButton from "../components/addAssetButton";
+import {useAuth} from "@/app/(dashboard)/components/AuthContext";
 
 export default function NavMobile(){
     const router = useRouter();
@@ -20,6 +21,8 @@ export default function NavMobile(){
         firstName: "",
         lastName: "",
     });
+
+    const { data } = useAuth();
 
     const handleSidebarToggle = () => {
         const newState = !open
@@ -43,20 +46,14 @@ export default function NavMobile(){
 
     useEffect( () => {
         const getUserInfo = async () => {
-            const res = await fetch("/api/auth/me", {
-                method: "GET",
-            });
-
-            const data = await res.json();
-
-            if(!data.loggedIn){
+            if(!data || !data.loggedIn){
                 router.push("/login");
+                return;
             }
-
-            setUserData(data.user);
+            setUserData(data.user!);
         }
         getUserInfo();
-    },[]);
+    },[data]);
 
     useEffect(() => {
         function handleClickOutside(event: MouseEvent) {

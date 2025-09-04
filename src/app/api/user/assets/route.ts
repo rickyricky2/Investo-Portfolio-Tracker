@@ -35,6 +35,7 @@ export async function POST(req:Request){
             addedManually: !notAddDataManually,
             dailyChange: Number(rawData.dailyChange) || 0,
             dailyChangePercent: Number(rawData.dailyChangePercent) || 0,
+            purchaseDate: String(rawData.purchaseDate),
         }
 
         const email = await getUserEmail();
@@ -64,6 +65,7 @@ export async function POST(req:Request){
             addedManually:userData.addedManually,
             dailyChange: userData.dailyChange,
             dailyChangePercent: userData.dailyChangePercent,
+            purchaseDate: userData.purchaseDate,
             createdAt: new Date(),
             updatedAt: new Date(),
         });
@@ -135,6 +137,7 @@ export async function PUT(req: Request) {
                     lastUnitPrice: Number(editedValues.lastUnitPrice),
                     currency: editedValues.currency,
                     country:editedValues.country,
+                    purchaseDate: editedValues.purchaseDate,
                     updatedAt: new Date(),
                 }
             });

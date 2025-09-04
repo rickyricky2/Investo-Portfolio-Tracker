@@ -9,6 +9,7 @@ import {useRouter} from "next/navigation";
 import { CiSettings } from "react-icons/ci";
 import { RiLogoutCircleLine } from "react-icons/ri";
 import { HiOutlineWallet } from "react-icons/hi2";
+import {useAuth} from "@/app/(dashboard)/components/AuthContext";
 
 export default function Nav() {
     const [open, setOpen] = useState(true);
@@ -18,6 +19,8 @@ export default function Nav() {
         firstName: "",
         lastName: "",
     });
+
+    const { data } = useAuth();
 
     const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"
 
@@ -50,20 +53,14 @@ export default function Nav() {
 
     useEffect( () => {
         const getUserInfo = async () => {
-            const res = await fetch(`${baseURL}/api/auth/me`, {
-                method: "GET",
-            });
-
-            const data = await res.json();
-
-            if(!data.loggedIn){
+            if(!data || !data.loggedIn){
                 router.push("/login");
+                return;
             }
-
-            setUserData(data.user);
+            setUserData(data.user!);
         }
         getUserInfo();
-    },[]);
+    },[data]);
 
     const handleSidebarToggle = () => {
         const newState = !open
@@ -76,6 +73,7 @@ export default function Nav() {
             method: "POST",
         })
         router.push("/login");
+        return;
     }
 
 

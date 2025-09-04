@@ -290,11 +290,11 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                                 : <span className={"text-xl"}>{asset.country}</span>}
                                                         </div>
                                                     ) : null}
-                                                    {asset.createdAt ? (
+                                                    {asset.purchaseDate ? (
                                                         <div className={`flex items-center `}>
-                                                            <FaSort onClick={() => handleSort("createdAt")} className={"text-light-text-tertiary dark:text-dark-main cursor-pointer mr-1 "} />
-                                                            <span className="font-semibold text-dark-text-secondary">Created At:&nbsp;</span>
-                                                            <span className={"text-xl"}>{String(asset.createdAt)}</span>
+                                                            <FaSort onClick={() => handleSort("purchaseDate")} className={"text-light-text-tertiary dark:text-dark-main cursor-pointer mr-1 "} />
+                                                            <span className="font-semibold text-dark-text-secondary">Purchase Date:&nbsp;</span>
+                                                            <span className={"text-xl"}>{String(asset.purchaseDate)}</span>
                                                         </div>
                                                     ) : null}
                                                 </div>

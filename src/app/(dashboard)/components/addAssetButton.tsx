@@ -59,6 +59,7 @@ export default function AddAssetButton({mobile}: {mobile: boolean;}) {
                 currency: formData.get('currency') as string,
                 country: formData.get('country') as string || "",
                 notAddedManually:  notAddDataManually,
+                purchaseDate: formData.get("purchaseDate") as string,
             }
 
             // we add schema for validating this data
@@ -71,6 +72,13 @@ export default function AddAssetButton({mobile}: {mobile: boolean;}) {
                 lastUnitPrice: z.coerce.number().positive("Unit price must be positive").refine( (val) => Number.isFinite(val), { message: `Invalid number, try typing with "." `}),
                 currency: z.string().min(1, "U must chose currency"),
                 country: z.string().optional(),
+                purchaseDate: z.string().refine( (val) => {
+                    const inputDate = new Date(val);
+                    inputDate.setHours(0,0,0,0);
+                    return inputDate <= today;
+                },{
+                    message: "Date can not be in the future"
+                }),
             });
 
             const validateData = assetSchema.safeParse(rawData);
@@ -95,6 +103,13 @@ export default function AddAssetButton({mobile}: {mobile: boolean;}) {
                 lastUnitPrice: z.number().positive("Last price must be positive"),
                 currency: z.string().min(1, "U must chose currency"),
                 country: z.string().optional(),
+                purchaseDate: z.string().refine( (val) => {
+                    const inputDate = new Date(val);
+                    inputDate.setHours(0,0,0,0);
+                    return inputDate <= today;
+                },{
+                    message: "Date can not be in the future"
+                }),
             });
             //then we have to take some info from client.
 
@@ -103,8 +118,8 @@ export default function AddAssetButton({mobile}: {mobile: boolean;}) {
                 ticker: formData.get("ticker") as string,
                 country: formData.get("country") as string,
                 quantity: Number(formData.get('quantity')),
+                purchaseDate: formData.get("purchaseDate") as string,
             }
-
             const quantity = rawData.quantity;
 
             // then check if we have info about ticker in dataStore db and if ticker info is fresh
@@ -125,9 +140,10 @@ export default function AddAssetButton({mobile}: {mobile: boolean;}) {
                 const tickerData = data.tickerInfo;
                 rawData = {
                     ...tickerData,
-                    purchaseUnitPrice:tickerData.lastUnitPrice,
+                    purchaseUnitPrice: tickerData.lastUnitPrice,
                     quantity,
                     country,
+                    purchaseDate: rawData.purchaseDate,
                 }
             }else {
                 // if we don't have data stored for this ticker we have to call API
@@ -171,9 +187,20 @@ export default function AddAssetButton({mobile}: {mobile: boolean;}) {
                     body: JSON.stringify({rawData}),
                 })
             }
+            const validateData = assetSchema.safeParse(rawData);
+
+            if(!validateData.success){
+                setError(validateData.error.errors[0].message);
+                setIsLoading(false);
+                return;
+            }
+
+            await fetch(`${baseURL}/api/historicalRates?purchaseDate=${rawData.purchaseDate}`, {
+                method: "POST",
+                headers:{"Content-Type": "application/json"},
+            });
 
         }
-
         const res = await fetch(`${baseURL}/api/user/assets`,{
             method: "POST",
             headers:{"Content-Type": "application/json"},
@@ -195,6 +222,9 @@ export default function AddAssetButton({mobile}: {mobile: boolean;}) {
     const [type, setType] = useState("");
     const [notAddDataManually,setNotAddDataManually] = useState(true);
 
+    const today = new Date();
+    const formattedDate = today.toISOString().split("T")[0];
+
     return(
         <div className={`lg:relative text-light-text-secondary dark:text-dark-text`} ref={wrapperRef}>
             <div className={`${mobile ? "bg-transparent" : "bg-light-bg-tertiary dark:bg-dark-main"} transition-all rounded-full cursor-pointer p-1 z-100 relative group `}  >
@@ -205,7 +235,7 @@ export default function AddAssetButton({mobile}: {mobile: boolean;}) {
                     Add Asset
                 </p>
             </div>
-            <div className={`absolute bg-light-bg-tertiary dark:bg-dark-bg-tertiary text-light-text-tertiary dark:text-dark-text-tertiary z-40 shadow-2xl -top-0 max-lg:left-0 right-0 m-auto lg:top-0 lg:right-0 rounded-4xl lg:rounded-3xl transition-all p-5 tiny:p-5 w-fit overflow-hidden ${isOpen ? "min-w-[300px] w-[350px] min-h-[400px] max-lg:-translate-y-120 " : "p-0 max-w-0 max-h-0 opacity-0"}`}>
+            <div className={`fixed mx-auto bg-light-bg-tertiary dark:bg-dark-bg-tertiary text-light-text-tertiary dark:text-dark-text-tertiary z-40 shadow-2xl max-lg:left-0 right-0 m-auto lg:top-0 lg:right-0 rounded-4xl lg:rounded-3xl transition-all p-5 tiny:p-5 max-h-[80%] lg:max-h-[710px] overflow-hidden min-w-[300px] lg:min-w-0 w-[330px] lg:absolute ${isOpen ? notAddDataManually ? "overflow-y-auto max-lg:bottom-20 lg:h-[420px]" : " overflow-y-auto max-lg:bottom-20 lg:h-[820px]" : "lg:w-0 lg:h-0 lg:opacity-0 max-lg:-bottom-[1000px]"}`}>
                 <h2 className={"text-3xl my-2 font-medium text-light-secondary dark:text-dark-tertiary"}>Add Asset</h2>
                 <form onSubmit={handleSubmit} className={"text-xl w-full"}>
                     <select
@@ -259,12 +289,22 @@ export default function AddAssetButton({mobile}: {mobile: boolean;}) {
                                     ))}
                                 </select>
                             </section>
+                            <section className={"flex my-3 relative w-full"}>
+                                <input
+                                    type={"date"}
+                                    min={1}
+                                    placeholder={"Purchase Date"}
+                                    defaultValue={formattedDate}
+                                    required
+                                    name={"purchaseDate"}
+                                    className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
+                            </section>
                         </>
                     ) : type ? (
                         formAssets.map( (item,index) => {
                                 return(
                                     ![ !typesWithTicker.includes(type) ? 0 : -1,!typesWithTicker.includes(type) ? 4 : -1].includes(index) ? (
-                                        <section className={"flex my-3 relative w-full"} key={index}>
+                                        <section className={"flex my-3 relative w-full "} key={index}>
                                         {item.key === "currency" ? (
                                                 <select
                                                     name={item.key}
@@ -292,6 +332,17 @@ export default function AddAssetButton({mobile}: {mobile: boolean;}) {
                                                     <option key={index} value={c.name}>{c.name}</option>
                                                 ))}
                                             </select>
+                                        ) : item.key === "purchaseDate" ? (
+                                            <section className={"flex my-3 relative w-full"}>
+                                                <input
+                                                    type={"date"}
+                                                    min={1}
+                                                    placeholder={"Purchase Date"}
+                                                    defaultValue={formattedDate}
+                                                    required
+                                                    name={"purchaseDate"}
+                                                    className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
+                                            </section>
                                         ) : (
                                             <input
                                                 min={1}

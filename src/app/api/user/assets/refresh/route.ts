@@ -1,6 +1,5 @@
 import {NextResponse } from "next/server";
 import {getCollection} from "@/lib/db";
-// import {ObjectId} from "mongodb";
 
 // this runs every day / once a day updates every asset price
 export async function POST(){
@@ -8,7 +7,7 @@ export async function POST(){
         const assetsCollection = await getCollection("assets");
         const assets = await assetsCollection.find({addedManually: false}).toArray();
 
-        const baseURL = process.env.PUBLIC_BASE_URL || "http://localhost:3000";
+        const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
         for (const asset of assets) {
             const res = await fetch(`${baseURL}/api/dataStore?ticker=${asset.ticker}&country=${asset.country}`, {
@@ -35,8 +34,8 @@ export async function POST(){
                         updatedAt: new Date()}},
             );
         }
-        return NextResponse.json({success: "true"}, {status: 200});
-    }catch{
-        return NextResponse.json({success: false, error:"server error occurred"}, {status: 500});
+        return NextResponse.json({success: true}, {status: 200});
+    }catch(error:unknown){
+        return NextResponse.json({success: false, error}, {status: 500});
     }
 }
