@@ -6,7 +6,7 @@ export default function LoginForm( { email, isError }: { email:string; isError: 
             <input type={"text"}
                    name={"email"}
                    defaultValue={ email }
-                   className={`border-2 text-lg rounded-lg p-1 px-2 w-full sm:text-2xl outline-none focus:border-3 ${isError ? "border-light-error-border focus:border-light-error-border bg-light-error-bg text-light-error-text dark:text-dark-error-text dark:bg-dark-error-bg dark:border-dark-error dark:focus:border-dark-error" : 'focus:border-light-bg dark:focus:border-dark-tertiary '}`}/>
+                   className={`border-2 text-lg rounded-lg p-1 px-2 w-full sm:text-2xl outline-none focus:border-3 ${isError ? "border-light-error-border focus:border-light-error-border bg-light-error-bg text-light-error-text dark:text-dark-error-text dark:bg-dark-error-bg dark:border-dark-error dark:focus:border-dark-error" : ' dark:focus:border-dark-tertiary '}`}/>
         </div>
     );
 }

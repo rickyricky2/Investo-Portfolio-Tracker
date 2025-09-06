@@ -84,7 +84,7 @@ export default function Nav() {
                 <h2 className={`text-light-main dark:text-dark-main font-bold transition scale-y-110 text-4xl ${open ? 'w-10 duration-500' : 'w-0 scale-0'} rounded-md`} >
                     investo
                 </h2>
-                <button onClick={handleSidebarToggle} className={`h-full ${open ? "" : "w-full"}`}>
+                <button aria-label={"Toggle menu"} onClick={handleSidebarToggle} className={`h-full ${open ? "" : "w-full"}`}>
                     <div className={"w-full flex flex-col items-center gap-y-1"}>
                         <span className={`w-8 bg-light-text-tertiary dark:bg-dark-text-tertiary h-1 transition duration-170 rounded-full ${open? "translate-y-3 rotate-45":""}`}></span>
                         <span className={`w-8 bg-light-text-tertiary dark:bg-dark-text-tertiary h-1 transition duration-170 rounded-full ${open? "translate-y-1 rotate-45":""}`}></span>

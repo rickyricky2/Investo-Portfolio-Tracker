@@ -130,7 +130,7 @@ function MainChartComponent({mainCurrency}: {mainCurrency: string}) {
                     axis: {
                         ticks: {
                             text: {
-                                fill: "var(--color-dark-text-secondary)",
+                                fill: "var(--color-chart-axis)",
                             },
                         },
                         legend: {
@@ -148,7 +148,7 @@ function MainChartComponent({mainCurrency}: {mainCurrency: string}) {
                     },
                 }}
                 colors={"var(--color-light-main)"}
-                pointSize={5}
+                pointSize={0}
                 pointColor={ "var(--color-light-main)"}
                 pointBorderWidth={2}
                 pointBorderColor={{ from: "seriesColor" }}

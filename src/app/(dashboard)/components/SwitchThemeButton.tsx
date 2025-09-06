@@ -9,7 +9,7 @@ export default function SwitchThemeButton({type}:{type:string}){
         const savedTheme = localStorage.getItem("theme");
 
         if(!savedTheme){
-            const prefersDark:boolean = window.matchMedia("(prefers-color-scheme: dark)").matches;
+            const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
             setTheme(prefersDark ? "dark" : "light");
             return;
         }

@@ -160,7 +160,7 @@ function PieChartComponent({isLoading,assets, type}: {isLoading:boolean; assets:
                     {/*legend*/}
                     <div className="grid grid-cols-[repeat(auto-fit,minmax(200px,1fr))] gap-2">
                         {data.map(d => (
-                            <div key={d.id} className="flex items-center gap-2 text-sm font-medium text-dark-text-secondary">
+                            <div key={d.id} className="flex items-center gap-2 text-sm font-medium text-chart-axis">
                                 <span className="w-3 h-3 rounded-full" style={{ backgroundColor: d.color }} />
                                 {d.label} ({((d.value / totalCount) * 100).toFixed(1)}%)
                             </div>

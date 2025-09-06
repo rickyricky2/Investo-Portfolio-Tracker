@@ -39,6 +39,8 @@
     --color-dark-hover: #5A4B87;
     --color-dark-active: #3B3354;
 
+    --color-chart-axis:var(--color-dark-text-tertiary);
+
     --breakpoint-tiny: 400px;
     --breakpoint-320: 320px;
 }
@@ -46,6 +48,7 @@
 .dark{
     --color-light-text: var(--color-dark-text);
     --color-light-main: var(--color-dark-main);
+    --color-chart-axis:  var(--color-dark-text-secondary);
 }
 
 .bg-gradient{

@@ -246,8 +246,12 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
             <div className={`fixed mx-auto bg-light-bg-tertiary dark:bg-dark-bg-tertiary text-light-text-tertiary dark:text-dark-text-tertiary z-40 shadow-2xl max-lg:left-0 right-0 m-auto lg:top-0 lg:right-0 rounded-4xl lg:rounded-3xl transition-all p-5 tiny:p-5 max-h-[80%] lg:max-h-[710px] overflow-hidden min-w-[300px] lg:min-w-0 w-[330px] lg:absolute ${isOpen ? notAddDataManually ? "overflow-y-auto max-lg:bottom-20 lg:h-[420px]" : " overflow-y-auto max-lg:bottom-20 lg:h-[820px]" : "lg:w-0 lg:h-0 lg:opacity-0 max-lg:-bottom-[1000px]"}`}>
                 <h2 className={"text-3xl my-2 font-medium text-light-secondary dark:text-dark-tertiary"}>Add Asset</h2>
                 <form onSubmit={handleSubmit} className={"text-xl w-full"}>
+                    <label htmlFor="type-select" className="sr-only">
+                        Choose Type Of Asset
+                    </label>
                     <select
                         name="type"
+                        id={"type-select"}
                         value={type}
                         className="text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none appearance-none bg-transparent p-1 focus:bg-light-bg-tertiary dark:focus:bg-dark-bg-tertiary focus:border-b-light-text-tertiary dark:focus:border-b-dark-main"
                         required
@@ -284,7 +288,11 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                     className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
                             </section>
                             <section className={"flex my-3 relative w-full"}>
+                                <label htmlFor="country-select" className="sr-only">
+                                    Choose country
+                                </label>
                                 <select
+                                    id={"country-select"}
                                     name="country"
                                     className="text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none appearance-none bg-transparent p-1 focus:bg-light-bg-tertiary dark:focus:bg-dark-bg-tertiary focus:border-b-light-text-tertiary dark:focus:border-b-dark-main"
                                     size={1}
@@ -312,8 +320,13 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                     ![ !typesWithTicker.includes(type) ? 0 : -1,!typesWithTicker.includes(type) ? 4 : -1].includes(index) ? (
                                         <section className={"flex my-3 relative w-full "} key={index}>
                                         {item.key === "currency" ? (
+                                            <div>
+                                                <label htmlFor="currency-select" className="sr-only">
+                                                    Choose Currency
+                                                </label>
                                                 <select
                                                     name={item.key}
+                                                    id={"currency-select"}
                                                     className="text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none appearance-none bg-transparent p-1 focus:bg-light-bg-tertiary dark:focus:bg-dark-bg-tertiary focus:border-b-light-text-tertiary dark:focus:border-b-dark-main"
                                                     required
                                                     defaultValue=""
@@ -323,17 +336,24 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                                     </option>
                                                     {currencyOptions}
                                                 </select>
+                                            </div>
                                         ) : item.key === "country" ? (
-                                            <select
-                                                name="country"
-                                                className="text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none appearance-none bg-transparent p-1 focus:bg-light-bg-tertiary dark:focus:bg-dark-bg-tertiary focus:border-b-light-text-tertiary dark:focus:border-b-dark-main"
-                                                size={1}
-                                                required
-                                                defaultValue=""
-                                            >
-                                                <option value="" disabled>-- Select Country --</option>
-                                                {countryOptions}
-                                            </select>
+                                            <div>
+                                                <label htmlFor="country-select" className="sr-only">
+                                                    Choose Country
+                                                </label>
+                                                <select
+                                                    name="country"
+                                                    id={"country-select"}
+                                                    className="text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none appearance-none bg-transparent p-1 focus:bg-light-bg-tertiary dark:focus:bg-dark-bg-tertiary focus:border-b-light-text-tertiary dark:focus:border-b-dark-main"
+                                                    size={1}
+                                                    required
+                                                    defaultValue=""
+                                                >
+                                                    <option value="" disabled>-- Select Country --</option>
+                                                    {countryOptions}
+                                                </select>
+                                            </div>
                                         ) : item.key === "purchaseDate" ? (
                                             <section className={"flex my-3 relative w-full"}>
                                                 <input
