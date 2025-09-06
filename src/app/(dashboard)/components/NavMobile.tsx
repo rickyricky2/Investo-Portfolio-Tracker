@@ -90,13 +90,13 @@ export default function NavMobile(){
                 <div className="w-full flex items-center justify-center">
                     <ul className="w-full flex items-center justify-evenly">
                         <li className={"flex flex-col justify-center items-center tracking-tighter"}>
-                            <Link href={`/${userData.id}`} >
+                            <Link href={`/${userData.id}`} aria-label="Dashboard" >
                                 <MdOutlineDashboard size={20} />
                             </Link>
                             <p className={`text-sm font-medium`}>Dashboard</p>
                         </li>
                         <li className={"flex flex-col justify-center items-center tracking-tighter"}>
-                            <Link href={`/${userData.id}/wallet`} >
+                            <Link href={`/${userData.id}/wallet`} aria-label="Wallet" >
                                 <HiOutlineWallet size={20} />
                             </Link>
                             <p className={`text-sm font-medium`}>Wallet</p>
@@ -106,18 +106,20 @@ export default function NavMobile(){
                             <p className={`text-sm font-medium leading-2 mb-3`}>Add Asset</p>
                         </li>
                         <li className={"flex flex-col justify-center items-center tracking-tighter"}>
-                            <Link href={`/${userData.id}/settings`} >
+                            <Link href={`/${userData.id}/settings`} aria-label="Settings" >
                                 <IoSettingsOutline size={20} />
                             </Link>
                             <p className={`text-sm font-medium`}>Settings</p>
                         </li>
-                        <button onClick={handleSidebarToggle} className={`h-full ${open ? "" : ""}`}>
+                        <li className={"flex flex-col justify-center items-center tracking-tighter"}>
+                        <button aria-label={"Toggle menu"} onClick={handleSidebarToggle} className={`h-full ${open ? "" : ""}`}>
                             <div className={"w-full flex flex-col items-center gap-y-1"}>
                                 <span className={`w-[25px] bg-light-text-tertiary dark:bg-dark-text-tertiary h-[3px] transition duration-170 rounded-full ${open? "translate-y-[7px] rotate-45":""}`}></span>
                                 <span className={`w-[25px] bg-light-text-tertiary dark:bg-dark-text-tertiary h-[3px] transition duration-170 rounded-full ${open? "translate-y-[0px] rotate-45":""}`}></span>
                                 <span className={`w-[25px] bg-light-text-tertiary dark:bg-dark-text-tertiary h-[3px] transition duration-170 rounded-full ${open? "-translate-y-[7px] -rotate-45":""}`}></span>
                             </div>
                         </button>
+                        </li>
                     </ul>
                 </div>
             </nav>
@@ -129,7 +131,7 @@ export default function NavMobile(){
                         {menuItems.map((item, index) => {
                             return(
                                 <li key={index}>
-                                    <Link href={`/${item.url}`}>
+                                    <Link href={`/${item.url}`} aria-label={item.label}>
                                         <p className={`py-2 px-2 text-lg mx-2 rounded-xl hover:bg-light-secondary dark:hover:bg-dark-secondary active:bg-light-secondary`}>
                                             {item.label}
                                         </p>
