@@ -38,6 +38,11 @@ export async function middleware(req: NextRequest) {
             isAuthenticated = false;
         }
     }
+    const res = NextResponse.next();
+
+    if(url.pathname.match(/^\/\d+/)){
+        res.headers.set("X-Robots-Tag", "noindex, nofollow");
+    }
 
     if (isAuthenticated && publicPaths.includes(url.pathname)) {
         url.pathname = `/${userId}`
@@ -49,7 +54,7 @@ export async function middleware(req: NextRequest) {
         return NextResponse.redirect(url);
     }
 
-    return NextResponse.next();
+    return res;
 }
 
 export const config = {

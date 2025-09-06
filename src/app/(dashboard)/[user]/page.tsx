@@ -5,6 +5,7 @@ import "@/app/global.css";
 export const metadata: Metadata = {
     title: "Dashboard | Investo",
     description: "User Dashboard",
+    robots: "noindex, nofollow, noarchive, nosnippet",
 };
 export default function DashboardPage(){
 

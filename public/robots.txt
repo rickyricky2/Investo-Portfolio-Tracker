@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+Disallow: /login
+Disallow: /create-account
+Disallow: /product
+Disallow: /reset-password
+Disallow: /restore-account
+Disallow: /verify-email
+Disallow: /verify-notice
+
+Sitemap: https://investo-lit9.vercel.app/sitemap.xml
