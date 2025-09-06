@@ -17,7 +17,6 @@ export default function LoginForm(){
             rememberMe: "off"
         }
     } );
-    const router = useRouter();
     const [isChecked,setIsChecked] = useState(false);
 
 
