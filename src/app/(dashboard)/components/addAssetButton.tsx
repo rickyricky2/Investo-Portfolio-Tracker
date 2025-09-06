@@ -8,7 +8,15 @@ import {useNotification} from "./changeNotification";
 
 let assetSchema;
 
-export default function AddAssetButton({mobile}: {mobile: boolean;}) {
+const countryOptions = countries.map((c,index) => (
+    <option key={index} value={c.name}>{c.name}</option>
+));
+
+const currencyOptions= currencies.map( (c,index) => (
+    <option key={index} value={c.value}>{c.label}</option>
+));
+
+function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
     const [isOpen,setIsOpen]=useState(false);
     const [error, setError]=useState("");
     const [isLoading, setIsLoading]=useState(false);
@@ -284,9 +292,7 @@ export default function AddAssetButton({mobile}: {mobile: boolean;}) {
                                     defaultValue=""
                                 >
                                     <option value="" disabled>-- Select Country --</option>
-                                    {countries.map((c,index) => (
-                                        <option key={index} value={c.name}>{c.name}</option>
-                                    ))}
+                                    {countryOptions}
                                 </select>
                             </section>
                             <section className={"flex my-3 relative w-full"}>
@@ -315,9 +321,7 @@ export default function AddAssetButton({mobile}: {mobile: boolean;}) {
                                                     <option value="" disabled>
                                                         -- Select Currency --
                                                     </option>
-                                                    {currencies.map( (c,index) => (
-                                                        <option key={index} value={c.value}>{c.label}</option>
-                                                    ))}
+                                                    {currencyOptions}
                                                 </select>
                                         ) : item.key === "country" ? (
                                             <select
@@ -328,9 +332,7 @@ export default function AddAssetButton({mobile}: {mobile: boolean;}) {
                                                 defaultValue=""
                                             >
                                                 <option value="" disabled>-- Select Country --</option>
-                                                {countries.map((c,index) => (
-                                                    <option key={index} value={c.name}>{c.name}</option>
-                                                ))}
+                                                {countryOptions}
                                             </select>
                                         ) : item.key === "purchaseDate" ? (
                                             <section className={"flex my-3 relative w-full"}>
@@ -370,3 +372,7 @@ export default function AddAssetButton({mobile}: {mobile: boolean;}) {
         </div>
     );
 }
+
+const AddAssetButton = React.memo(AddAssetButtonComponent);
+
+export default AddAssetButton;

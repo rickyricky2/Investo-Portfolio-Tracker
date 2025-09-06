@@ -1,4 +1,4 @@
-import {SortKey,Asset,SortConfig} from "@/types/assets";
+import {SortKey,Asset} from "@/types/assets";
 
 
 export type walletProps = {
@@ -8,9 +8,7 @@ export type walletProps = {
     }[];
     sortedFilteredAssets: Asset[];
     handleSort: (key:SortKey) => void ;
-    sortConfig: SortConfig;
     getAssets: () => Promise<void>;
     isLoading:boolean;
-    getPortfolioPercentage: (assetValue:number) => string | 0;
     error:string;
 }

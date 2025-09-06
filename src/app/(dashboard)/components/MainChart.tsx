@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { ResponsiveLine } from "@nivo/line";
 import { FaSpinner } from "react-icons/fa";
 import {useAuth} from "@/app/(dashboard)/components/AuthContext";
@@ -10,8 +10,7 @@ type Snapshot = {
     value: number;
 };
 
-
-export default function MainChart({mainCurrency}: {mainCurrency: string}) {
+function MainChartComponent({mainCurrency}: {mainCurrency: string}) {
     const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
     const [isLoading, setIsLoading] = useState(true);
 
@@ -20,23 +19,35 @@ export default function MainChart({mainCurrency}: {mainCurrency: string}) {
     const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
     useEffect(() => {
+        if(!mainCurrency || !data || !data.loggedIn) return;
+
         const fetchSnapshots = async () => {
             try {
                 setIsLoading(true);
-                if(!data || !data.loggedIn){
-                    console.warn("token not found");
-                    return;
-                }
                 const userId =  data.user!.id;
-                const res = await fetch(`${baseURL}/api/user/walletSnapshots?userId=${userId}`,{
+                const resWalletSnapshots = fetch(`${baseURL}/api/user/walletSnapshots?userId=${userId}`,{
                     method: "GET",
                     headers: { "Content-Type": "application/json" },
                 });
+                const resRates = fetch(`https://api.frankfurter.app/latest?from=USD`);
 
-                const json = await res.json();
+                const [snapshotsData, ratesData] = await Promise.all([
+                    resWalletSnapshots.then(res => res.json()),
+                    resRates.then(res => res.json())
+                    ]);
 
-                if(json.success) {
-                    setSnapshots(json.snapshots);
+                if(snapshotsData.success) {
+                    let convertedSnapshots = snapshotsData.snapshots;
+
+                    if(mainCurrency !== "USD"){
+                        if(ratesData){
+                            convertedSnapshots = snapshotsData.snapshots.map( (snapshot:Snapshot) => ({
+                                ...snapshot,
+                                value: Number(snapshot.value) * Number(ratesData.rates[mainCurrency])
+                            }));
+                        }
+                    }
+                    setSnapshots(convertedSnapshots);
                 }else{
                     console.error("Failed to get snapshots");
                 }
@@ -48,17 +59,9 @@ export default function MainChart({mainCurrency}: {mainCurrency: string}) {
         };
 
         fetchSnapshots();
-    }, [data]);
+    }, [data,mainCurrency]);
 
-    if (isLoading) {
-        return (
-            <div className="flex justify-center items-center h-[400px] my-10">
-                <FaSpinner className="animate-spin text-4xl text-light-main dark:text-dark-main" />
-            </div>
-        );
-    }
-
-    const chartData = [
+    const chartData = useMemo( () => [
         {
             id: "Portfolio Value",
             color: "hsl(260, 70%, 50%)",
@@ -67,7 +70,15 @@ export default function MainChart({mainCurrency}: {mainCurrency: string}) {
                 y: Number(s.value.toFixed(2)),
             })),
         },
-    ];
+    ],[snapshots]);
+
+    if (isLoading) {
+        return (
+            <div className="flex justify-center items-center h-[400px] my-10">
+                <FaSpinner className="animate-spin text-4xl text-light-main dark:text-dark-main" />
+            </div>
+        );
+    }
 
     return (
         <div className="min-h-[500px] w-full my-5 shadow-lg rounded-4xl bg-light-bg-secondary dark:bg-dark-bg-tertiary py-6 px-2 tiny:px-6 select-none">
@@ -163,3 +174,7 @@ export default function MainChart({mainCurrency}: {mainCurrency: string}) {
         </div>
     );
 }
+
+const MainChart = React.memo(MainChartComponent);
+
+export default MainChart;

@@ -1,5 +1,6 @@
 import PieChart from "./PieChart";
 import {Asset} from "@/types/assets";
+import React from "react";
 
 export type PieChartData = {
     id:string;
@@ -25,7 +26,7 @@ export const getRandomPurple = (str:string) => {
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
 };
 
-export default function PieCharts({isLoading, assets} : {isLoading: boolean; assets: Asset[];}){
+function PieChartsComponent({isLoading, assets} : {isLoading: boolean; assets: Asset[];}){
 
     return(
         <div>
@@ -38,3 +39,7 @@ export default function PieCharts({isLoading, assets} : {isLoading: boolean; ass
         </div>
     );
 }
+
+const PieCharts = React.memo(PieChartsComponent);
+
+export default PieCharts;

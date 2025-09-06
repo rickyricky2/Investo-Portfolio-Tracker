@@ -2,7 +2,7 @@
 import PortfolioDashboardHeaderCards from './PortfolioDashboardHeaderCards';
 import MainChart from "./MainChart";
 import PieCharts from "./PieCharts";
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useMemo} from "react";
 import {Asset} from "@/types/assets";
 import {useWalletStore} from "@/store/useWalletStore";
 import {useAuth} from "@/app/(dashboard)/components/AuthContext";
@@ -24,7 +24,7 @@ export default function PortfolioDashboard(){
     const [totalInvestmentsValue,setTotalInvestmentsValue] = useState(0);
     const [totalProfitLoss,setTotalProfitLoss] = useState(0);
     const [totalProfitLossPercent,setTotalProfitLossPercent] = useState(0);
-    const [mainCurrency,setMainCurrency] = useState("");
+    const [mainCurrency,setMainCurrency] = useState<string>("");
 
     const { data } = useAuth();
 
@@ -43,7 +43,6 @@ export default function PortfolioDashboard(){
         }
 
         const assets = data.assets;
-        const tempMainCurrency = localStorage.getItem("mainCurrency") || "USD";
 
         const promises = assets.map( async (asset:Asset) =>{
             const temp = {...asset};
@@ -56,7 +55,7 @@ export default function PortfolioDashboard(){
                 temp.dailyChangePercent =  Number(Number(temp.dailyChangePercent).toFixed(2));
             }
 
-            if(temp.currency !== tempMainCurrency){
+            if(temp.currency !== mainCurrency){
                 let res = await fetch(`${baseURL}/api/historicalRates?purchaseDate=${temp.purchaseDate}`,{
                     method: "GET",
                     headers: {"Content-Type": "application/json"},
@@ -64,16 +63,16 @@ export default function PortfolioDashboard(){
                 let data = await res.json();
                 if(data.success){
                     if(temp.currency === "USD"){
-                        temp.purchaseUnitPrice = Number(Number(temp.purchaseUnitPrice * data.rates[tempMainCurrency]).toFixed(2));
+                        temp.purchaseUnitPrice = Number(Number(temp.purchaseUnitPrice * data.rates[mainCurrency]).toFixed(2));
                     }else{
-                        if(tempMainCurrency === "USD"){
+                        if(mainCurrency === "USD"){
                             temp.purchaseUnitPrice = Number(Number(temp.purchaseUnitPrice / data.rates[temp.currency]).toFixed(2));
                         }else{
-                            temp.purchaseUnitPrice = Number(Number((temp.purchaseUnitPrice / data.rates[temp.currency]) * data.rates[tempMainCurrency]).toFixed(2));
+                            temp.purchaseUnitPrice = Number(Number((temp.purchaseUnitPrice / data.rates[temp.currency]) * data.rates[mainCurrency]).toFixed(2));
                         }
                     }
                 }
-                res = await fetch(`${baseURL}/api/exchangeRates?base=${temp.currency}&mainCurrency=${tempMainCurrency}`,{
+                res = await fetch(`${baseURL}/api/exchangeRates?base=${temp.currency}&mainCurrency=${mainCurrency}`,{
                     method: "GET",
                     headers: {"Content-Type": "application/json"},
                 });
@@ -116,7 +115,6 @@ export default function PortfolioDashboard(){
         setTotalProfitLoss( totalProfitLoss);
         setTotalProfitLossPercent( totalProfitLossPercent);
         setTotalInvestmentsValue( totalInvestmentsValue);
-        setMainCurrency(tempMainCurrency);
     }
     const getUserInfo = async () => {
         if(data && data.loggedIn){
@@ -126,16 +124,24 @@ export default function PortfolioDashboard(){
 
     const { refreshTrigger } = useWalletStore();
 
+    useEffect(() => {
+        setMainCurrency(localStorage.getItem("mainCurrency") || "USD");
+    }, []);
+
     useEffect(()=> {
+        if(!mainCurrency ) return;
+
         const fetchData = async () => {
             setIsLoading(true);
             await Promise.all([getUserInfo(),getAssets()]);
             setIsLoading(false);
         }
         fetchData();
-    }, [refreshTrigger, data]);
+    }, [refreshTrigger, data, mainCurrency]);
 
-    const headerValues = [
+    const memoizedAssets = useMemo(() => assets, [assets]);
+
+    const headerValues = useMemo( () =>  [
         {
             label: "Total Invested Amount",
             value: totalInvestedAmount,
@@ -149,7 +155,7 @@ export default function PortfolioDashboard(){
             value: Number(totalProfitLoss.toFixed(2)),
             percent: Number(totalProfitLossPercent.toFixed(2)),
         }
-    ];
+    ],[totalInvestedAmount,numberOfInvestments,totalProfitLoss,totalProfitLossPercent]);
 
     return(
         <div className={"px-2"}>
@@ -171,7 +177,7 @@ export default function PortfolioDashboard(){
             >
                 <PortfolioDashboardHeaderCards totalBalance={totalInvestmentsValue} values={headerValues} isLoading={isLoading} currency={mainCurrency}/>
                 <MainChart mainCurrency={mainCurrency} />
-                <PieCharts isLoading={isLoading} assets={assets} />
+                <PieCharts isLoading={isLoading} assets={memoizedAssets} />
             </main>
         </div>
     );

@@ -42,17 +42,22 @@ export async function GET(req:Request){
             return NextResponse.json({success:false, error: "Could not find required parameters in url" }, { status: 400 });
         }
         const historicalRates = await getCollection("historicalRates");
-        let rate;
-        if(purchaseDate === new Date().toISOString().split('T')[0] ){
-            const yesterday = new Date(purchaseDate);
-            yesterday.setDate(yesterday.getDate() - 1 );
-            const formattedYesterday = yesterday.toISOString().split('T')[0];
-            rate = await historicalRates.findOne({date:formattedYesterday});
-        }else{
-            rate = await historicalRates.findOne({date:purchaseDate});
-        }
+        const rate = await historicalRates.findOne({date:purchaseDate});
+
         if(!rate){
-            return NextResponse.json({success:false, error: "Can not find rates with this date" }, { status: 400 });
+            const exchangeRatesURL = `https://api.frankfurter.app/${purchaseDate}?from=USD`;
+            const res = await fetch(exchangeRatesURL);
+            if (!res.ok) {
+                return NextResponse.json({success:false, error: "Could not fetch rates" }, { status: 500 });
+            }
+            const data = await res.json();
+            await historicalRates.insertOne({
+                base:"USD",
+                date:data.date,
+                rates:data.rates,
+                createdAt: new Date(),
+            });
+            return NextResponse.json({success:true, rates:data.rates }, { status: 200 });
         }
         return NextResponse.json({success:true, rates:rate.rates }, { status: 200 });
 

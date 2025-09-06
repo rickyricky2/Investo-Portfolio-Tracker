@@ -58,7 +58,7 @@ export default function LoginForm(){
                 setErrors(data.errors);
                 clearPassword();
             }else{
-                router.refresh();
+                window.location.href = `/login`;
             }
         }catch{
             setIsLoading(false);

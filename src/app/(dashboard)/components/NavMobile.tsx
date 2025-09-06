@@ -47,7 +47,6 @@ export default function NavMobile(){
     useEffect( () => {
         const getUserInfo = async () => {
             if(!data || !data.loggedIn){
-                router.push("/login");
                 return;
             }
             setUserData(data.user!);

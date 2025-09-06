@@ -1,6 +1,7 @@
 "use client";
 import Nav from "../components/Nav";
 import NavMobile from "../components/NavMobile";
+import MemoizedChildren from "@/app/(dashboard)/components/memoizedChildren";
 
 export default function UserPageClient({children}: { children: React.ReactNode; }) {
 
@@ -13,7 +14,7 @@ export default function UserPageClient({children}: { children: React.ReactNode; 
                 <NavMobile/>
             </div>
             <div className={"w-full min-h-screen lg:py-5 lg:px-5 bg-gradient"}>
-                {children}
+                <MemoizedChildren>{children}</MemoizedChildren>
             </div>
         </div>
     );

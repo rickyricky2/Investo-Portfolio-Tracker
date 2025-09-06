@@ -1,50 +1,67 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { NextResponse } from 'next/server'
+import type { NextRequest } from 'next/server'
 
-export async function middleware(request: NextRequest) {
-    const token = request.cookies.get('login_token')?.value;
+export async function middleware(req: NextRequest) {
+    const isHtmlRequest = req.headers.get('accept')?.includes('text/html');
 
-    const pathName = request.nextUrl.pathname;
-    const publicPaths = ['/','/login','/reset-password','/restore-account','/create-account','/product','/verify-email','/verify-notice']
-    const isPublicPath = publicPaths.includes(pathName);
+    if(!isHtmlRequest) {
+        return NextResponse.next();
+    }
 
-    let isLoggedIn = false;
+    const token = req.cookies.get('login_token')?.value;
+    const baseURL = process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000';
+    const publicPaths = ['/','/login','/reset-password','/restore-account', '/create-account','/product','/verify-email','/verify-notice'];
+    const url = req.nextUrl.clone();
+
+    let isAuthenticated = false;
     let userId;
 
-    if(token){
+    if (token) {
         try {
-            const res = await fetch(`${request.nextUrl.origin}/api/auth/validate`, {
-                method: "GET",
-                headers: {
-                    Authorization: `Bearer ${token}`
-                }
+            const res = await fetch(`${baseURL}/api/auth/validate`,{
+                method: 'GET',
+                headers: { Authorization: `Bearer ${token}`},
             });
-
             const data = await res.json();
 
-            isLoggedIn = data.loggedIn;
-            userId = data.userId;
-
-        } catch (err:unknown) {
-            console.error("Error: ",err);
-            isLoggedIn = false;
+            if(data && data.loggedIn){
+                isAuthenticated = true;
+                userId = data.userId;
+            }
+            else if(!data.loggedIn){
+                const res = NextResponse.redirect(new URL('/login', req.url));
+                res.cookies.delete('login_token');
+                return res;
+            }
+        } catch (e) {
+            console.error("Middleware fetch error:", e);
+            isAuthenticated = false;
         }
     }
 
-    if (!isLoggedIn && !isPublicPath) {
-        return NextResponse.redirect(new URL('/login', request.url));
+    if (isAuthenticated && publicPaths.includes(url.pathname)) {
+        url.pathname = `/${userId}`
+        return NextResponse.redirect(url);
     }
 
-    if (isLoggedIn && isPublicPath) {
-        return NextResponse.redirect(new URL(`/${userId}`, request.url));
+    if (!isAuthenticated && url.pathname.match(/^\/\d+/)) {
+        url.pathname = '/login';
+        return NextResponse.redirect(url);
     }
 
     return NextResponse.next();
-
-
 }
 
 export const config = {
-    matcher: ['/:user((?!api|_next|favicon.ico)[^/]+)','/:user((?!api|_next|favicon.ico)[^/]+)/:path*', '/login', '/create-settings', '/product', '/verify-email', '/verify-notice' , '/'],
-
-};
+    matcher: [
+        '/',
+        '/login',
+        '/reset-password',
+        '/restore-account',
+        '/create-account',
+        '/product',
+        '/verify-email',
+        '/verify-notice',
+        '/((?!api|_next|favicon.ico).*)',
+    ],
+}

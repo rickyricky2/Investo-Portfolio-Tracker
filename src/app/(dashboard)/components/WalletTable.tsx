@@ -3,7 +3,7 @@ import {FaSort, FaSpinner, FaChevronDown, FaChevronRight, FaCheckCircle} from "r
 import {MdCancel} from "react-icons/md";
 import AssetModifyMenu from "@/app/(dashboard)/components/AssetModifyMenu";
 import {walletProps} from "@/types/wallet";
-import React, {useState} from "react";
+import React, {useState,useCallback, useMemo} from "react";
 import {useWalletStore} from "@/store/useWalletStore";
 import {Asset} from "@/types/assets";
 import {useNotification} from "@/app/(dashboard)/components/changeNotification";
@@ -21,43 +21,44 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(30);
 
-    const indexOfLastAsset = currentPage * itemsPerPage;
-    const indexOfFirstAsset = indexOfLastAsset - itemsPerPage;
-    const currentAssets = sortedFilteredAssets.slice(indexOfFirstAsset, indexOfLastAsset);
+    const currentAssets = useMemo( () => {
+        const indexOfLastAsset = currentPage * itemsPerPage;
+        const indexOfFirstAsset = indexOfLastAsset - itemsPerPage;
+        return sortedFilteredAssets.slice(indexOfFirstAsset, indexOfLastAsset);
+    },[sortedFilteredAssets, currentPage, itemsPerPage]);
 
-    // buttons for changing pages
-    const totalPages = Math.ceil(sortedFilteredAssets.length / itemsPerPage);
-
-    const maxVisible = 3;
-    let startPage = Math.max(currentPage - 1, 1);
-    let endPage = startPage + maxVisible - 1;
-
-    if (endPage > totalPages) {
-        endPage = totalPages;
-        startPage = Math.max(endPage - maxVisible + 1, 1);
-    }
-
-    const visiblePages:number[] = [];
-    for (let i = startPage; i <= endPage; i++) {
-        visiblePages.push(i);
-    }
+    const visiblePages = useMemo( () => {
+        const totalPages = Math.ceil(sortedFilteredAssets.length / itemsPerPage);
+        const maxVisible = 3;
+        let startPage = Math.max(currentPage - 1, 1);
+        let endPage = startPage + maxVisible - 1;
+        if (endPage > totalPages) {
+            endPage = totalPages;
+            startPage = Math.max(endPage - maxVisible + 1, 1);
+        }
+        const pages = [];
+        for (let i = startPage; i <= endPage; i++) {
+            pages.push(i);
+        }
+        return pages;
+    },[sortedFilteredAssets.length, currentPage, itemsPerPage]);
 
     // editing assets
-    const startEditing = (asset: Asset) => {
+    const startEditing = useCallback( (asset: Asset) => {
         setEditingId(asset._id);
         setEditedValues(asset);
-    };
+    },[]);
 
-    const cancelEditing = () => {
+    const cancelEditing = useCallback(() => {
         setEditingId(null);
         setEditedValues({} as Asset);
-    };
+    },[]);
 
     const handleChange = (key: string, value: string | number) => {
         setEditedValues((prev: Asset) => ({ ...prev, [key]: value }));
     };
 
-    const saveChanges = async () => {
+    const saveChanges = useCallback(async () => {
         const res = await fetch("/api/user/assets", {
             method: "PUT",
             headers: { "Content-Type": "application/json" },
@@ -72,9 +73,9 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
         showNotification("Asset have been modified");
         cancelEditing();
         triggerRefresh();
-    };
+    },[editedValues]);
 
-    const editableInput = (key: string, value: string | number) => (
+    const editableInput = useCallback((key: string, value: string | number, handleChange: (key:string,value:string|number) => void) => (
         <input
             key={key}
             className={`
@@ -94,14 +95,14 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                 boxShadow: '0 1px 4px 0 rgba(168,130,221,0.13)',
             }}
         />
-    );
+    ),[]);
 
-    const toggleExpand = (id: string) => {
+    const toggleExpand = useCallback((id: string) => {
         setExpandedRows(prev => ({
             ...prev,
             [id]: !prev[id],
         }));
-    };
+    },[]);
 
     return (
         <React.Fragment>
@@ -160,27 +161,27 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                             </button>
                                         </td>
                                         {asset.addedManually && isEditing && editedValues
-                                            ? <td className={"p-1"}> {editableInput("ticker", editedValues.ticker!)}</td>
+                                            ? <td className={"p-1"}> {editableInput("ticker", editedValues.ticker!, handleChange)}</td>
                                             : <td className={"py-2"}>{asset.ticker}</td>}
                                         {asset.addedManually && isEditing && editedValues
-                                            ? <td className={"p-1"}> {editableInput("type", editedValues.type)}</td>
+                                            ? <td className={"p-1"}> {editableInput("type", editedValues.type, handleChange)}</td>
                                             : <td className={"py-2"}>{asset.type}</td>}
                                         {asset.addedManually && isEditing && editedValues
-                                            ? <td className={"p-1"}> {editableInput("name", editedValues.name)}</td>
+                                            ? <td className={"p-1"}> {editableInput("name", editedValues.name, handleChange)}</td>
                                             : <td className={"py-2"}>{asset.name}</td>}
                                         <td className="hidden lg:table-cell">
                                             {isEditing && editedValues
-                                                ? editableInput("quantity", editedValues.quantity)
+                                                ? editableInput("quantity", editedValues.quantity, handleChange)
                                                 : asset.quantity}
                                         </td>
                                         <td className="hidden lg:table-cell">
                                             {isEditing && editedValues
-                                                ? editableInput("purchaseUnitPrice", editedValues.purchaseUnitPrice)
+                                                ? editableInput("purchaseUnitPrice", editedValues.purchaseUnitPrice, handleChange)
                                                 : asset.purchaseUnitPrice}
                                         </td>
                                         <td className="hidden lg:table-cell">
                                             {asset.addedManually && isEditing && editedValues
-                                                ? editableInput("lastUnitPrice", editedValues.lastUnitPrice)
+                                                ? editableInput("lastUnitPrice", editedValues.lastUnitPrice, handleChange)
                                                 : asset.lastUnitPrice}
                                         </td>
                                         <td className="hidden lg:table-cell">
@@ -188,13 +189,13 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                         </td>
                                         <td className="hidden lg:table-cell">
                                             {asset.addedManually && isEditing && editedValues
-                                                ? editableInput("currency", editedValues.currency)
+                                                ? editableInput("currency", editedValues.currency, handleChange)
                                                 : asset.currency}
                                         </td>
                                         <td className={`hidden lg:table-cell ${ (asset.dailyChange > 0) ? "text-green-500" : "text-light-error-text dark:text-dark-error-text"}`}>
-                                            {`${asset.dailyChange > 0 ? "+" : ""}${asset.dailyChange} ${asset.dailyChangePercent && `(${asset.dailyChangePercent > 0 ? "+" : ""}${asset.dailyChangePercent}%)`}`}
+                                            {`${asset.dailyChange > 0 ? "+" : ""}${asset.dailyChange || "-"} (${asset.dailyChangePercent > 0 ? "+" : ""}${asset.dailyChangePercent || ""}%)`}
                                         </td>
-                                        {asset.profit_loss ? (
+                                        {asset.profit_loss !== undefined ? (
                                         <td className={`hidden lg:table-cell ${ (asset.profit_loss > 0) ? "text-green-500" : "text-light-error-text dark:text-dark-error-text"}`}>
                                             {`${asset.profit_loss > 0 ? "+" : ""}${asset.profit_loss} (${asset.profit_lossPercent && (asset.profit_lossPercent > 0 )? "+" : ""}${asset.profit_lossPercent}%)`}
                                         </td>
@@ -223,7 +224,7 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                             <FaSort onClick={() => handleSort("quantity")} className={"text-light-text-tertiary dark:text-dark-main cursor-pointer mr-1 "} />
                                                             <span className="font-semibold text-dark-text-secondary">Quantity:&nbsp;</span>
                                                             {isEditing && editedValues
-                                                                ? <span className={"p-1"}> {editableInput("quantity", editedValues.quantity)}</span>
+                                                                ? <span className={"p-1"}> {editableInput("quantity", editedValues.quantity, handleChange)}</span>
                                                                 : <span className={"text-xl"}>{asset.quantity}</span>}
                                                         </div>
                                                     ) : null}
@@ -232,7 +233,7 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                             <FaSort onClick={() => handleSort("purchaseUnitPrice")} className={"text-light-text-tertiary dark:text-dark-main cursor-pointer mr-1 "} />
                                                             <span className="font-semibold text-dark-text-secondary">Purchase Unit Price:&nbsp;</span>
                                                             {isEditing && editedValues
-                                                                ? <span className={"p-1"}> {editableInput("purchaseUnitPrice", editedValues.purchaseUnitPrice)}</span>
+                                                                ? <span className={"p-1"}> {editableInput("purchaseUnitPrice", editedValues.purchaseUnitPrice, handleChange)}</span>
                                                                 : <span className={"text-xl"}>{asset.purchaseUnitPrice}</span>}
                                                         </div>
                                                     ) : null}
@@ -241,7 +242,7 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                             <FaSort onClick={() => handleSort("lastUnitPrice")} className={"text-light-text-tertiary dark:text-dark-main cursor-pointer mr-1 "} />
                                                             <span className="font-semibold text-dark-text-secondary">Last Unit Price:&nbsp;</span>
                                                             {asset.addedManually && isEditing && editedValues
-                                                                ? <span className={"p-1"}> {editableInput("lastUnitPrice", editedValues.lastUnitPrice)}</span>
+                                                                ? <span className={"p-1"}> {editableInput("lastUnitPrice", editedValues.lastUnitPrice, handleChange)}</span>
                                                                 : <span className={"text-xl"}>{asset.lastUnitPrice}</span>}
                                                         </div>
                                                     ) : null}
@@ -250,7 +251,7 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                             <FaSort onClick={() => handleSort("totalValue")} className={"text-light-text-tertiary dark:text-dark-main cursor-pointer mr-1 "} />
                                                             <span className="font-semibold text-dark-text-secondary">Total Value:&nbsp;</span>
                                                             {asset.addedManually && isEditing && editedValues
-                                                                ? <span className={"p-1"}> {editableInput("totalValue", editedValues.totalValue!)}</span>
+                                                                ? <span className={"p-1"}> {editableInput("totalValue", editedValues.totalValue!, handleChange)}</span>
                                                                 : <span className={"text-xl"}>{asset.totalValue}</span>}
                                                         </div>
                                                     ) : null}
@@ -259,11 +260,11 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                             <FaSort onClick={() => handleSort("currency")} className={"text-light-text-tertiary dark:text-dark-main cursor-pointer mr-1 "} />
                                                             <span className="font-semibold text-dark-text-secondary">Currency:&nbsp;</span>
                                                             {asset.addedManually && isEditing && editedValues
-                                                                ? <span className={"p-1"}> {editableInput("currency", editedValues.currency)}</span>
+                                                                ? <span className={"p-1"}> {editableInput("currency", editedValues.currency, handleChange)}</span>
                                                                 : <span className={"text-xl"}>{asset.currency}</span>}
                                                         </div>
                                                     ) : null}
-                                                    {asset.dailyChange ? (
+
                                                         <div className={`flex items-center lg:hidden`}>
                                                             <FaSort onClick={() => handleSort("dailyChange")} className={"text-light-text-tertiary dark:text-dark-main cursor-pointer mr-1 "} />
                                                             <span className="font-semibold text-dark-text-secondary">Daily Change:&nbsp;</span>
@@ -271,8 +272,8 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                                 {`${asset.dailyChange > 0 ? "+" : ""}${asset.dailyChange} (${asset.dailyChangePercent && (asset.dailyChangePercent > 0) ? "+" : ""}${asset.dailyChangePercent}%)`}
                                                             </span>
                                                         </div>
-                                                    ) : null}
-                                                    {asset.profit_loss ? (
+
+                                                    {asset.profit_loss !== undefined ? (
                                                         <div className={`flex items-center lg:hidden`}>
                                                             <FaSort onClick={() => handleSort("profit_loss")} className={"text-light-text-tertiary dark:text-dark-main cursor-pointer mr-1 "} />
                                                             <span className="font-semibold text-dark-text-secondary">Profit/Loss:&nbsp;</span>
@@ -280,13 +281,13 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                                 {`${asset.profit_loss > 0 ? "+" : ""}${asset.profit_loss} (${asset.profit_lossPercent && (asset.profit_lossPercent > 0 )? "+" : ""}${asset.profit_lossPercent}%)`}
                                                             </span>
                                                         </div>
-                                                    ) : null}
+                                                        ): null}
                                                     {asset.country ? (
                                                         <div className={`flex items-center `}>
                                                             <FaSort onClick={() => handleSort("country")} className={"text-light-main dark:text-dark-main cursor-pointer mr-1 "} />
                                                             <span className="font-semibold text-dark-text-secondary">Country:&nbsp;</span>
                                                             {asset.addedManually && isEditing && editedValues
-                                                                ? <span className={"p-1"}> {editableInput("country", editedValues.country)}</span>
+                                                                ? <span className={"p-1"}> {editableInput("country", editedValues.country, handleChange)}</span>
                                                                 : <span className={"text-xl"}>{asset.country}</span>}
                                                         </div>
                                                     ) : null}

@@ -80,8 +80,10 @@ export default function SettingsClient(){
 
     const grabUserCredentials = async () => {
         if(!data || !data.loggedIn){
-            console.error("Could not fetch user credentials from api");
+            return;
         }else{
+            const id = data.user!.id;
+            setUserId(id);
             setSettings( prev => ({
                 ...prev,
                 userCredentials: {
@@ -93,6 +95,7 @@ export default function SettingsClient(){
                     data: data.user!.email,
                 },
             }));
+            return id;
         }
     }
     const grabTheme = async () => {
@@ -132,30 +135,20 @@ export default function SettingsClient(){
             }));
         }
     }
-
-
-    const grabData = async (userId:string) => {
+    useEffect(() => {
         grabUserCredentials();
-        grabMainCurrency();
-        grabTheme();
-        grabPassword(userId);
-    }
+    }, [data]);
 
     useEffect( () => {
-        const fetchId = async () => {
-            const token = document.cookie.split("; ").find( (row) => row.startsWith("login_token"))?.split("=")[1];
-            const res = await fetch(`${baseURL}/api/auth/validate`,{
-                method: "GET",
-                headers:{Authorization: `Bearer ${token}`}
-            });
-            const data = await res.json();
-            if(data?.userId){
-                setUserId(data.userId);
-                grabData(data.userId);
-            }
-        }
-        fetchId();
+        grabMainCurrency();
+        grabTheme();
     },[]);
+
+    useEffect( () => {
+        if(!userId) return;
+        grabPassword(userId);
+    },[userId]);
+
 
     const startEditing = (settings: accountSettings) => {
         setEditedValueError("");
@@ -336,12 +329,12 @@ export default function SettingsClient(){
                     </section>)
 
     return(
-        <div className={"relative flex flex-col"}>
+        <div className={" flex flex-col"}>
             <h2 className={"px-4 mt-5 text-4xl lg:text-5xl font-bold bg-[linear-gradient(130deg,var(--color-light-main),hsl(300,70%,80%))] dark:bg-[linear-gradient(130deg,var(--color-dark-main),hsl(266,50%,35%))] bg-clip-text text-transparent"}>
                 Account
             </h2>
             <main
-                className={`px-2 pb-20 overflow-auto w-full min-h-screen relative grid grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-5 md:gap-y-10 md:gap-x-50 font-medium transition-all mt-5 tracking-tighter`}>
+                className={`px-2 pb-20 overflow-auto w-full grid min-h-10 grid-cols-[repeat(auto-fit,minmax(300px,1fr))] gap-5 md:gap-y-10 md:gap-x-50 font-medium transition-all mt-5 tracking-tighter`}>
                 {Object.keys(settings).map( key => {
                     const isEditing = settings[key].name === editingId;
                     return (

@@ -5,7 +5,7 @@ import {PieChartData,getRandomPurple} from "./PieCharts";
 import {Asset} from "@/types/assets";
 import AssetFilters from "../components/AssetFilters";
 import {Filters} from "./walletPageClient";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect,useMemo, useCallback } from "react";
 
 function useWindowWidth() {
     const [width, setWidth] = useState<number | null>(null);
@@ -27,7 +27,7 @@ const chartTitles: Record<string, string> = {
     currency: "Assets by Currency",
 };
 
-export default function PieChart({isLoading,assets, type}: {isLoading:boolean; assets:Asset[]; type:string;}) {
+function PieChartComponent({isLoading,assets, type}: {isLoading:boolean; assets:Asset[]; type:string;}) {
     const [filters, setFilters] = useState<Filters>({
         type: "all",
         currency: "all",
@@ -35,11 +35,8 @@ export default function PieChart({isLoading,assets, type}: {isLoading:boolean; a
         search: "",
     });
 
-    let data:PieChartData = [];
-    let totalCount = 0;
-
-
-    const getData = (assets: Asset[]) => {
+    const {data, totalCount} = useMemo( ():{data:PieChartData;totalCount:number} => {
+        let total = 0;
         const map: Record<string, number>= {};
 
         for(const asset of assets){
@@ -52,42 +49,38 @@ export default function PieChart({isLoading,assets, type}: {isLoading:boolean; a
                 (asset.ticker && asset.ticker.toLowerCase().includes(filters.search.toLowerCase()));
 
             if(matchesType && matchesCurrency && matchesCountry && matchesSearch) {
-                totalCount = type === "quantity"? totalCount + Number(asset.quantity) : type === "value" ? totalCount + (Number(asset.lastUnitPrice) * Number(asset.quantity)) : totalCount + 1 ;
+                total = type === "quantity" ? total + Number(asset.quantity) : type === "value" ? total + (Number(asset.lastUnitPrice) * Number(asset.quantity)) : total + 1 ;
                 const value = type === "value" ? Number(asset.lastUnitPrice) * Number(asset.quantity) : type === "quantity" ? Number(asset.quantity) : 1;
                 const name =  type  === "currency" ? asset.currency : type === "type" ? asset.type : asset.name;
                 map[name] = (map[name] || 0) + value;
-
             }
         }
-        totalCount = Number(totalCount.toFixed(2));
 
-        data = Object.entries(map).map( ([key, val]) => ({
+        const chartData:PieChartData = Object.entries(map).map( ([key, val]) => ({
             id:key,
             label:key,
             value:val,
             color: getRandomPurple(key),
-            percentage: ((val/ totalCount)).toFixed(1),
+            percentage: ((val/ total)).toFixed(1),
         }));
-    }
 
-    getData(assets);
+        return {data: chartData, totalCount:Number(total.toFixed(2)) };
+    },[assets,type,filters]);
 
     const width = useWindowWidth();
-    let minPieChartHeight = "400px";
+    const minPieChartHeight = useMemo( () => {
+        if(width === null) return "400px";
+        if (width > 1500) return "400px";
+        if( width < 400) return "300px";
+        if (width < 500) return "400px";
+        if (width < 600) return "400px";
+        if (width < 1024) return "450px";
+    },[width]);
 
-    if (width !== null) {
-        if (width > 1500) {
-            minPieChartHeight = "400px";
-        }else if( width < 400){
-            minPieChartHeight = "300px";
-        } else if (width < 500) {
-            minPieChartHeight = "400px";
-        } else if (width < 600) {
-            minPieChartHeight = "400px";
-        } else if (width < 1024) {
-            minPieChartHeight = "450px";
-        }
-    }
+    const formatValue = useCallback(
+        (value: number) => `${((value / totalCount) * 100).toFixed(1)}%`
+        , [totalCount]);
+
     return(
         <div className={`shadow-lg rounded-4xl bg-light-bg-secondary dark:bg-dark-bg-tertiary overflow-hidden w-full py-10 px-3 tiny:px-5 sm:px-10 min-h-[400px] ${isLoading ? "flex justify-center items-center" : ""}`}>
             {isLoading ? (
@@ -105,7 +98,7 @@ export default function PieChart({isLoading,assets, type}: {isLoading:boolean; a
                         <div  className={`relative min-h-[${minPieChartHeight}] z-1 overflow-visible`}>
                         <ResponsivePie
                             data={data}
-                            valueFormat={value => `${( (value / totalCount) * 100).toFixed(1)}%`}
+                            valueFormat={formatValue}
                             margin={{ top: 30, right: 40, bottom: 30, left: 40 }}
                             innerRadius={0.5}
                             padAngle={0.6}
@@ -178,3 +171,7 @@ export default function PieChart({isLoading,assets, type}: {isLoading:boolean; a
         </div>
     );
 }
+
+const PieChart = React.memo(PieChartComponent);
+
+export default PieChart;

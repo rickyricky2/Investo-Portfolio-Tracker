@@ -1,5 +1,5 @@
 "use client";
-import {useState, useEffect} from "react";
+import {useState, useEffect, useMemo} from "react";
 import {Asset,SortKey,SortConfig} from "@/types/assets";
 import WalletTable from "../components/WalletTable";
 import {walletProps} from "@/types/wallet";
@@ -20,23 +20,7 @@ export const tableHeaders: {label:string, key:SortKey}[] = [
 
     { label:"Country", key:"country" },
     { label:"CreatedAt", key:"createdAt" },
-
-
-    // { label:"Portfolio", key:"portfolioPercentage" },
-
-    // { label:"Total Purchase Price", key:"purchaseTotalPrice" },
 ];
-function formatDate(date:string) {
-    const formatedDate = new Date(date);
-    return formatedDate.toLocaleString("pl-PL",{
-        year: "numeric",
-        month: "2-digit",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit",
-        second: "2-digit",
-    });
-}
 
 export default function WalletAssets({filters}: {filters: Filters;}){
     const [assets, setAssets] = useState<Asset[]>([]);
@@ -48,38 +32,44 @@ export default function WalletAssets({filters}: {filters: Filters;}){
 
     const getAssets = async () =>{
         setIsLoading(true);
-
         const res = await fetch(`${baseURL}/api/user/assets`,{
             method: "GET",
         });
-
         const data = await res.json();
-
-        setIsLoading(false);
-
         if(!data.success){
             setError(data?.error);
             console.error(data?.error);
         }
 
-        const assets = data.assets;
-
-        for(const asset in assets){
-            assets[asset].createdAt = formatDate(assets[asset].createdAt);
-
-            if(assets[asset].addedManually){
-                assets[asset].dailyChange = "";
-                assets[asset].dailyChangePercent = "";
+        const formattedAssets = data.assets.map( (asset:Asset) => {
+            let dailyChange, dailyChangePercent;
+            if(asset.addedManually){
+                dailyChange = 0;
+                dailyChangePercent = 0;
             }else{
-                assets[asset].dailyChange = Number(Number(assets[asset].dailyChange).toFixed(2));
-                assets[asset].dailyChangePercent =  Number(Number(assets[asset].dailyChangePercent).toFixed(2));
+                dailyChange = Number(Number(asset.dailyChange).toFixed(2));
+                dailyChangePercent =  Number(Number(asset.dailyChangePercent).toFixed(2));
             }
 
-            assets[asset].totalValue = assets[asset].lastUnitPrice ? assets[asset].lastUnitPrice * assets[asset].quantity : assets[asset].purchaseUnitPrice * assets[asset].quantity  ;
-            assets[asset].profit_loss = Number(assets[asset].totalValue - (assets[asset].purchaseUnitPrice * assets[asset].quantity)).toFixed(2);
-            assets[asset].profit_lossPercent = Number( (assets[asset].profit_loss / (assets[asset].purchaseUnitPrice * assets[asset].quantity)) * 100).toFixed(2);
-        }
-        setAssets(assets);
+            const totalValue = asset.lastUnitPrice
+                ? asset.lastUnitPrice * asset.quantity
+                : asset.purchaseUnitPrice * asset.quantity;
+
+            const profit_loss = Number(Number(totalValue - (asset.purchaseUnitPrice * asset.quantity)).toFixed(2));
+            const profit_lossPercent = Number(Number( (profit_loss / (asset.purchaseUnitPrice * asset.quantity)) * 100).toFixed(2));
+
+            return {
+                ...asset,
+                dailyChange,
+                dailyChangePercent,
+                totalValue,
+                profit_loss,
+                profit_lossPercent,
+            }
+        });
+
+        setAssets(formattedAssets);
+        setIsLoading(false);
     }
 
     const { refreshTrigger } = useWalletStore();
@@ -88,37 +78,73 @@ export default function WalletAssets({filters}: {filters: Filters;}){
         getAssets();
         }, [refreshTrigger]);
 
-    const sortAssets = (data: Asset[]) => {
-        const {key, direction} = sortConfig;
-        if(!key) return data;
+    // const sortAssets = (data: Asset[]) => {
+    //     const {key, direction} = sortConfig;
+    //     if(!key) return data;
+    //
+    //     return [...data].sort((a,b)=> {
+    //        const aValue = a[key];
+    //        const bValue = b[key];
+    //
+    //        if(typeof aValue === "number" && typeof bValue === "number") {
+    //            return direction === "asc" ? aValue - bValue : bValue - aValue;
+    //        }
+    //
+    //         const aStr = String(aValue ?? '');
+    //         const bStr = String(bValue ?? '');
+    //
+    //        return direction === "asc" ? aStr.localeCompare(bStr) : bStr.localeCompare(aStr);
+    //     });
+    // }
+    //
+    // const filteredAssets = assets.filter((asset) => {
+    //     const matchesType = filters.type === "all" || asset.type === filters.type;
+    //     const matchesCurrency = filters.currency === "all" || asset.currency === filters.currency;
+    //     const matchesCountry = filters.country === "all" || asset.country === filters.country;
+    //     const matchesSearch =
+    //         filters.search === "" ||
+    //         asset.name.toLowerCase().includes(filters.search.toLowerCase()) ||
+    //         (asset.ticker && asset.ticker.toLowerCase().includes(filters.search.toLowerCase()));
+    //     return matchesType && matchesCurrency && matchesCountry && matchesSearch;
+    // });
 
-        return [...data].sort((a,b)=> {
-           const aValue = a[key];
-           const bValue = b[key];
+    // const sortedFilteredAssets = sortAssets(filteredAssets);
 
-           if(typeof aValue === "number" && typeof bValue === "number") {
-               return direction === "asc" ? aValue - bValue : bValue - aValue;
-           }
+    const sortedFilteredAssets = useMemo( () => {
+        let data = assets;
 
-            const aStr = String(aValue ?? '');
-            const bStr = String(bValue ?? '');
-
-           return direction === "asc" ? aStr.localeCompare(bStr) : bStr.localeCompare(aStr);
+        data = data.filter( asset => {
+            const matchesType = filters.type === "all" || asset.type === filters.type;
+            const matchesCurrency = filters.currency === "all" || asset.currency === filters.currency;
+            const matchesCountry = filters.country === "all" || asset.country === filters.country;
+            const matchesSearch =
+                filters.search === "" ||
+                asset.name.toLowerCase().includes(filters.search.toLowerCase()) ||
+                (asset.ticker && asset.ticker.toLowerCase().includes(filters.search.toLowerCase()));
+            return matchesType && matchesCurrency && matchesCountry && matchesSearch;
         });
-    }
 
-    const filteredAssets = assets.filter((asset) => {
-        const matchesType = filters.type === "all" || asset.type === filters.type;
-        const matchesCurrency = filters.currency === "all" || asset.currency === filters.currency;
-        const matchesCountry = filters.country === "all" || asset.country === filters.country;
-        const matchesSearch =
-            filters.search === "" ||
-            asset.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-            (asset.ticker && asset.ticker.toLowerCase().includes(filters.search.toLowerCase()));
-        return matchesType && matchesCurrency && matchesCountry && matchesSearch;
-    });
+        const {key, direction} = sortConfig;
+        if(key) {
+            data = [...data].sort((a, b) => {
+                const aValue = a[key];
+                const bValue = b[key];
 
-    const sortedFilteredAssets = sortAssets(filteredAssets);
+                if (typeof aValue === "number" && typeof bValue === "number") {
+                    return direction === "asc" ? aValue - bValue : bValue - aValue;
+                }
+
+                const aStr = String(aValue ?? '');
+                const bStr = String(bValue ?? '');
+
+                return direction === "asc"
+                    ? aStr.localeCompare(bStr)
+                    : bStr.localeCompare(aStr);
+            });
+        }
+
+        return data;
+    },[assets,filters,sortConfig]);
 
     const handleSort = (key: SortKey) =>{
         setSortConfig(prev => {
@@ -133,20 +159,12 @@ export default function WalletAssets({filters}: {filters: Filters;}){
         });
     }
 
-    const totalPortfolioValue = assets.reduce((sum,asset) => sum + (asset.totalValue || 0), 0);
-
-    const getPortfolioPercentage = (assetValue:number) =>{
-        if(totalPortfolioValue === 0) return 0;
-        return ((assetValue/totalPortfolioValue) * 100).toFixed(2);
-    }
     const commonProps: walletProps = {
         tableHeaders,
         sortedFilteredAssets,
         handleSort,
-        sortConfig,
         getAssets,
         isLoading,
-        getPortfolioPercentage,
         error,
     };
 

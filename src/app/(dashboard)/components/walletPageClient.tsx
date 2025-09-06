@@ -19,7 +19,7 @@ export default function WalletPageClient(){
     });
 
     return(
-        <div className={"w-full min-h-screen my-5 px-2 flex flex-col gap-5 lg:gap-5 relative"}>
+        <div className={"w-full min-h-screen my-5 px-2 flex flex-col gap-5 lg:gap-5 "}>
             <h2 className={"text-4xl lg:text-5xl bg-[linear-gradient(130deg,var(--color-light-main),hsl(300,70%,78%))] dark:bg-[linear-gradient(130deg,var(--color-dark-main),hsl(266,50%,35%))] bg-clip-text text-transparent px-2 tracking-tight text-left font-bold flex flex-col"}>
                 My
                 <span className={"mt-2 capitalize"}>

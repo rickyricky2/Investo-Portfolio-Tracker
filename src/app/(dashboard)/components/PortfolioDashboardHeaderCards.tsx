@@ -4,7 +4,7 @@ import React from "react";
 import { AiFillDollarCircle, AiFillCopy ,AiOutlineStock, AiOutlineFall } from "react-icons/ai";
 import { FaWallet } from "react-icons/fa";
 
-export default function PortfolioDashboardHeaderCards({totalBalance, values, isLoading, currency}: {totalBalance: number; values: {label:string, value:number, percent?:number;}[]; isLoading:boolean; currency:string } ) {
+function PortfolioDashboardHeaderCardsComponent({totalBalance, values, isLoading, currency}: {totalBalance: number; values: {label:string, value:number, percent?:number;}[]; isLoading:boolean; currency:string } ) {
     return(
         <div>
             <section className={"min-h-[150px] main-gradient w-full shadow-lg rounded-4xl overflow-hidden font-medium"}>
@@ -38,3 +38,6 @@ export default function PortfolioDashboardHeaderCards({totalBalance, values, isL
         </div>
     );
 }
+const PortfolioDashboardHeaderCards = React.memo(PortfolioDashboardHeaderCardsComponent);
+
+export default PortfolioDashboardHeaderCards;
