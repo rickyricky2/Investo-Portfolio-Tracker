@@ -12,7 +12,7 @@ import { HiOutlineWallet } from "react-icons/hi2";
 import {useAuth} from "@/app/(dashboard)/components/AuthContext";
 
 export default function Nav() {
-    const [open, setOpen] = useState(true);
+    const [open, setOpen] = useState(false);
     const [userData, setUserData] = useState({
         id: "",
         email: "",
@@ -46,8 +46,8 @@ export default function Nav() {
 
     useEffect(() =>{
         const sidebarOpen = localStorage.getItem('sidebarOpen');
-        if(sidebarOpen === "false"){
-            setOpen(false);
+        if(sidebarOpen && sidebarOpen === "true"){
+            setOpen(true);
         }
     },[]);
 

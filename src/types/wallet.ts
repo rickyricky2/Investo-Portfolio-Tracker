@@ -1,6 +1,5 @@
 import {SortKey,Asset} from "@/types/assets";
 
-
 export type walletProps = {
     tableHeaders: {
         label:string;

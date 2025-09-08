@@ -151,7 +151,7 @@ export default function NavMobile(){
                         <SwitchThemeButton type={"horizontal"}/>
                     </div>
                     <div className={"mx-4 text-center"}>
-                        <button onClick={handleSidebarToggle} className={`h-full ${open ? "" : ""}`}>
+                        <button aria-label={"Toggle menu"} onClick={handleSidebarToggle} className={`h-full`}>
                             <div className={"w-full flex flex-col items-center gap-y-1"}>
                                 <span className={`w-[30px] bg-light-text-tertiary dark:bg-dark-text-tertiary h-[3px] transition duration-170 rounded-full ${open? "translate-y-[7px] rotate-45":""}`}></span>
                                 <span className={`w-[30px] bg-light-text-tertiary dark:bg-dark-text-tertiary h-[3px] transition duration-170 rounded-full ${open? "translate-y-[0px] rotate-45":""}`}></span>

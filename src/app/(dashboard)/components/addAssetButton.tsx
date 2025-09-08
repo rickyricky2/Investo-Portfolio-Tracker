@@ -73,17 +73,41 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
             // we add schema for validating this data
             assetSchema = z.object({
                 ticker: z.string().optional(),
-                type: z.string().min(1, "Asset type is required"),
-                name: z.string().min(1,"Asset name is required"),
-                quantity: z.number().min(1,"Quantity must be at least 1"),
-                purchaseUnitPrice: z.coerce.number().positive("Unit price must be positive").refine( (val) => Number.isFinite(val), { message: `Invalid number, try typing with "." `}),
-                lastUnitPrice: z.coerce.number().positive("Unit price must be positive").refine( (val) => Number.isFinite(val), { message: `Invalid number, try typing with "." `}),
-                currency: z.string().min(1, "U must chose currency"),
-                country: z.string().optional(),
-                purchaseDate: z.string().refine( (val) => {
+                type: z.string({
+                    required_error: "Asset type is required",
+                    invalid_type_error: "Asset type must be text",
+                }).min(1, "Asset type is required"),
+                name: z.string({
+                    required_error: "Asset name is required",
+                    invalid_type_error: "Asset name must be a text",
+                }).min(1,"Asset name is required"),
+                quantity: z.coerce.number({
+                    required_error: "Quantity is required",
+                    invalid_type_error: "Quantity must be a number",
+                }).min(1,"Quantity must be at least 1"),
+                purchaseUnitPrice: z.coerce.number({
+                    required_error: "Purchase unit price is required",
+                    invalid_type_error: "Purchase unit price must be a number",
+                }).positive("Unit price must be positive").refine( (val) => Number.isFinite(val), { message: `Invalid number, try typing with "." `}),
+                lastUnitPrice: z.coerce.number({
+                    required_error: "Last unit price is required",
+                    invalid_type_error: "Last unit price must be a number",
+                }).positive("Unit price must be positive").refine( (val) => Number.isFinite(val), { message: `Invalid number, try typing with "." `}),
+                currency: z.string({
+                    required_error: "Currency is required",
+                    invalid_type_error: "Currency must be a text",
+                }).min(1, "U must chose currency"),
+                country: z.string({
+                    required_error: "Country is required",
+                    invalid_type_error: "Country must be a text",
+                }).optional(),
+                purchaseDate: z.string({
+                    required_error: "Purchase Date is required",
+                    invalid_type_error: "Purchase Date must be a date",
+                }).refine( (val) => {
                     const inputDate = new Date(val);
                     inputDate.setHours(0,0,0,0);
-                    return inputDate <= today;
+                    return inputDate <= new Date();
                 },{
                     message: "Date can not be in the future"
                 }),
@@ -103,18 +127,42 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
             // if yes, we create schema for validating data
 
             assetSchema = z.object({
-                ticker: z.string(),
-                type: z.string().min(1, "Asset type is required"),
-                name: z.string().min(1,"Asset name is required"),
-                quantity: z.number().min(1,"Quantity must be at least 1"),
-                purchaseUnitPrice: z.number().positive("Unit price must be positive"),
-                lastUnitPrice: z.number().positive("Last price must be positive"),
-                currency: z.string().min(1, "U must chose currency"),
-                country: z.string().optional(),
-                purchaseDate: z.string().refine( (val) => {
+                ticker: z.string().optional(),
+                type: z.string({
+                    required_error: "Asset type is required",
+                    invalid_type_error: "Asset type must be text",
+                }).min(1, "Asset type is required"),
+                name: z.string({
+                    required_error: "Asset name is required",
+                    invalid_type_error: "Asset name must be a text",
+                }).min(1,"Asset name is required"),
+                quantity: z.coerce.number({
+                    required_error: "Quantity is required",
+                    invalid_type_error: "Quantity must be a number",
+                }).min(1,"Quantity must be at least 1"),
+                purchaseUnitPrice: z.coerce.number({
+                    required_error: "Purchase unit price is required",
+                    invalid_type_error: "Purchase unit price must be a number",
+                }).positive("Unit price must be positive").refine( (val) => Number.isFinite(val), { message: `Invalid number, try typing with "." `}),
+                lastUnitPrice: z.coerce.number({
+                    required_error: "Last unit price is required",
+                    invalid_type_error: "Last unit price must be a number",
+                }).positive("Unit price must be positive").refine( (val) => Number.isFinite(val), { message: `Invalid number, try typing with "." `}),
+                currency: z.string({
+                    required_error: "Currency is required",
+                    invalid_type_error: "Currency must be a text",
+                }).min(1, "U must chose currency"),
+                country: z.string({
+                    required_error: "Country is required",
+                    invalid_type_error: "Country must be a text",
+                }).optional(),
+                purchaseDate: z.string({
+                    required_error: "Purchase Date is required",
+                    invalid_type_error: "Purchase Date must be a date",
+                }).refine( (val) => {
                     const inputDate = new Date(val);
                     inputDate.setHours(0,0,0,0);
-                    return inputDate <= today;
+                    return inputDate <= new Date();
                 },{
                     message: "Date can not be in the future"
                 }),

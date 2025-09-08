@@ -5,20 +5,8 @@ import {PieChartData,getRandomPurple} from "./PieCharts";
 import {Asset} from "@/types/assets";
 import AssetFilters from "../components/AssetFilters";
 import {Filters} from "./walletPageClient";
-import React, { useState, useEffect,useMemo, useCallback } from "react";
+import React, { useState,useMemo, useCallback  } from "react";
 
-function useWindowWidth() {
-    const [width, setWidth] = useState<number | null>(null);
-
-    useEffect(() => {
-        const handleResize = () => setWidth(window.innerWidth);
-        handleResize();
-        window.addEventListener("resize", handleResize);
-        return () => window.removeEventListener("resize", handleResize);
-    }, []);
-
-    return width;
-}
 
 const chartTitles: Record<string, string> = {
     value: "Assets by Value",
@@ -27,7 +15,7 @@ const chartTitles: Record<string, string> = {
     currency: "Assets by Currency",
 };
 
-function PieChartComponent({isLoading,assets, type}: {isLoading:boolean; assets:Asset[]; type:string;}) {
+function PieChartComponent({isLoading,assets, type, width}: {isLoading:boolean; assets:Asset[]; type:string; width:number | null;}) {
     const [filters, setFilters] = useState<Filters>({
         type: "all",
         currency: "all",
@@ -67,9 +55,8 @@ function PieChartComponent({isLoading,assets, type}: {isLoading:boolean; assets:
         return {data: chartData, totalCount:Number(total.toFixed(2)) };
     },[assets,type,filters]);
 
-    const width = useWindowWidth();
     const minPieChartHeight = useMemo( () => {
-        if(width === null) return "400px";
+        if(!width) return "400px";
         if (width > 1500) return "400px";
         if( width < 400) return "300px";
         if (width < 500) return "400px";
@@ -80,6 +67,11 @@ function PieChartComponent({isLoading,assets, type}: {isLoading:boolean; assets:
     const formatValue = useCallback(
         (value: number) => `${((value / totalCount) * 100).toFixed(1)}%`
         , [totalCount]);
+
+    const memoizedLegendData = useMemo(() => data.map(d => ({
+        ...d,
+        label: d.label.length > 10 ? d.label.slice(0,10) + "…" : d.label
+    })), [data]);
 
     return(
         <div className={`shadow-lg rounded-4xl bg-light-bg-secondary dark:bg-dark-bg-tertiary overflow-hidden w-full py-10 px-3 tiny:px-5 sm:px-10 min-h-[400px] ${isLoading ? "flex justify-center items-center" : ""}`}>
@@ -116,10 +108,9 @@ function PieChartComponent({isLoading,assets, type}: {isLoading:boolean; assets:
                             }}
                             cornerRadius={2}
                             enableArcLabels={true}
-                            enableArcLinkLabels={(width !== null && width > 700 && width < 1025) || (width !== null &&  width > 1500 )}
+                            enableArcLinkLabels={ !!((width && width > 700 && width < 1025) || (width &&  width > 1500 ))}
                             activeOuterRadiusOffset={8}
                             arcLinkLabelsSkipAngle={10}
-                            // arcLinkLabelsTextColor="#333333"
                             arcLinkLabelsThickness={2}
                             arcLinkLabelsColor={{ from: 'color' }}
                             arcLabelsSkipAngle={10}
@@ -134,10 +125,7 @@ function PieChartComponent({isLoading,assets, type}: {isLoading:boolean; assets:
                                     itemHeight: 18,
                                     symbolShape: 'circle',
                                     itemTextColor: "var(--color-light-text)",
-                                    data: data.map(d => ({
-                                        ...d,
-                                        label: d.label.length > 10 ? d.label.slice(0, 10) + "…" + ` ${( (d.value / totalCount ) * 100).toFixed(2)}%` : d.label +` ${( (d.value / totalCount ) * 100).toFixed(2)}%`,
-                                    })),
+                                    data: memoizedLegendData,
                                 }
                             ]}
                             tooltip={({ datum }) => (

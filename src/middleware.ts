@@ -42,6 +42,14 @@ export async function middleware(req: NextRequest) {
 
     if(url.pathname.match(/^\/\d+/)){
         res.headers.set("X-Robots-Tag", "noindex, nofollow");
+        res.headers.set("Cache-Control", "private, max-age=0, must-revalidate");
+    }
+
+    if(publicPaths.includes(url.pathname)){
+        res.headers.set(
+            "Cache-Control",
+            "private, max-age=0, must-revalidate"
+        );
     }
 
     if (isAuthenticated && publicPaths.includes(url.pathname)) {

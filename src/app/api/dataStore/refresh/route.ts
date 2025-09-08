@@ -31,9 +31,9 @@ export async function POST(){
                     }
                 },
             );
-
-            return NextResponse.json({success: true}, {status: 200});
         }
+        return NextResponse.json({success: true}, {status: 200});
+
     }catch(error:unknown){
         return NextResponse.json({success: false, error}, {status: 500});
     }

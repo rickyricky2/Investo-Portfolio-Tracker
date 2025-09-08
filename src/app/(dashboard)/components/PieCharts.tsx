@@ -1,6 +1,8 @@
-import PieChart from "./PieChart";
 import {Asset} from "@/types/assets";
-import React from "react";
+import React, { lazy, Suspense, useEffect, useState, useRef} from "react";
+import {FaSpinner} from "react-icons/fa";
+
+const PieChart = lazy( () => import("./PieChart"));
 
 export type PieChartData = {
     id:string;
@@ -28,13 +30,54 @@ export const getRandomPurple = (str:string) => {
 
 function PieChartsComponent({isLoading, assets} : {isLoading: boolean; assets: Asset[];}){
 
+    const useWindowWidth = () => {
+        const [width, setWidth] = useState<number | null>(null);
+
+        useEffect(() => {
+            const handleResize = () => setWidth(window.innerWidth);
+            handleResize();
+            window.addEventListener("resize", handleResize);
+            return () => window.removeEventListener("resize", handleResize);
+        }, []);
+
+        return width;
+    }
+
+    const LazyPieChartWrapper = (props:{isLoading:boolean;assets:Asset[];type:string;width:number|null;}) => {
+        const [show, setShow] = useState(false);
+        const ref = useRef<HTMLDivElement>(null);
+
+        useEffect( () => {
+            const obs = new IntersectionObserver( ([entry]) => {
+                if(entry.isIntersecting){
+                    setShow(true);
+                    obs.disconnect();
+                }
+            });
+            if(ref.current) obs.observe(ref.current);
+            return () => obs.disconnect();
+        },[]);
+
+        return (
+            <div ref={ref}>
+                {show && (
+                    <Suspense fallback={<FaSpinner className="animate-spin text-4xl mx-auto text-light-main dark:text-dark-main" size={40} />}>
+                        <PieChart {...props} />
+                    </Suspense>
+                )}
+            </div>
+        );
+    }
+
+    const width = useWindowWidth();
+
     return(
         <div>
             <section className={"grid lg:grid-cols-2 gap-10"}>
-                <PieChart isLoading={isLoading} assets={assets} type={"value"} />
-                <PieChart isLoading={isLoading} assets={assets} type={"quantity"}/>
-                <PieChart isLoading={isLoading} assets={assets} type={"type"} />
-                <PieChart isLoading={isLoading} assets={assets} type={"currency"} />
+                <LazyPieChartWrapper isLoading={isLoading} assets={assets} type={"value"} width={width} />
+                <LazyPieChartWrapper isLoading={isLoading} assets={assets} type={"quantity"} width={width}/>
+                <LazyPieChartWrapper isLoading={isLoading} assets={assets} type={"type"} width={width} />
+                <LazyPieChartWrapper isLoading={isLoading} assets={assets} type={"currency"} width={width} />
             </section>
         </div>
     );
