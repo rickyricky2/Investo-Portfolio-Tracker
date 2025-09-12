@@ -22,7 +22,7 @@ const sendVerificationEmail = async  (to: string,token:string) => {
         text: "",
         html: `<h1>We received a request to reset your password</h1>
                 <p>Click the button below to choose a new password:</p>
-                <a href="http://localhost:3000/restore-account?token=${token}" style="background:#4CAF50; color:white; padding:10px 20px; border-radius:4px; text-decoration:none;">Reset Password</a>
+                <a href="https://investo-lit9.vercel.app/restore-account?token=${token}" style="background:#4CAF50; color:white; padding:10px 20px; border-radius:4px; text-decoration:none;">Reset Password</a>
                 <p>If you did not request a password reset, you can ignore this email.</p>
                 <p>The Investo Team</p>`
     });

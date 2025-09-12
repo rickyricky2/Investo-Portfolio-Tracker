@@ -23,7 +23,7 @@ const sendVerificationEmail = async  (to: string,token:string) => {
         text: "",
         html: `<h1>Your new verification link is here!</h1>
                 <p>Click on link below to verify your investo account</p>
-                <a href="http://localhost:3000/verify-email?token=${token}" style="background:#4CAF50; color:white; padding:10px 20px; border-radius:4px; text-decoration:none;">Verify here</a>`
+                <a href="https://investo-lit9.vercel.app/verify-email?token=${token}" style="background:#4CAF50; color:white; padding:10px 20px; border-radius:4px; text-decoration:none;">Verify here</a>`
     });
 }
 

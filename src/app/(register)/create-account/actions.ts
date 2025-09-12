@@ -27,7 +27,7 @@ const sendWelcomeEmail = async  (to: string, emailToken:string) => {
         text: "Thanks for trusting us!!",
         html: `<h1>Welcome to Investo!</h1>
                 <p>Thank you for registering. To activate your account, please confirm your email address by clicking the button below:</p>
-                <a href="http://localhost:3000/verify-email?token=${emailToken}" style="background:#4CAF50; color:white; padding:10px 20px; border-radius:4px; text-decoration:none;">Confirm your email</a>
+                <a href="https://investo-lit9.vercel.app/verify-email?token=${emailToken}" style="background:#4CAF50; color:white; padding:10px 20px; border-radius:4px; text-decoration:none;">Confirm your email</a>
                 <p>If you didn’t create this account, you can ignore this email.</p>`,
     });
 }
