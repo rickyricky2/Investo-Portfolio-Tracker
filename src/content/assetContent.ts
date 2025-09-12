@@ -127,6 +127,41 @@ export const countries = [
     { code: "PF", name: "French Polynesia" }
 ];
 
+export const countrySuffixMap: Record<string, string> = {
+    "United States": "US",
+    "Germany": "DE",
+    "Poland": "PL",
+    "United Kingdom": "GB",
+    "France": "FR",
+    "Japan": "JP",
+    "China": "CN",
+    "Canada": "CA",
+    "Switzerland": "CH",
+    "India": "IN",
+    "Australia": "AU",
+    "South Korea": "KR",
+    "Hong Kong": "HK",
+    "Netherlands": "NL",
+    "Spain": "ES",
+    "Italy": "IT",
+    "Sweden": "SE",
+    "Norway": "NO",
+    "Denmark": "DK",
+    "Finland": "FI",
+    "Belgium": "BE",
+    "Brazil": "BR",
+    "Mexico": "MX",
+    "Russia": "RU",
+    "South Africa": "ZA",
+    "Turkey": "TR",
+    "Austria": "AT",
+    "Ireland": "IE",
+    "Portugal": "PT",
+    "Greece": "GR",
+    "Czech Republic": "CZ",
+    "Hungary": "HU",
+};
+
 export const currencies = [
     { value: "USD", label: "USD – US Dollar" },
     { value: "EUR", label: "EUR – Euro" },

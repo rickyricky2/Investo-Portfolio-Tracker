@@ -1,14 +1,15 @@
 "use client";
-import {  MdOutlineAccountCircle, MdOutlineDashboard  } from "react-icons/md";
 import SwitchThemeButton from "./SwitchThemeButton";
 import { useState,useEffect } from 'react';
 import {useRouter} from "next/navigation";
 import NavMenuItems from "@/app/(dashboard)/components/NavMenuItems";
 // icons
-
+import {  MdOutlineAccountCircle, MdOutlineDashboard  } from "react-icons/md";
 import { CiSettings } from "react-icons/ci";
 import { RiLogoutCircleLine } from "react-icons/ri";
 import { HiOutlineWallet } from "react-icons/hi2";
+import { AiOutlineLineChart } from "react-icons/ai";
+
 import {useAuth} from "@/app/(dashboard)/components/AuthContext";
 
 export default function Nav() {
@@ -36,6 +37,11 @@ export default function Nav() {
             icons: <HiOutlineWallet size={30} />,
             label: 'Wallet',
             url: `${userData.id}/wallet`
+        },
+        {
+            icons: <AiOutlineLineChart size={30} />,
+            label: 'Benchmark',
+            url: `${userData.id}/benchmark`
         },
         {
             icons: <CiSettings size={30} />,

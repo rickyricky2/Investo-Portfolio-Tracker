@@ -14,15 +14,24 @@ export async function POST(){
                 method: "GET",
                 headers: {"Content-Type": "application/json"},
             });
-            if (!res.ok) {
-                console.warn("could not fetch data from dataStore");
-                continue;
-            }
-
             const data = await res.json();
-
             if (!data.success) {
-                console.warn("could not fetch data from dataStore");
+                const res = await fetch(`${baseURL}/api/stockMarketAPI?dataType=lastPrice&ticker=${asset.ticker}&country=${asset.country}&purchaseDate=${asset.purchaseDate}`, {
+                    method: "GET",
+                    headers: {"Content-Type": "application/json"},
+                });
+                const data = await res.json();
+                if(data.success) {
+                    await assetsCollection.updateOne(
+                        {_id: asset._id},
+                        {
+                            $set: {
+                                lastUnitPrice: data.lastPrice,
+                                updatedAt: new Date()
+                            }
+                        },
+                    );
+                }
                 continue;
             }
 

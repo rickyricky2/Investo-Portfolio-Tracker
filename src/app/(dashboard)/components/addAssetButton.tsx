@@ -16,10 +16,27 @@ const currencyOptions= currencies.map( (c,index) => (
     <option key={index} value={c.value}>{c.label}</option>
 ));
 
+async function updateWalletSnapshots(baseURL:string,country:string,purchaseDate:string,quantity:number,currency:string,ticker?:string,price?:number) {
+    try {
+        const url = `${baseURL}/api/user/walletSnapshots?ticker=${ticker}&country=${country}&purchaseDate=${purchaseDate}&quantity=${quantity}&price=${price}&currency=${currency}`;
+        const res = await fetch(url, { method: "PUT", headers: { "Content-Type": "application/json" } });
+        const data = await res.json();
+        if(data.success){
+            console.log("Wallet Snapshot Update Response:", data.success);
+        }else{
+            console.error("Error:", data.error);
+        }
+    } catch (err:unknown) {
+        console.error("Error:", err);
+    }
+}
+
 function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
     const [isOpen,setIsOpen]=useState(false);
     const [error, setError]=useState("");
     const [isLoading, setIsLoading]=useState(false);
+    const [purchaseUnitPriceState, setPurchaseUnitPriceState]=useState(0);
+    const [lastUnitPriceState, setLastUnitPriceState]=useState(0);
     const wrapperRef = useRef<HTMLDivElement>(null);
 
     const { showNotification } = useNotification();
@@ -183,20 +200,26 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
             const ticker = rawData.ticker as string;
             const country = rawData.country as string;
 
-            let res = await fetch(`${baseURL}/api/dataStore?ticker=${encodeURIComponent(ticker)}&country=${country}`, {
+            const res = fetch(`${baseURL}/api/dataStore?ticker=${ticker}&country=${country}`, {
                 method:"GET",
                 headers:{"Content-Type": "application/json"},
             });
+            const purchaseUnitPriceRes  = fetch(`${baseURL}/api/stockMarketAPI?dataType=historicalPrices&ticker=${ticker}&country=${country}&purchaseDate=${rawData.purchaseDate}`, {
+                method: "GET",
+                headers:{"Content-Type": "application/json"},
+            });
 
-            let data = await res.json();
+            const [data,purchaseUnitPrice] = await Promise.all([
+                res.then( res => res.json()),
+                purchaseUnitPriceRes.then(res => res.json())
+            ]);
 
             if(data.success){
             //     if we have this ticker data already stored
-
                 const tickerData = data.tickerInfo;
                 rawData = {
                     ...tickerData,
-                    purchaseUnitPrice: tickerData.lastUnitPrice,
+                    purchaseUnitPrice: Number(purchaseUnitPrice.price || tickerData.lastUnitPrice),
                     quantity,
                     country,
                     purchaseDate: rawData.purchaseDate,
@@ -205,17 +228,29 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                 // if we don't have data stored for this ticker we have to call API
 
                 // first we fetch for ticker data
-                res = await fetch(`${baseURL}/api/stockMarketAPI?ticker=${ticker}&country=${country}`, {
+                const res = await fetch(`${baseURL}/api/stockMarketAPI?ticker=${ticker}&country=${country}`, {
                     method: "GET",
                     headers:{"Content-Type": "application/json"},
                 });
-
-                data = await res.json();
+                const data = await res.json();
 
                 if(!data.success){
-                    setError("We couldn't find ticker u need to add information manually");
+                    setError("We couldn't find ticker info, u need to add information manually");
                     setIsLoading(false);
                     setNotAddDataManually(false);
+                    if(purchaseUnitPrice.success){
+                        setPurchaseUnitPriceState(Number(purchaseUnitPrice.price));
+                        const res = await fetch(`${baseURL}/api/stockMarketAPI?dataType=lastPrice&ticker=${ticker}&country=${country}`, {
+                            method: "GET",
+                            headers:{"Content-Type": "application/json"},
+                        });
+                        const data = await res.json();
+                        if(data.success){
+                            setLastUnitPriceState(Number(data.lastPrice))
+                        }else{
+                            setLastUnitPriceState(0)
+                        }
+                    }
                     return;
                 }
 
@@ -227,7 +262,7 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                 rawData = {
                     ...rawData,
                     name:tickerInfo.name,
-                    purchaseUnitPrice:lastUnitPrice,
+                    purchaseUnitPrice:purchaseUnitPrice.price || lastUnitPrice,
                     lastUnitPrice:lastUnitPrice,
                     currency: currency,
                     country:country,
@@ -270,6 +305,7 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
         }
 
         showNotification(`Asset has been added!`);
+        updateWalletSnapshots(baseURL,rawData.country,rawData.purchaseDate,rawData.quantity,rawData.currency,rawData.ticker,rawData.purchaseUnitPrice).catch(console.error);
         triggerRefresh();
         setIsOpen(false);
         setIsLoading(false);
@@ -306,6 +342,9 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                         onChange={ (e) => {
                             setType(e.target.value);
                             setNotAddDataManually(typesWithTicker.includes(e.target.value));
+                            setError("");
+                            setPurchaseUnitPriceState(0);
+                            setLastUnitPriceState(0);
                         }}
                     >
                         <option value="" disabled>-- Select Asset Type --</option>
@@ -413,6 +452,22 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                                     name={"purchaseDate"}
                                                     className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
                                             </section>
+                                        ) : item.key === "purchaseUnitPrice" ? (
+                                            <input
+                                                min={1}
+                                                placeholder={item.label}
+                                                name={item.key}
+                                                value={purchaseUnitPriceState}
+                                                onChange={(e) => setPurchaseUnitPriceState(Number(e.target.value))}
+                                                className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
+                                        ) : item.key === "lastUnitPrice" ? (
+                                            <input
+                                                min={1}
+                                                placeholder={item.label}
+                                                name={item.key}
+                                                value={lastUnitPriceState}
+                                                onChange={(e) => setLastUnitPriceState(Number(e.target.value))}
+                                                className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
                                         ) : (
                                             <input
                                                 min={1}

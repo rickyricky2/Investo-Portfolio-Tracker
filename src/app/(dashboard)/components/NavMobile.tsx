@@ -5,8 +5,8 @@ import SwitchThemeButton from "../components/SwitchThemeButton";
 import {useRouter} from "next/navigation";
 
 import { HiOutlineWallet } from "react-icons/hi2";
-import { IoSettingsOutline } from "react-icons/io5";
 import { MdOutlineDashboard  } from "react-icons/md";
+import { AiOutlineLineChart } from "react-icons/ai";
 
 import AddAssetButton from "../components/addAssetButton";
 import {useAuth} from "@/app/(dashboard)/components/AuthContext";
@@ -68,17 +68,18 @@ export default function NavMobile(){
 
     const menuItems = [
         {
-            icons: <MdOutlineDashboard size={30} />,
             label: 'Dashboard',
             url: `${userData.id}`
         },
         {
-            icons: <HiOutlineWallet size={30} />,
             label: 'Wallet',
             url: `${userData.id}/wallet`
         },
         {
-            icons: <IoSettingsOutline size={30} />,
+            label: 'Benchmark',
+            url: `${userData.id}/benchmark`
+        },
+        {
             label: 'Settings',
             url: `${userData.id}/settings`
         },
@@ -106,10 +107,10 @@ export default function NavMobile(){
                             <p className={`text-sm font-medium leading-2 mb-3`}>Add Asset</p>
                         </li>
                         <li className={"flex flex-col justify-center items-center tracking-tighter"}>
-                            <Link href={`/${userData.id}/settings`} aria-label="Settings" >
-                                <IoSettingsOutline size={20} />
+                            <Link href={`/${userData.id}/benchmark`} aria-label="Benchmark" >
+                                <AiOutlineLineChart size={20} />
                             </Link>
-                            <p className={`text-sm font-medium`}>Settings</p>
+                            <p className={`text-sm font-medium`}>Benchmark</p>
                         </li>
                         <li className={"flex flex-col justify-center items-center tracking-tighter"}>
                         <button aria-label={"Toggle menu"} onClick={handleSidebarToggle} className={`h-full ${open ? "" : ""}`}>

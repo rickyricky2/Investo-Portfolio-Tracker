@@ -4,6 +4,7 @@ import React, { useEffect, useState, useMemo } from "react";
 import { ResponsiveLine } from "@nivo/line";
 import { FaSpinner } from "react-icons/fa";
 import {useAuth} from "@/app/(dashboard)/components/AuthContext";
+import LineChartFilter from "@/app/(dashboard)/components/LineChartFilter";
 
 type Snapshot = {
     date: string;
@@ -13,6 +14,8 @@ type Snapshot = {
 function MainChartComponent({mainCurrency}: {mainCurrency: string}) {
     const [snapshots, setSnapshots] = useState<Snapshot[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [firstDate, setFirstDate] =  useState<string>("");
+    const [dateFilter, setDateFilter] = useState<string>("all");
 
     const {data} = useAuth();
 
@@ -34,8 +37,8 @@ function MainChartComponent({mainCurrency}: {mainCurrency: string}) {
                 const [snapshotsData, ratesData] = await Promise.all([
                     resWalletSnapshots.then(res => res.json()),
                     resRates.then(res => res.json())
-                    ]);
-
+                ]);
+                setFirstDate(snapshotsData.snapshots[0].date);
                 if(snapshotsData.success) {
                     let convertedSnapshots = snapshotsData.snapshots;
 
@@ -65,27 +68,29 @@ function MainChartComponent({mainCurrency}: {mainCurrency: string}) {
         {
             id: "Portfolio Value",
             color: "hsl(260, 70%, 50%)",
-            data: snapshots.map((s) => ({
+            data: snapshots
+                .filter(s => dateFilter === "all" || dateFilter === s.date.split('-')[0])
+                .map((s) => ({
                 x: new Date(s.date).toLocaleDateString(),
                 y: Number(s.value.toFixed(2)),
             })),
         },
     ],[snapshots]);
 
-    if (isLoading) {
-        return (
-            <div className="flex justify-center items-center h-[400px] my-10">
-                <FaSpinner className="animate-spin text-4xl text-light-main dark:text-dark-main" />
-            </div>
-        );
-    }
-
     return (
         <div className="min-h-[500px] w-full my-5 shadow-lg rounded-4xl bg-light-bg-secondary dark:bg-dark-bg-tertiary py-6 px-2 tiny:px-6 select-none">
+            <div className="flex items-center">
             <h2 className={"text-2xl font-medium px-2"}>
                 Summary
             </h2>
+            <LineChartFilter firstDate={firstDate} filter={dateFilter} onFilterChange={setDateFilter} />
+            </div>
             <div className={"h-[400px]"}>
+                {isLoading ? (
+                    <div className={" h-[400px] flex justify-center items-center"}>
+                        <FaSpinner className="animate-spin text-4xl text-light-main dark:text-dark-main" />
+                    </div>
+                    ) : (
             <ResponsiveLine
                 data={chartData}
                 margin={{ top: 50, right: 20, bottom: 60, left: 60 }}
@@ -170,6 +175,7 @@ function MainChartComponent({mainCurrency}: {mainCurrency: string}) {
                     </div>
                 )}
             />
+                    )}
             </div>
         </div>
     );

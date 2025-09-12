@@ -3,7 +3,7 @@ import {FaSort, FaSpinner, FaChevronDown, FaChevronRight, FaCheckCircle} from "r
 import {MdCancel} from "react-icons/md";
 import AssetModifyMenu from "@/app/(dashboard)/components/AssetModifyMenu";
 import {walletProps} from "@/types/wallet";
-import React, {useState,useCallback, useMemo} from "react";
+import React, {useState,useCallback, useMemo,useEffect} from "react";
 import {useWalletStore} from "@/store/useWalletStore";
 import {Asset} from "@/types/assets";
 import {useNotification} from "@/app/(dashboard)/components/changeNotification";
@@ -63,7 +63,14 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
 
     // quantity of items on page
     const [currentPage, setCurrentPage] = useState(1);
-    const [itemsPerPage, setItemsPerPage] = useState(30);
+    const [itemsPerPage, setItemsPerPage] = useState(15);
+
+    useEffect(() => {
+        const walletItemsPerPage = localStorage.getItem("walletItemsPerPage");
+        if(walletItemsPerPage){
+            setItemsPerPage(Number(walletItemsPerPage));
+        }
+    },[]);
 
     const currentAssets = useMemo( () => {
         const indexOfLastAsset = currentPage * itemsPerPage;
@@ -249,32 +256,41 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                         <td className="hidden lg:table-cell">
                                             {asset.addedManually && isEditing && editedValues
                                                 ? editableInput("lastUnitPrice", editedValues.lastUnitPrice, handleChange)
-                                                : asset.lastUnitPrice}
+                                                : Number(asset.lastUnitPrice).toFixed(2)}
                                         </td>
                                         <td className="hidden lg:table-cell">
-                                            {asset.totalValue}
+                                            {Number(asset.totalValue).toFixed(2)}
                                         </td>
                                         <td className="hidden lg:table-cell">
                                             {asset.addedManually && isEditing && editedValues
                                                 ? editableInput("currency", editedValues.currency, handleChange)
                                                 : asset.currency}
                                         </td>
-                                        <td className={`hidden lg:table-cell ${ (asset.dailyChange > 0) ? "text-green-500" : "text-light-error-text dark:text-dark-error-text"}`}>
+                                        <td className={`hidden lg:table-cell ${ (asset.dailyChange > 0) ? "text-green-600" : "text-light-error-text dark:text-dark-error-text"}`}>
                                             {`${asset.dailyChange > 0 ? "+" : ""}${asset.dailyChange || "-"} (${asset.dailyChangePercent > 0 ? "+" : ""}${asset.dailyChangePercent || ""}%)`}
                                         </td>
                                         {asset.profit_loss !== undefined ? (
-                                        <td className={`hidden lg:table-cell ${ (asset.profit_loss > 0) ? "text-green-500" : "text-light-error-text dark:text-dark-error-text"}`}>
+                                        <td className={`hidden lg:table-cell ${ (asset.profit_loss > 0) ? "text-green-600" : "text-light-error-text dark:text-dark-error-text"}`}>
                                             {`${asset.profit_loss > 0 ? "+" : ""}${asset.profit_loss} (${asset.profit_lossPercent && (asset.profit_lossPercent > 0 )? "+" : ""}${asset.profit_lossPercent}%)`}
                                         </td>
                                             ) : null}
                                         <td className={"table-cell py-1"}>
                                             {isEditing ? (
                                                 <div className={"flex items-center justify-evenly gap-2 w-full px-2"}>
-                                                    <FaCheckCircle size={23} className={"text-green-500 cursor-pointer"} onClick={saveChanges} />
+                                                    <FaCheckCircle size={23} className={"text-green-600 cursor-pointer"} onClick={saveChanges} />
                                                     <MdCancel size={26} className={"text-light-error-text dark:text-dark-error-text cursor-pointer"} onClick={cancelEditing} />
                                                 </div>
                                             ) : (
-                                                <AssetModifyMenu id={asset._id} refresh={getAssets} showNotification={showNotification} handleEdit={() => startEditing(asset)} />
+                                                <AssetModifyMenu id={asset._id}
+                                                                 ticker={asset.ticker}
+                                                                 country={asset.country}
+                                                                 purchaseDate={asset.purchaseDate}
+                                                                 quantity={asset.quantity}
+                                                                 purchasePrice={asset.purchaseUnitPrice}
+                                                                 currency={asset.currency}
+                                                                 refresh={getAssets}
+                                                                 showNotification={showNotification}
+                                                                 handleEdit={() => startEditing(asset)} />
                                             )}
                                         </td>
                                     </tr>
@@ -310,7 +326,7 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                             <span className="font-semibold text-dark-text-secondary">Last Unit Price:&nbsp;</span>
                                                             {asset.addedManually && isEditing && editedValues
                                                                 ? <span className={"p-1"}> {editableInput("lastUnitPrice", editedValues.lastUnitPrice, handleChange)}</span>
-                                                                : <span className={"text-xl"}>{asset.lastUnitPrice}</span>}
+                                                                : <span className={"text-xl"}>{Number(asset.lastUnitPrice).toFixed(2)}</span>}
                                                         </div>
                                                     ) : null}
                                                     {asset.totalValue ? (
@@ -319,7 +335,7 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                             <span className="font-semibold text-dark-text-secondary">Total Value:&nbsp;</span>
                                                             {asset.addedManually && isEditing && editedValues
                                                                 ? <span className={"p-1"}> {editableInput("totalValue", editedValues.totalValue!, handleChange)}</span>
-                                                                : <span className={"text-xl"}>{asset.totalValue}</span>}
+                                                                : <span className={"text-xl"}>{Number(asset.totalValue).toFixed(2)}</span>}
                                                         </div>
                                                     ) : null}
                                                     {asset.currency ? (
@@ -335,7 +351,7 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                         <div className={`flex items-center lg:hidden`}>
                                                             <FaSort onClick={() => handleSort("dailyChange")} className={"text-light-text-tertiary dark:text-dark-main cursor-pointer mr-1 "} />
                                                             <span className="font-semibold text-dark-text-secondary">Daily Change:&nbsp;</span>
-                                                            <span className={`text-xl ${ (asset.dailyChange > 0) ? "text-green-500" : "text-light-error-text dark:text-dark-error-text"}`}>
+                                                            <span className={`text-xl ${ (asset.dailyChange > 0) ? "text-green-600" : "text-light-error-text dark:text-dark-error-text"}`}>
                                                                 {`${asset.dailyChange > 0 ? "+" : ""}${asset.dailyChange} (${asset.dailyChangePercent && (asset.dailyChangePercent > 0) ? "+" : ""}${asset.dailyChangePercent}%)`}
                                                             </span>
                                                         </div>
@@ -344,7 +360,7 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                         <div className={`flex items-center lg:hidden`}>
                                                             <FaSort onClick={() => handleSort("profit_loss")} className={"text-light-text-tertiary dark:text-dark-main cursor-pointer mr-1 "} />
                                                             <span className="font-semibold text-dark-text-secondary">Profit/Loss:&nbsp;</span>
-                                                            <span className={`text-xl ${ (asset.profit_loss > 0) ? "text-green-500" : "text-light-error-text dark:text-dark-error-text"}`}>
+                                                            <span className={`text-xl ${ (asset.profit_loss > 0) ? "text-green-600" : "text-light-error-text dark:text-dark-error-text"}`}>
                                                                 {`${asset.profit_loss > 0 ? "+" : ""}${asset.profit_loss} (${asset.profit_lossPercent && (asset.profit_lossPercent > 0 )? "+" : ""}${asset.profit_lossPercent}%)`}
                                                             </span>
                                                         </div>
@@ -397,6 +413,7 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                             if (!isNaN(value) && value > 0) {
                                 setItemsPerPage(value);
                                 setCurrentPage(1);
+                                localStorage.setItem("walletItemsPerPage", `${value}`);
                             }
                         }}
                         className="w-16 px-2 py-1 border-2 border-light-main dark:border-dark-main rounded shadow-sm focus:border-light-secondary dark:focus:border-dark-secondary outline-none"
