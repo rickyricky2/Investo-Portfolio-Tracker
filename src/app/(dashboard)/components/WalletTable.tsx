@@ -9,6 +9,7 @@ import {Asset} from "@/types/assets";
 import {useNotification} from "@/app/(dashboard)/components/changeNotification";
 import {z} from "zod";
 import isEqual from "lodash/isEqual";
+import {updateWalletSnapshots} from "@/app/(dashboard)/components/addAssetButton";
 
 const editedValuesSchema = z.object({
     ticker: z.string().optional(),
@@ -60,6 +61,8 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
     const { showNotification } = useNotification();
 
     const triggerRefresh = useWalletStore((state) => state.triggerRefresh);
+
+    const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
     // quantity of items on page
     const [currentPage, setCurrentPage] = useState(1);
@@ -121,15 +124,15 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
 
         if(!currentAsset) return;
 
+        if(isEqual(editedValues, currentAsset)){
+            showNotification("All of the values are the same", false);
+            return;
+        }
+
         if(editedValues.purchaseDate !== currentAsset.purchaseDate){
             await fetch(`/api/historicalRates?purchaseDate=${editedValues.purchaseDate}`,{
                 method: "POST",
             });
-        }
-
-        if(isEqual(editedValues, currentAsset)){
-            showNotification("All of the values are the same", false);
-            return;
         }
 
         const res = await fetch("/api/user/assets", {
@@ -143,7 +146,11 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
         if (!data.success) {
             console.warn(data.error);
             showNotification(data.error, false);
+        }else{
+            await updateWalletSnapshots(baseURL,currentAsset.country,currentAsset.purchaseDate,currentAsset.quantity,currentAsset.currency,currentAsset.ticker,currentAsset.purchaseUnitPrice,true).catch(console.error);
+            await updateWalletSnapshots(baseURL,editedValues.country,editedValues.purchaseDate,editedValues.quantity,editedValues.currency,editedValues.ticker,editedValues.purchaseUnitPrice).catch(console.error);
         }
+
         showNotification("Asset have been modified");
         cancelEditing();
         triggerRefresh();

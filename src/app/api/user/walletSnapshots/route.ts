@@ -141,7 +141,7 @@ export async function POST() {
 export async function PUT(req:Request){
     const {searchParams} = new URL(req.url);
     let ticker = searchParams.get("ticker");
-    const ifDelete = !!(searchParams.get("delete") || false);
+    const ifDelete = searchParams.get("delete") === "true";
     const country = searchParams.get("country") || "";
     const purchaseDate = searchParams.get("purchaseDate");
     const quantity = Number(searchParams.get("quantity"));
@@ -236,7 +236,7 @@ export async function PUT(req:Request){
             parseString(csvText, { headers: true })
                 .on("error", (err) => reject(err))
                 .on("data", (row) => {
-                    if (row.Date >= purchaseDate) {
+                    if (row.Date >= purchaseDate && row.Date !== new Date().toISOString().split("T")[0]) {
                         results.push({
                             date: row.Date,
                             close: parseFloat(row.Close),

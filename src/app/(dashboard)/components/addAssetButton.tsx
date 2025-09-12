@@ -16,9 +16,9 @@ const currencyOptions= currencies.map( (c,index) => (
     <option key={index} value={c.value}>{c.label}</option>
 ));
 
-async function updateWalletSnapshots(baseURL:string,country:string,purchaseDate:string,quantity:number,currency:string,ticker?:string,price?:number) {
+export async function updateWalletSnapshots(baseURL:string,country:string,purchaseDate:string,quantity:number,currency:string,ticker?:string,price?:number,ifDelete:boolean = false,) {
     try {
-        const url = `${baseURL}/api/user/walletSnapshots?ticker=${ticker}&country=${country}&purchaseDate=${purchaseDate}&quantity=${quantity}&price=${price}&currency=${currency}`;
+        const url = `${baseURL}/api/user/walletSnapshots?ticker=${ticker}&country=${country}&purchaseDate=${purchaseDate}&quantity=${quantity}&price=${price}&currency=${currency}&delete=${ifDelete}`;
         const res = await fetch(url, { method: "PUT", headers: { "Content-Type": "application/json" } });
         const data = await res.json();
         if(data.success){
