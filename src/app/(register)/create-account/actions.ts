@@ -7,13 +7,15 @@ import nodemailer from "nodemailer";
 import clientPromise from "@/lib/db";
 import {ActionResponse, CreateAccountFormData} from "@/types/createAccount";
 
+const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+
 //  function for sending and welcome email
 const sendWelcomeEmail = async  (to: string, emailToken:string) => {
 //     transport config
     const transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 587,
-        secure: false,
+        host: "server423682.nazwa.pl",
+        port: 465,
+        secure: true,
         auth: {
             user: process.env.SMTP_USERNAME,
             pass: process.env.SMTP_PASSWORD,
@@ -27,7 +29,7 @@ const sendWelcomeEmail = async  (to: string, emailToken:string) => {
         text: "Thanks for trusting us!!",
         html: `<h1>Welcome to Investo!</h1>
                 <p>Thank you for registering. To activate your account, please confirm your email address by clicking the button below:</p>
-                <a href="https://investo-lit9.vercel.app/verify-email?token=${emailToken}" style="background:#4CAF50; color:white; padding:10px 20px; border-radius:4px; text-decoration:none;">Confirm your email</a>
+                <a href="${baseURL}/verify-email?token=${emailToken}" style="background:#4CAF50; color:white; padding:10px 20px; border-radius:4px; text-decoration:none;">Confirm your email</a>
                 <p>If you didn’t create this account, you can ignore this email.</p>`,
     });
 }

@@ -4,12 +4,14 @@ import nodemailer from "nodemailer";
 import jwt from 'jsonwebtoken';
 import clientPromise from "@/lib/db";
 
+const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+
 const sendConfirmationEmail = async  (to: string) => {
 //     transport config
     const transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 587,
-        secure: false,
+        host: "server423682.nazwa.pl",
+        port: 465,
+        secure: true,
         auth: {
             user: process.env.SMTP_USERNAME,
             pass: process.env.SMTP_PASSWORD,
@@ -23,7 +25,7 @@ const sendConfirmationEmail = async  (to: string) => {
         text: "",
         html: `<h1>Thanks for confirming your email!</h1>
                 <p>Now u can enjoy our app. Log in from link below.</p>
-                <a href="https://investo-lit9.vercel.app/login" style="background:#4CAF50; color:white; padding:10px 20px; border-radius:4px; text-decoration:none;">Log in here</a>`
+                <a href="${baseURL}/login" style="background:#4CAF50; color:white; padding:10px 20px; border-radius:4px; text-decoration:none;">Log in here</a>`
     });
 }
 

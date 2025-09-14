@@ -92,7 +92,7 @@ export default async function Home() {
           <div className={"text-center mt-20 p-10 w-full sm:w-9/10 m-auto"}>
               <h2 className={"text-5xl"}>Any questions? Contact us using form below ;)</h2>
               <div className={" w-full sm:w-9/10 lg:w-8/10 m-auto"}>
-                  <form method="post" className={"contactForm dark:placeholder:text-dark-text-tertiary"}>
+                  <form action={"mailto:contact@investo.net.pl"} method="get"  className={"contactForm dark:placeholder:text-dark-text-tertiary"}>
                       <div className={"text-3xl py-10 sm:px-10 w-full"}>
                           <div className={"flex flex-col md:flex-row sm:gap-5 lg:gap-10 mb-5"}>
                               <section className={"flex flex-col items-start gap-3 w-full md:w-1/2"}>
@@ -109,22 +109,22 @@ export default async function Home() {
                           <div  className={"flex flex-col gap-3 w-full mb-10"}>
                               <section  className={"flex flex-col items-start gap-3 p-2 w-full"}>
                                   <label>E-mail</label>
-                                  <input type="email" placeholder={"Enter your e-mail"} required
+                                  <input type="email" name="email" placeholder={"Enter your e-mail"} required
                                          className={"border-1 rounded-sm px-2 py-1 focus:border-light-secondary dark:focus:border-dark-secondary w-full"}/>
                               </section>
                               <section className={"flex flex-col items-start gap-3 p-2 w-full"}>
                                   <label>Topic</label>
-                                  <input type="text" placeholder={"Enter topic"} required
+                                  <input type="text" name="subject" placeholder={"Enter topic"} required
                                          className={"border-1 rounded-sm px-2 py-1 focus:border-light-secondary dark:focus:border-dark-secondary w-full"}/>
                               </section>
                               <section className={"flex flex-col items-start gap-3 p-2 w-full"}>
                                   <label>Your message</label>
-                                  <textarea placeholder={"Enter message"} required rows={7}
+                                  <textarea placeholder={"Enter message"} name="body" required rows={7}
                                             className={"border-1 rounded-sm px-2 py-1 focus:border-light-secondary dark:focus:border-dark-secondary w-full"}/>
                               </section>
                           </div>
                           <input className={"bg-light-secondary dark:bg-dark-bg-tertiary text-light-text-secondary dark:text-dark-text-secondary px-5 py-3 my-5 rounded-lg text-4xl transition-all hover:scale-105 hover:shadow-2xl active:bg-[#4a426ec9]"}
-                          type={"submit"} value={"Submit"}/>
+                          type={"submit"} value={"Send"}/>
                       </div>
                   </form>
               </div>

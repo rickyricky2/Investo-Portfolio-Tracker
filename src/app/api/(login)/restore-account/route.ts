@@ -8,9 +8,9 @@ import nodemailer from "nodemailer";
 const sendEmail = async  (to: string) => {
 //     transport config
     const transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 587,
-        secure: false,
+        host: "server423682.nazwa.pl",
+        port: 465,
+        secure: true,
         auth: {
             user: process.env.SMTP_USERNAME,
             pass: process.env.SMTP_PASSWORD,

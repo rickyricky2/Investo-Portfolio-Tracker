@@ -4,12 +4,14 @@ import nodemailer from "nodemailer";
 import jwt from 'jsonwebtoken';
 import clientPromise from "@/lib/db";
 
+const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+
 const sendVerificationEmail = async  (to: string,token:string) => {
 //     transport config
     const transporter = nodemailer.createTransport({
-        host: "smtp.gmail.com",
-        port: 587,
-        secure: false,
+        host: "server423682.nazwa.pl",
+        port: 465,
+        secure: true,
         auth: {
             user: process.env.SMTP_USERNAME,
             pass: process.env.SMTP_PASSWORD,
@@ -23,7 +25,7 @@ const sendVerificationEmail = async  (to: string,token:string) => {
         text: "",
         html: `<h1>Your new verification link is here!</h1>
                 <p>Click on link below to verify your investo account</p>
-                <a href="https://investo-lit9.vercel.app/verify-email?token=${token}" style="background:#4CAF50; color:white; padding:10px 20px; border-radius:4px; text-decoration:none;">Verify here</a>`
+                <a href="${baseURL}/verify-email?token=${token}" style="background:#4CAF50; color:white; padding:10px 20px; border-radius:4px; text-decoration:none;">Verify here</a>`
     });
 }
 
