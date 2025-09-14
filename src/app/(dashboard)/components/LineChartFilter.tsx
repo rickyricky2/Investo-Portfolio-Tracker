@@ -1,6 +1,6 @@
 
 export default function LineChartFilter({firstDate,filter,onFilterChange}: {firstDate:string; filter:string; onFilterChange: (filters:string) => void;}){
-    const firstYear = Number(firstDate.split("-")[0]);
+    const firstYear = Number(firstDate.split("-")[0] || new Date().toISOString().split("-")[0] );
     const currentYear = new Date().getFullYear();
 
     const years:number[] = [];
