@@ -24,10 +24,10 @@ export async function updateWalletSnapshots(baseURL:string,country:string,purcha
         if(data.success){
             console.log("Wallet Snapshot Update Response:", data.success);
         }else{
-            console.error("Error:", data.error);
+            console.warn("Error:", data.error);
         }
     } catch (err:unknown) {
-        console.error("Error:", err);
+        console.warn("Error:", err);
     }
 }
 

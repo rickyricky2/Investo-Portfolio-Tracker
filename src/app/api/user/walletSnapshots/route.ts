@@ -73,6 +73,22 @@ function fillMissingDays(data: HistoricalPrice[]): HistoricalPrice[] {
         close: last.close,
     });
 
+    const today = new Date();
+    const untilDate = new Date(today);
+    untilDate.setUTCDate(untilDate.getUTCDate() - 1);
+
+    let day = new Date(last.date);
+    lastClose = last.close;
+    day.setUTCDate(day.getUTCDate() + 1);
+
+    while (day <= untilDate) {
+        result.push({
+            date: day.toISOString().slice(0, 10),
+            close: lastClose,
+        });
+        day.setUTCDate(day.getUTCDate() + 1);
+    }
+
     return result;
 }
 
@@ -196,7 +212,23 @@ export async function PUT(req:Request){
     allPrices = fillMissingDays(allPrices);
 
     if (allPrices.length === 0) {
-        return NextResponse.json({success: false, error:"No data"}, {status: 500});
+        const last = await fetch(`${baseURL}/api/stockMarketAPI?dataType=lastPrice&ticker=${ticker}&country=${country}`).then(res => res.json());
+
+        if(!last){
+            return NextResponse.json({success: false, error:"No data"}, {status: 500});
+        }
+
+        const currentDate = new Date(purchaseDate);
+        const untilDate = new Date();
+        untilDate.setUTCDate(untilDate.getUTCDate() - 1);
+
+        while(currentDate <= untilDate){
+            allPrices.push({
+                date: currentDate.toISOString().split("T")[0],
+                close: last.lastPrice
+            });
+            currentDate.setDate(currentDate.getDate() + 1);
+        }
     }
 
     const ops = await Promise.all(
@@ -219,6 +251,9 @@ export async function PUT(req:Request){
     );
 
     const portfolioSnapshots = await getCollection("portfolioSnapshots");
+    if(ops.length === 0) {
+        return NextResponse.json({ success: true },{status:200});
+    }
     await portfolioSnapshots.bulkWrite(ops);
 
     return NextResponse.json({ success: true },{status:200});
