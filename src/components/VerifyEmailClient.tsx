@@ -9,8 +9,6 @@ export default function VerifyEmailClient({token}:{token?:string}) {
     const [email, setEmail] = useState("");
     const [resendStatus, setResendStatus] = useState({ type: "idle", message: "" });
 
-    const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
-
     useEffect(() => {
         const verify = async () => {
             if (!token) {
@@ -19,7 +17,7 @@ export default function VerifyEmailClient({token}:{token?:string}) {
             }
 
             try {
-                const res = await fetch(`${baseURL}/api/verify-email`, {
+                const res = await fetch(`/api/verify-email`, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
@@ -52,7 +50,7 @@ export default function VerifyEmailClient({token}:{token?:string}) {
         }
 
         try {
-            const res = await fetch(`${baseURL}/api/resend-verification`, {
+            const res = await fetch(`/api/resend-verification`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
