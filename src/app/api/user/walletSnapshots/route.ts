@@ -74,12 +74,13 @@ function fillMissingDays(data: HistoricalPrice[]): HistoricalPrice[] {
     });
 
     const today = new Date();
-    const untilDate = new Date(today);
-    untilDate.setUTCDate(untilDate.getUTCDate() - 1);
+    const untilDate = new Date(today.toISOString().slice(0, 10));
+    untilDate.setDate(untilDate.getDate() + 1);
+
 
     let day = new Date(last.date);
     lastClose = last.close;
-    day.setUTCDate(day.getUTCDate() + 1);
+    day.setDate(day.getDate() + 1);
 
     while (day <= untilDate) {
         result.push({
@@ -213,14 +214,15 @@ export async function PUT(req:Request){
 
     if (allPrices.length === 0) {
         const last = await fetch(`${baseURL}/api/stockMarketAPI?dataType=lastPrice&ticker=${ticker}&country=${country}`).then(res => res.json());
-
+        // czy kupujac w dniu obecnym mamy juz ceny w fetchu??? do sprawdzenia
         if(!last){
             return NextResponse.json({success: false, error:"No data"}, {status: 500});
         }
 
         const currentDate = new Date(purchaseDate);
-        const untilDate = new Date();
-        untilDate.setUTCDate(untilDate.getUTCDate() - 1);
+        const today = new Date();
+        const untilDate = new Date(today.toISOString().split('T')[0]);
+        untilDate.setDate(untilDate.getDate() + 1);
 
         while(currentDate <= untilDate){
             allPrices.push({
@@ -271,7 +273,8 @@ export async function PUT(req:Request){
             parseString(csvText, { headers: true })
                 .on("error", (err) => reject(err))
                 .on("data", (row) => {
-                    if (row.Date >= purchaseDate && row.Date !== new Date().toISOString().split("T")[0]) {
+                    if (row.Date >= purchaseDate) {
+                        // && row.Date !== new Date().toISOString().split("T")[0]
                         results.push({
                             date: row.Date,
                             close: parseFloat(row.Close),

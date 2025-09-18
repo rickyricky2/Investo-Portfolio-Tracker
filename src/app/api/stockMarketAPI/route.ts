@@ -65,7 +65,15 @@ export async function GET(req:Request){
 
         if(record) {
             const lastPrice = Number(Number(record.Close).toFixed(2));
-            return NextResponse.json({success: true, lastPrice}, {status: 200});
+            if(lastPrice){
+                return NextResponse.json({success: true, lastPrice}, {status: 200});
+            }
+            const res = await fetch(`https://api.twelvedata.com/price?symbol=${ticker.split(".")[0]}&apikey=${twelvedata_token}&country=${country}`);
+            const data = await res.json();
+            if(data){
+                console.log(data);
+                return NextResponse.json({success: true, lastPrice: data.price}, {status: 200});
+            }
         }
     }else if(dataType === "historicalPrices"){
         if(!purchaseDate){
@@ -77,7 +85,7 @@ export async function GET(req:Request){
             return NextResponse.json({success: true, price: price}, {status: 200});
         }
     }else {
-        const tickerInfoUrl = `https://api.twelvedata.com/quote?symbol=${ticker}&apikey=${twelvedata_token}&country=${country}`;
+        const tickerInfoUrl = `https://api.twelvedata.com/quote?symbol=${ticker.split(".")[0]}&apikey=${twelvedata_token}&country=${country}`;
         const res = await fetch(tickerInfoUrl);
 
         if (res.ok) {

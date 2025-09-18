@@ -1,9 +1,9 @@
 "use client";
-import {useEffect} from "react";
+import {useLayoutEffect} from "react";
 
 export default function ThemeProvider({children}:{children:React.ReactNode}){
 
-    useEffect(()=>{
+    useLayoutEffect(()=>{
         const theme = localStorage.getItem("theme");
         if(theme === "dark"){
             document.documentElement.classList.add("dark");
