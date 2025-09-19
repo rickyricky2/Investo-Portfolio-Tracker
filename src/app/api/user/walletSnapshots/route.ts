@@ -78,7 +78,7 @@ function fillMissingDays(data: HistoricalPrice[]): HistoricalPrice[] {
     untilDate.setDate(untilDate.getDate() + 1);
 
 
-    let day = new Date(last.date);
+    const day = new Date(last.date);
     lastClose = last.close;
     day.setDate(day.getDate() + 1);
 
