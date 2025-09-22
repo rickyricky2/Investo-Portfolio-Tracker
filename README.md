@@ -30,4 +30,4 @@ Site is using Twelve Data and Stooq for stock data, jwt for authentication and M
 
 Deployed in Vercel, stored in Github
 
-[investo frontpage screen](/investo_window.png)
+[investo frontpage screen](./investo_window.png)
