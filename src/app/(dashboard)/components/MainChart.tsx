@@ -39,7 +39,9 @@ function MainChartComponent({mainCurrency}: {mainCurrency: string}) {
                     resRates.then(res => res.json())
                 ]);
                 if(snapshotsData.success) {
-                    snapshotsData.snapshots.length === 0 ? null : setFirstDate(snapshotsData.snapshots[0].date || "");
+                    if(snapshotsData.snapshots){
+                        setFirstDate(snapshotsData.snapshots[0].date);
+                    }
                     let convertedSnapshots = snapshotsData.snapshots;
 
                     if(mainCurrency !== "USD"){
