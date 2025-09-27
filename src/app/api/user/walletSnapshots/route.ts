@@ -189,6 +189,7 @@ export async function PUT(req:Request){
     const purchasePrice = Number(searchParams.get("price"));
     const currency = searchParams.get("currency");
     const today = searchParams.get("today");
+    const addedManually = searchParams.get("addedManually");
 
     if(!country || !quantity || !purchaseDate || !currency || !today) {
         return NextResponse.json({success:false, error:"Could not find country, quantity, currency or purchaseDate in params"},{status:400});
@@ -198,7 +199,7 @@ export async function PUT(req:Request){
 
     const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
-    if(!ticker){
+    if(addedManually || !ticker){
         if(!purchasePrice){
             return NextResponse.json({ success: false, error:"no price in params" },{status:500});
         }
@@ -251,6 +252,9 @@ export async function PUT(req:Request){
         let currentDate = dateFromYMD(purchaseDate);
         const untilDate = dateFromYMD(today);
 
+        // console.log(currentDate);
+        // console.log(untilDate);
+
         while(currentDate <= untilDate){
             const dateStr = currentDate.toLocaleDateString("sv-SE");
             allPrices.push({
@@ -259,6 +263,7 @@ export async function PUT(req:Request){
             });
             const next_day = addDays(dateStr,1);
             currentDate = dateFromYMD(next_day);
+            // console.log(currentDate);
         }
     }
 

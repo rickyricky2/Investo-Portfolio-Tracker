@@ -16,9 +16,9 @@ const currencyOptions= currencies.map( (c,index) => (
     <option key={index} value={c.value}>{c.label}</option>
 ));
 
-export async function updateWalletSnapshots(baseURL:string,country:string,purchaseDate:string,quantity:number,currency:string,today:string,ticker?:string,price?:number,ifDelete:boolean = false,) {
+export async function updateWalletSnapshots(baseURL:string,country:string,purchaseDate:string,quantity:number,currency:string,today:string,addedManually:boolean,ticker?:string,price?:number,ifDelete:boolean = false,) {
     try {
-        const url = `${baseURL}/api/user/walletSnapshots?ticker=${ticker}&country=${country}&purchaseDate=${purchaseDate}&quantity=${quantity}&price=${price}&today=${today}&currency=${currency}&delete=${ifDelete}`;
+        const url = `${baseURL}/api/user/walletSnapshots?ticker=${ticker}&country=${country}&purchaseDate=${purchaseDate}&quantity=${quantity}&addedManually=${addedManually}&price=${price}&today=${today}&currency=${currency}&delete=${ifDelete}`;
         const res = await fetch(url, { method: "PUT", headers: { "Content-Type": "application/json" } });
         const data = await res.json();
         if(data.success){
@@ -35,9 +35,18 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
     const [isOpen,setIsOpen]=useState(false);
     const [error, setError]=useState("");
     const [isLoading, setIsLoading]=useState(false);
-    const [purchaseUnitPriceState, setPurchaseUnitPriceState]=useState(0);
-    const [lastUnitPriceState, setLastUnitPriceState]=useState(0);
+    const [purchaseUnitPriceState, setPurchaseUnitPriceState] = useState<string | number>("");
+    const [lastUnitPriceState, setLastUnitPriceState] = useState<string | number>("");
+
+    const [tickerState, setTickerState] = useState("");
+    const [countryState, setCountryState] = useState("");
+    const [purchaseDateState, setPurchaseDateState] = useState("");
+    const [isDirty, setIsDirty] = useState(false);
+    const [today, setToday] = useState("");
+
     const wrapperRef = useRef<HTMLDivElement>(null);
+    const buttonRef = useRef<HTMLDivElement>(null);
+
 
     const { showNotification } = useNotification();
 
@@ -46,16 +55,26 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
     const triggerRefresh = useWalletStore((state) => state.triggerRefresh);
 
     useEffect(() => {
-        function handleClickOutside(event: MouseEvent) {
-            if (wrapperRef.current && !wrapperRef.current.contains(event.target as Node)) {
+        if(!isOpen) return;
+
+        function handleClickOutside(event: Event) {
+            const clickedAllowed =
+                (wrapperRef.current && wrapperRef.current.contains(event.target as Node)) ||
+                (buttonRef.current && buttonRef.current.contains(event.target as Node));
+
+            if (!clickedAllowed) {
                 setIsOpen(false);
             }
         }
         document.addEventListener("mousedown", handleClickOutside);
+        document.addEventListener('pointerdown', handleClickOutside);
+        document.addEventListener('touchstart', handleClickOutside);
         return () => {
             document.removeEventListener("mousedown", handleClickOutside);
+            document.removeEventListener('pointerdown', handleClickOutside);
+            document.removeEventListener('touchstart', handleClickOutside);
         };
-    }, []);
+    }, [isOpen]);
 
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -191,6 +210,7 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                 ticker: formData.get("ticker") as string,
                 country: formData.get("country") as string,
                 quantity: Number(formData.get('quantity')),
+                purchaseUnitPrice: Number(formData.get('purchaseUnitPrice')),
                 purchaseDate: formData.get("purchaseDate") as string,
             }
             const quantity = rawData.quantity;
@@ -200,26 +220,19 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
             const ticker = rawData.ticker as string;
             const country = rawData.country as string;
 
-            const res = fetch(`${baseURL}/api/dataStore?ticker=${ticker}&country=${country}`, {
+            const res = await fetch(`${baseURL}/api/dataStore?ticker=${ticker}&country=${country}`, {
                 method:"GET",
                 headers:{"Content-Type": "application/json"},
             });
-            const purchaseUnitPriceRes  = fetch(`${baseURL}/api/stockMarketAPI?dataType=historicalPrices&ticker=${ticker}&country=${country}&purchaseDate=${rawData.purchaseDate}`, {
-                method: "GET",
-                headers:{"Content-Type": "application/json"},
-            });
 
-            const [data,purchaseUnitPrice] = await Promise.all([
-                res.then( res => res.json()),
-                purchaseUnitPriceRes.then(res => res.json())
-            ]);
+            const data = await res.json();
 
             if(data.success){
             //     if we have this ticker data already stored
                 const tickerData = data.tickerInfo;
                 rawData = {
                     ...tickerData,
-                    purchaseUnitPrice: Number(purchaseUnitPrice.price || tickerData.lastUnitPrice),
+                    purchaseUnitPrice: Number(rawData.purchaseUnitPrice || tickerData.lastUnitPrice),
                     quantity,
                     country,
                     purchaseDate: rawData.purchaseDate,
@@ -238,19 +251,21 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                     setError("We couldn't find ticker info, u need to add information manually");
                     setIsLoading(false);
                     setNotAddDataManually(false);
-                    if(purchaseUnitPrice.success){
-                        setPurchaseUnitPriceState(Number(purchaseUnitPrice.price));
+                    // if(purchaseUnitPrice.success){
+                    //     setPurchaseUnitPriceState(Number(purchaseUnitPrice.price));
                         const res = await fetch(`${baseURL}/api/stockMarketAPI?dataType=lastPrice&ticker=${ticker}&country=${country}`, {
                             method: "GET",
                             headers:{"Content-Type": "application/json"},
                         });
                         const data = await res.json();
                         if(data.success){
-                            setLastUnitPriceState(Number(data.lastPrice))
+                            console.log(1);
+                            setLastUnitPriceState(Number(data.lastPrice));
                         }else{
-                            setLastUnitPriceState(0)
+                            console.log(1);
+                            setLastUnitPriceState("");
                         }
-                    }
+                    // }
                     return;
                 }
 
@@ -262,7 +277,6 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                 rawData = {
                     ...rawData,
                     name:tickerInfo.name,
-                    purchaseUnitPrice:purchaseUnitPrice.price || lastUnitPrice,
                     lastUnitPrice:lastUnitPrice,
                     currency: currency,
                     country:country,
@@ -305,21 +319,52 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
         }
 
         showNotification(`Asset has been added!`);
-        updateWalletSnapshots(baseURL,rawData.country,rawData.purchaseDate,rawData.quantity,rawData.currency,formattedDate,rawData.ticker,rawData.purchaseUnitPrice).catch(console.error);
+        updateWalletSnapshots(baseURL,rawData.country,rawData.purchaseDate,rawData.quantity,rawData.currency,today,!notAddDataManually,rawData.ticker,rawData.purchaseUnitPrice).catch(console.error);
         triggerRefresh();
         setIsOpen(false);
         setIsLoading(false);
     }
 
+    useEffect( () => {
+        if(isDirty) return;
+        if(!tickerState || !countryState || !purchaseDateState) return;
+
+        const timeout = setTimeout( async () => {
+            const purchaseUnitPriceRes  = await fetch(`${baseURL}/api/stockMarketAPI?dataType=historicalPrices&ticker=${tickerState}&country=${countryState}&purchaseDate=${purchaseDateState}`, {
+                method: "GET",
+                headers:{"Content-Type": "application/json"},
+            });
+            const purchaseUnitPrice = await purchaseUnitPriceRes.json();
+            if(purchaseUnitPrice.success){
+                setPurchaseUnitPriceState(purchaseUnitPrice.price);
+            }else{
+                const purchaseUnitPriceRes  = await fetch(`${baseURL}/api/stockMarketAPI?dataType=lastPrice&ticker=${tickerState}&country=${countryState}`, {
+                    method: "GET",
+                    headers:{"Content-Type": "application/json"},
+                });
+                const purchaseUnitPrice = await purchaseUnitPriceRes.json();
+                if(purchaseUnitPrice.success){
+                    setPurchaseUnitPriceState(purchaseUnitPrice.lastPrice);
+                }
+            }
+        }, 500);
+
+        return () => clearTimeout(timeout);
+    },[tickerState, countryState, purchaseDateState])
+
     const [type, setType] = useState("");
     const [notAddDataManually,setNotAddDataManually] = useState(true);
 
-    const today = new Date();
-    const formattedDate = today.toLocaleDateString("sv-SE");
+    useEffect( () => {
+        const todayDate = new Date();
+        const formattedDate = todayDate.toLocaleDateString("sv-SE");
+        setToday(formattedDate);
+        setPurchaseDateState(formattedDate);
+    },[]);
 
     return(
-        <div className={`lg:relative text-light-text-secondary dark:text-dark-text`} ref={wrapperRef}>
-            <div className={`${mobile ? "bg-transparent" : "bg-light-bg-tertiary dark:bg-dark-main"} transition-all rounded-full cursor-pointer p-1 z-100 relative group `}  >
+        <div className={`lg:relative text-light-text-secondary dark:text-dark-text`}>
+            <div ref={buttonRef} className={`${mobile ? "bg-transparent" : "bg-light-bg-tertiary dark:bg-dark-main"} transition-all rounded-full cursor-pointer p-1 z-100 relative group `}  >
                 <FaPlus className={`${mobile ? "text-light-text-tertiary dark:text-dark-text-tertiary" : "text-light-text-secondary dark:text-dark-text" }   z-10 transition-all ${isOpen ? "rotate-45" : ""}`} size={30} onClick={() => setIsOpen(!isOpen)} />
                 <p className={`${isOpen ? 'hidden' : "hidden lg:block"} absolute bottom-6 -left-7 group-hover:-translate-y-5 shadow-md rounded-md text-lg
                       w-25 p-2 scale-0 text-light-text-tertiary bg-[hsl(266,40%,85%)] dark:text-dark-text dark:bg-dark-secondary font-medium duration-175 overflow-hidden group-hover:scale-100 text-center
@@ -327,7 +372,8 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                     Add Asset
                 </p>
             </div>
-            <div className={`fixed mx-auto bg-light-bg-tertiary dark:bg-dark-bg-tertiary text-light-text-tertiary dark:text-dark-text-tertiary z-40 shadow-2xl max-lg:left-0 right-0 m-auto lg:top-0 lg:right-0 rounded-4xl lg:rounded-3xl transition-all p-5 tiny:p-5 max-h-[80%] lg:max-h-[710px] overflow-hidden min-w-[300px] lg:min-w-0 w-[330px] lg:absolute ${isOpen ? notAddDataManually ? "overflow-y-auto max-lg:bottom-20 lg:h-[420px]" : " overflow-y-auto max-lg:bottom-20 lg:h-[820px]" : "lg:w-0 lg:h-0 lg:opacity-0 max-lg:-bottom-[1000px]"}`}>
+            {mobile ? <div className={`fixed top-0 left-0 w-screen h-full backdrop-blur-lg transition-all ${isOpen ? "max-lg:scale-100" : "max-lg:scale-0"}`}></div> : null}
+            <div ref={wrapperRef} className={`fixed mx-auto bg-light-bg-tertiary dark:bg-dark-bg-tertiary text-light-text-tertiary dark:text-dark-text-tertiary z-40 shadow-2xl rounded-4xl lg:rounded-3xl transition-all p-5 tiny:p-5 right-5 max-lg:left-5 bottom-30 max-w-[330px] h-auto max-h-[500px] overflow-auto lg:absolute lg:right-0 lg:top-0 lg:w-[330px] lg:h-[500px] lg:max-h-[710px] ${isOpen ? "scale-100" : "scale-0 lg:translate-x-50 lg:-translate-y-70 opacity-0 appearance-none"}`}>
                 <h2 className={"text-3xl my-2 font-medium text-light-secondary dark:text-dark-tertiary"}>Add Asset</h2>
                 <form onSubmit={handleSubmit} className={"text-xl w-full"}>
                     <label htmlFor="type-select" className="sr-only">
@@ -343,8 +389,11 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                             setType(e.target.value);
                             setNotAddDataManually(typesWithTicker.includes(e.target.value));
                             setError("");
-                            setPurchaseUnitPriceState(0);
-                            setLastUnitPriceState(0);
+                            setIsDirty(false);
+                            setTickerState("");
+                            setCountryState("");
+                            setPurchaseUnitPriceState("");
+                            setLastUnitPriceState("");
                         }}
                     >
                         <option value="" disabled>-- Select Asset Type --</option>
@@ -363,6 +412,7 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                     placeholder={"ticker"}
                                     name={"ticker"}
                                     required
+                                    onChange={ (e) => setTickerState(e.target.value) }
                                     className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
                             </section>
                             <section className={"flex my-3 relative w-full"}>
@@ -375,6 +425,19 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                     className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
                             </section>
                             <section className={"flex my-3 relative w-full"}>
+                                <input
+                                    type={"number"}
+                                    placeholder={"Purchase Unit Price"}
+                                    value={purchaseUnitPriceState === "" ? "" : purchaseUnitPriceState}
+                                    onChange={ (e) => {
+                                        setIsDirty(true);
+                                        setPurchaseUnitPriceState(e.target.value);
+                                    }}
+                                    required={true}
+                                    name={"purchaseUnitPrice"}
+                                    className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
+                            </section>
+                            <section className={"flex my-3 relative w-full"}>
                                 <label htmlFor="country-select" className="sr-only">
                                     Choose country
                                 </label>
@@ -384,6 +447,7 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                     className="text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none appearance-none bg-transparent p-1 focus:bg-light-bg-tertiary dark:focus:bg-dark-bg-tertiary focus:border-b-light-text-tertiary dark:focus:border-b-dark-main"
                                     size={1}
                                     required
+                                    onChange={ (e) => setCountryState(e.target.value) }
                                     defaultValue=""
                                 >
                                     <option value="" disabled>-- Select Country --</option>
@@ -395,7 +459,8 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                     type={"date"}
                                     min={1}
                                     placeholder={"Purchase Date"}
-                                    defaultValue={formattedDate}
+                                    onChange={ (e) => setPurchaseDateState(e.target.value) }
+                                    defaultValue={today}
                                     required
                                     name={"purchaseDate"}
                                     className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
@@ -447,7 +512,7 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                                     type={"date"}
                                                     min={1}
                                                     placeholder={"Purchase Date"}
-                                                    defaultValue={formattedDate}
+                                                    defaultValue={purchaseDateState}
                                                     required
                                                     name={"purchaseDate"}
                                                     className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
@@ -457,6 +522,7 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                                 min={1}
                                                 placeholder={item.label}
                                                 name={item.key}
+                                                required={true}
                                                 value={purchaseUnitPriceState}
                                                 onChange={(e) => setPurchaseUnitPriceState(Number(e.target.value))}
                                                 className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
@@ -465,6 +531,7 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                                 min={1}
                                                 placeholder={item.label}
                                                 name={item.key}
+                                                required={true}
                                                 value={lastUnitPriceState}
                                                 onChange={(e) => setLastUnitPriceState(Number(e.target.value))}
                                                 className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>

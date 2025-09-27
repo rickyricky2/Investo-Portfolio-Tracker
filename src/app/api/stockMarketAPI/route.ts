@@ -70,8 +70,8 @@ export async function GET(req:Request){
             }
             const res = await fetch(`https://api.twelvedata.com/price?symbol=${ticker.split(".")[0]}&apikey=${twelvedata_token}&country=${country}`);
             const data = await res.json();
-            if(data){
-                console.log(data);
+            if(data.price){
+                // console.log(data);
                 return NextResponse.json({success: true, lastPrice: data.price}, {status: 200});
             }
         }
