@@ -353,6 +353,7 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
     },[tickerState, countryState, purchaseDateState])
 
     const [type, setType] = useState("");
+    const [quantityState, setQuantityState] = useState(0);
     const [notAddDataManually,setNotAddDataManually] = useState(true);
 
     useEffect( () => {
@@ -375,10 +376,11 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
             {mobile ? <div className={`fixed top-0 left-0 w-screen h-full backdrop-blur-lg transition-all ${isOpen ? "max-lg:scale-100" : "max-lg:scale-0"}`}></div> : null}
             <div ref={wrapperRef} className={`fixed mx-auto bg-light-bg-tertiary dark:bg-dark-bg-tertiary text-light-text-tertiary dark:text-dark-text-tertiary z-40 shadow-2xl rounded-4xl lg:rounded-3xl transition-all p-5 tiny:p-5 right-5 max-lg:left-5 bottom-30 max-w-[330px] h-auto max-h-[500px] overflow-auto lg:absolute lg:right-0 lg:top-0 lg:w-[330px] lg:h-[500px] lg:max-h-[710px] ${isOpen ? "scale-100" : "scale-0 lg:translate-x-50 lg:-translate-y-70 opacity-0 appearance-none"}`}>
                 <h2 className={"text-3xl my-2 font-medium text-light-secondary dark:text-dark-tertiary"}>Add Asset</h2>
-                <form onSubmit={handleSubmit} className={"text-xl w-full"}>
+                <form onSubmit={handleSubmit} className={"text-xl w-full relative"}>
                     <label htmlFor="type-select" className="sr-only">
                         Choose Type Of Asset
                     </label>
+                    <span className={`absolute z-0 w-auto font-medium transition-all ${type ? "text-[.9rem] left-0 -top-[9px]" : "top-1 left-1 opacity-0"}`}>Type</span>
                     <select
                         name="type"
                         id={"type-select"}
@@ -407,27 +409,28 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                     {notAddDataManually ? (
                         <>
                             <section className={"flex my-3 relative w-full"}>
+                                <span className={`absolute z-0 w-auto font-medium transition-all ${tickerState ? "text-[.9rem] left-0 -top-[7px]" : "top-1 left-1"}`}>Ticker</span>
                                 <input
                                     type={"text"}
-                                    placeholder={"ticker"}
                                     name={"ticker"}
                                     required
                                     onChange={ (e) => setTickerState(e.target.value) }
-                                    className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
+                                    className={"text-dark-tertiary w-full z-10 font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
                             </section>
                             <section className={"flex my-3 relative w-full"}>
+                                <span className={`absolute z-0 w-auto font-medium transition-all ${quantityState ? "text-[.9rem] left-0 -top-[7px]" : "top-1 left-1"}`}>Quantity</span>
                                 <input
                                     type={"number"}
                                     min={1}
-                                    placeholder={"quantity"}
+                                    onChange={(e) => setQuantityState(Number(e.target.value))}
                                     required
                                     name={"quantity"}
-                                    className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
+                                    className={"text-dark-tertiary w-full z-10 font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
                             </section>
                             <section className={"flex my-3 relative w-full"}>
+                                <span className={`absolute z-0 w-auto font-medium transition-all ${purchaseUnitPriceState ? "text-[.9rem] left-0 -top-[7px]" : "top-1 left-1"}`}>Purchase Unit Price</span>
                                 <input
                                     type={"number"}
-                                    placeholder={"Purchase Unit Price"}
                                     value={purchaseUnitPriceState === "" ? "" : purchaseUnitPriceState}
                                     onChange={ (e) => {
                                         setIsDirty(true);
@@ -435,16 +438,18 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                     }}
                                     required={true}
                                     name={"purchaseUnitPrice"}
-                                    className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
+                                    className={"text-dark-tertiary w-full z-10 font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
                             </section>
                             <section className={"flex my-3 relative w-full"}>
                                 <label htmlFor="country-select" className="sr-only">
                                     Choose country
                                 </label>
+                                <span className={`absolute z-0 w-auto font-medium transition-all ${countryState ? "text-[.9rem] left-0 -top-[7px]" : "top-1 left-1 opacity-0"}`}>Country</span>
+
                                 <select
                                     id={"country-select"}
                                     name="country"
-                                    className="text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none appearance-none bg-transparent p-1 focus:bg-light-bg-tertiary dark:focus:bg-dark-bg-tertiary focus:border-b-light-text-tertiary dark:focus:border-b-dark-main"
+                                    className="text-dark-tertiary w-full z-10 font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none appearance-none bg-transparent p-1 focus:bg-light-bg-tertiary dark:focus:bg-dark-bg-tertiary focus:border-b-light-text-tertiary dark:focus:border-b-dark-main"
                                     size={1}
                                     required
                                     onChange={ (e) => setCountryState(e.target.value) }
@@ -455,6 +460,7 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                 </select>
                             </section>
                             <section className={"flex my-3 relative w-full"}>
+                                <span className={`absolute z-0 w-auto font-medium transition-all ${purchaseDateState ? "text-[.9rem] left-0 -top-[7px]" : "top-1 left-1"}`}>Purchase Date</span>
                                 <input
                                     type={"date"}
                                     min={1}

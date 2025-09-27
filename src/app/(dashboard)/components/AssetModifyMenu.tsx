@@ -4,7 +4,7 @@ import { IoPencil } from "react-icons/io5";
 import { GoAlertFill } from "react-icons/go";
 import React from "react";
 
-export default function AssetModifyMenu({id,refresh,showNotification, handleEdit,ticker,country,purchaseDate,quantity,purchasePrice,currency}: {id: string;refresh: () => void;showNotification: (message?: string) => void; handleEdit: (id:string) => void;ticker?:string;country:string;purchaseDate:string;quantity:number;purchasePrice?:number;currency:string;}) {
+export default function AssetModifyMenu({id,refresh,showNotification, handleEdit,ticker,country,purchaseDate,quantity,purchasePrice,currency,addedManually}: {id: string;refresh: () => void;showNotification: (message?: string) => void; handleEdit: (id:string) => void;ticker?:string;country:string;purchaseDate:string;quantity:number;purchasePrice?:number;currency:string;addedManually:boolean}) {
     const handleDelete = async (id:string) =>{
 
         const res = await fetch("/api/user/assets",{
@@ -23,7 +23,7 @@ export default function AssetModifyMenu({id,refresh,showNotification, handleEdit
     }
     const handlePermanentDelete = async () =>{
         const today = new Date().toLocaleDateString("sv-SE");
-        const url = `/api/user/walletSnapshots?ticker=${ticker}&delete=true&country=${country}&purchaseDate=${purchaseDate}&today=${today}&quantity=${quantity}&price=${purchasePrice}&currency=${currency}`;
+        const url = `/api/user/walletSnapshots?ticker=${ticker}&delete=true&country=${country}&purchaseDate=${purchaseDate}&addedManually=${addedManually}&today=${today}&quantity=${quantity}&price=${purchasePrice}&currency=${currency}`;
         const res = await fetch(url,{
             method: "PUT",
             headers: { "Content-Type": "application/json" },
