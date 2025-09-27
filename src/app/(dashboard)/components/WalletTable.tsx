@@ -296,7 +296,7 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
                                                                  quantity={asset.quantity}
                                                                  purchasePrice={asset.purchaseUnitPrice}
                                                                  currency={asset.currency}
-                                                                 addedmanually={asset.addedManually}
+                                                                 addedManually={asset.addedManually}
                                                                  refresh={getAssets}
                                                                  showNotification={showNotification}
                                                                  handleEdit={() => startEditing(asset)} />
