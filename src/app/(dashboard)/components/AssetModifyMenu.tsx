@@ -22,8 +22,8 @@ export default function AssetModifyMenu({id,refresh,showNotification, handleEdit
         refresh();
     }
     const handlePermanentDelete = async () =>{
-
-        const url = `/api/user/walletSnapshots?ticker=${ticker}&delete=true&country=${country}&purchaseDate=${purchaseDate}&quantity=${quantity}&price=${purchasePrice}&currency=${currency}`;
+        const today = new Date().toLocaleDateString("sv-SE");
+        const url = `/api/user/walletSnapshots?ticker=${ticker}&delete=true&country=${country}&purchaseDate=${purchaseDate}&today=${today}&quantity=${quantity}&price=${purchasePrice}&currency=${currency}`;
         const res = await fetch(url,{
             method: "PUT",
             headers: { "Content-Type": "application/json" },

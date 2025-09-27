@@ -61,7 +61,7 @@ export default function ProductClient() {
                             className={`bg-light-bg dark:bg-dark-bg-tertiary p-4 pt-5 pb-10 min-w-70 w-9/10 max-w-90 sm:w-120 sm:max-w-200 min-h-[450px] sm:min-h-[450px] rounded-4xl transition-all hover:cursor-pointer border-2 border-transparent hover:-translate-y-3 hover:shadow-2xl z-0 ${
                                 subscription === `${item.name}` ? "border-light-main dark:border-dark-main -translate-y-3 shadow-2xl" : ""
                             }`}
-                            onClick={() => saveProduct(item.name)}
+                            onClick={() => item.available ? saveProduct(item.name) : null}
                         >
                             <div className="text-center border-b-1 border-light-secondary dark:border-dark-secondary py-1 pb-5">
                                 <h2 className="text-5xl pb-5">{item.name}</h2>

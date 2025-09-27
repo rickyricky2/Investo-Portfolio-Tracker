@@ -33,11 +33,29 @@ const getUserId = async ()=>{
     return decoded.userId;
 }
 
-function fillMissingDays(data: HistoricalPrice[]): HistoricalPrice[] {
+function dateFromYMD(dateStr: string): Date {
+    const [year, month, day] = dateStr.split("-").map(Number);
+    return new Date(year, month - 1, day);
+}
+
+function addDays(dateStr: string, days: number): string {
+    const [year, month, day] = dateStr.split("-").map(Number);
+
+    const d = new Date(year, month - 1, day);
+    d.setDate(d.getDate() + days);
+
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const dd = String(d.getDate()).padStart(2, "0");
+
+    return `${y}-${m}-${dd}`;
+}
+
+function fillMissingDays(data: HistoricalPrice[], today:string): HistoricalPrice[] {
     if (data.length === 0) return [];
 
     const parsed = data.map(p => ({
-        date: new Date(p.date),
+        date: dateFromYMD(p.date),
         close: p.close,
     }));
 
@@ -47,49 +65,55 @@ function fillMissingDays(data: HistoricalPrice[]): HistoricalPrice[] {
     for (let i = 0; i < parsed.length - 1; i++) {
         const current = parsed[i].date;
         const next = parsed[i + 1].date;
+        const dateStr = current.toLocaleDateString("sv-SE")
 
         result.push({
-            date: current.toISOString().slice(0, 10),
+            date: dateStr,
             close: parsed[i].close,
         });
 
         lastClose = parsed[i].close;
 
-        const day = new Date(current);
-        day.setUTCDate(day.getUTCDate() + 1);
+        let day = dateFromYMD(dateStr);
+        const next_day = addDays(dateStr,1);
+        day = dateFromYMD(next_day);
 
         while (day < next) {
+            const dateStr = day.toLocaleDateString("sv-SE");
+
             result.push({
-                date: day.toISOString().slice(0, 10),
+                date: dateStr,
                 close: lastClose,
             });
-            day.setUTCDate(day.getUTCDate() + 1);
+
+            const next_day = addDays(dateStr,1);
+            day = dateFromYMD(next_day);
         }
     }
 
     const last = parsed[parsed.length - 1];
     result.push({
-        date: last.date.toISOString().slice(0, 10),
+        date: last.date.toLocaleDateString("sv-SE"),
         close: last.close,
     });
 
-    const today = new Date();
-    const untilDate = new Date(today.toISOString().slice(0, 10));
-    untilDate.setDate(untilDate.getDate() + 1);
+    const untilDate = dateFromYMD(today);
 
-
-    const day = new Date(last.date);
+    const next_day = addDays(last.date.toLocaleDateString("sv-SE"),1);
+    let day = dateFromYMD(next_day);
     lastClose = last.close;
-    day.setDate(day.getDate() + 1);
 
     while (day <= untilDate) {
+        // console.log("day",day.toLocaleDateString("sv-SE"));
+        // console.log("untilDate",untilDate.toLocaleDateString("sv-SE"));
+        const dateStr = day.toLocaleDateString("sv-SE");
         result.push({
-            date: day.toISOString().slice(0, 10),
+            date: dateStr,
             close: lastClose,
         });
-        day.setUTCDate(day.getUTCDate() + 1);
+        const next_day = addDays(dateStr,1);
+        day = dateFromYMD(next_day);
     }
-
     return result;
 }
 
@@ -164,8 +188,9 @@ export async function PUT(req:Request){
     const quantity = Number(searchParams.get("quantity"));
     const purchasePrice = Number(searchParams.get("price"));
     const currency = searchParams.get("currency");
+    const today = searchParams.get("today");
 
-    if(!country || !quantity || !purchaseDate || !currency) {
+    if(!country || !quantity || !purchaseDate || !currency || !today) {
         return NextResponse.json({success:false, error:"Could not find country, quantity, currency or purchaseDate in params"},{status:400});
     }
 
@@ -179,12 +204,13 @@ export async function PUT(req:Request){
         }
         const ops = [];
 
-        const currentDate = new Date(purchaseDate);
-        const today = new Date();
+        let currentDate = dateFromYMD(purchaseDate);
+        const untilDate = dateFromYMD(today);
 
-        while(currentDate <= today ){
+        while(currentDate <= untilDate ){
             let assetValue =  purchasePrice * quantity;
-            const dateStr = currentDate.toISOString().split("T")[0];
+            const dateStr = currentDate.toLocaleDateString("sv-SE");
+
             const res = await fetch(`${baseURL}/api/historicalRates?purchaseDate=${dateStr}`);
             const data = await res.json();
             if(currency !== "USD"){
@@ -198,7 +224,8 @@ export async function PUT(req:Request){
                 }
             });
 
-            currentDate.setDate(currentDate.getDate() + 1);
+            const next_day = addDays(dateStr,1);
+            currentDate = dateFromYMD(next_day);
         }
 
         const portfolioSnapshots = await getCollection("portfolioSnapshots");
@@ -210,7 +237,9 @@ export async function PUT(req:Request){
     ticker = buildTicker(ticker,country);
 
     let allPrices: HistoricalPrice[] = await fetchFromStooq(ticker,purchaseDate);
-    allPrices = fillMissingDays(allPrices);
+    // console.log(allPrices);
+    allPrices = fillMissingDays(allPrices, today);
+    // console.log(allPrices);
 
     if (allPrices.length === 0) {
         const last = await fetch(`${baseURL}/api/stockMarketAPI?dataType=lastPrice&ticker=${ticker}&country=${country}`).then(res => res.json());
@@ -219,17 +248,17 @@ export async function PUT(req:Request){
             return NextResponse.json({success: false, error:"No data"}, {status: 500});
         }
 
-        const currentDate = new Date(purchaseDate);
-        const today = new Date();
-        const untilDate = new Date(today.toISOString().split('T')[0]);
-        untilDate.setDate(untilDate.getDate() + 1);
+        let currentDate = dateFromYMD(purchaseDate);
+        const untilDate = dateFromYMD(today);
 
         while(currentDate <= untilDate){
+            const dateStr = currentDate.toLocaleDateString("sv-SE");
             allPrices.push({
-                date: currentDate.toISOString().split("T")[0],
+                date: dateStr,
                 close: last.lastPrice
             });
-            currentDate.setDate(currentDate.getDate() + 1);
+            const next_day = addDays(dateStr,1);
+            currentDate = dateFromYMD(next_day);
         }
     }
 

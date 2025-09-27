@@ -147,8 +147,9 @@ export default function WalletTable({tableHeaders, isLoading, handleSort, sorted
             console.warn(data.error);
             showNotification(data.error, false);
         }else{
-            await updateWalletSnapshots(baseURL,currentAsset.country,currentAsset.purchaseDate,currentAsset.quantity,currentAsset.currency,currentAsset.ticker,currentAsset.purchaseUnitPrice,true).catch(console.error);
-            await updateWalletSnapshots(baseURL,editedValues.country,editedValues.purchaseDate,editedValues.quantity,editedValues.currency,editedValues.ticker,editedValues.purchaseUnitPrice).catch(console.error);
+            const today = new Date().toLocaleDateString("sv-SE");
+            await updateWalletSnapshots(baseURL,currentAsset.country,currentAsset.purchaseDate,currentAsset.quantity,currentAsset.currency,today,currentAsset.ticker,currentAsset.purchaseUnitPrice,true).catch(console.error);
+            await updateWalletSnapshots(baseURL,editedValues.country,editedValues.purchaseDate,editedValues.quantity,editedValues.currency,today,editedValues.ticker,editedValues.purchaseUnitPrice).catch(console.error);
         }
 
         showNotification("Asset have been modified");

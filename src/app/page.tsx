@@ -61,13 +61,13 @@ export default async function Home() {
               <div className={"flex flex-wrap gap-15 justify-center items-center my-10"}>
                   {subscriptionPlans.map((item,index) => {
                       return(
-                          <div key={index} className={`shadow-2xl p-10 min-w-70 w-90 max-w-100 min-h-[500px] bg-light-bg dark:bg-dark-bg-tertiary rounded-4xl
-                              transition-all hover:scale-101 hover:-translate-y-3 hover:shadow-2xl`}>
+                          <div key={index} className={`shadow-2xl p-10 min-w-70 w-90 max-w-100 min-h-[530px] bg-light-bg dark:bg-dark-bg-tertiary rounded-4xl
+                              transition-all flex flex-col justify-between hover:scale-101 hover:-translate-y-3 hover:shadow-2xl`}>
                               <div className={"text-left border-b-1 border-dark-secondary dark:border-dark-secondary py-1 pb-2"}>
                                   <h2 className={"text-5xl dark:text-dark-text-secondary"}>{item.name}</h2>
                                   <p className={"text-4xl"}>{item.monthlyPrice}$/<span className={"text-3xl text-dark-text-tertiary"}>Month</span></p>
                               </div>
-                              <div className={"py-2 mb-1"}>
+                              <div className={"py-2 mb-auto"}>
                                   <p className={"text-3xl py-3"}>Includes</p>
                                   <ul className={"text-2xl text-left p-5 dark:text-dark-text-secondary"}>
                                       {item.includes.map((item,index) => {
@@ -76,11 +76,11 @@ export default async function Home() {
                                           );
                                       })}
                                   </ul>
+                                  {item.name === "Free" ? (
+                                      <p className={"text-light-text dark:text-dark-text-tertiary tracking-normal text-lg"}>No credit card info needed!</p>
+                                  ) : ""}
                               </div>
-                              {item.name === "Free" ? (
-                                  <p className={"text-light-text dark:text-dark-text-tertiary tracking-normal text-lg"}>No credit card info needed!</p>
-                              ) : ""}
-                              <Link href={"/product"} className={"mt-4 inline-block text-3xl bg-light-secondary dark:bg-dark-bg-secondary text-light-bg dark:text-dark-text-secondary py-2 px-5 rounded-lg font-medium hover:bg-light-secondary dark:hover:bg-dark-secondary"}>Select</Link>
+                              <Link href={item.available? "/product" : "#"} aria-disabled={!item.available} className={`${item.available ? "bg-light-secondary dark:bg-dark-bg-secondary" : "bg-gray-400 dark:bg-gray-600 pointer-events-none"} mt-4 inline-block text-3xl text-light-bg dark:text-dark-text-secondary py-2 px-5 rounded-lg font-medium hover:bg-light-secondary dark:hover:bg-dark-secondary`}>Select</Link>
                           </div>
                       );
                   })}

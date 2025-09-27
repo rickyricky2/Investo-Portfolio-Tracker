@@ -16,9 +16,9 @@ const currencyOptions= currencies.map( (c,index) => (
     <option key={index} value={c.value}>{c.label}</option>
 ));
 
-export async function updateWalletSnapshots(baseURL:string,country:string,purchaseDate:string,quantity:number,currency:string,ticker?:string,price?:number,ifDelete:boolean = false,) {
+export async function updateWalletSnapshots(baseURL:string,country:string,purchaseDate:string,quantity:number,currency:string,today:string,ticker?:string,price?:number,ifDelete:boolean = false,) {
     try {
-        const url = `${baseURL}/api/user/walletSnapshots?ticker=${ticker}&country=${country}&purchaseDate=${purchaseDate}&quantity=${quantity}&price=${price}&currency=${currency}&delete=${ifDelete}`;
+        const url = `${baseURL}/api/user/walletSnapshots?ticker=${ticker}&country=${country}&purchaseDate=${purchaseDate}&quantity=${quantity}&price=${price}&today=${today}&currency=${currency}&delete=${ifDelete}`;
         const res = await fetch(url, { method: "PUT", headers: { "Content-Type": "application/json" } });
         const data = await res.json();
         if(data.success){
@@ -305,7 +305,7 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
         }
 
         showNotification(`Asset has been added!`);
-        updateWalletSnapshots(baseURL,rawData.country,rawData.purchaseDate,rawData.quantity,rawData.currency,rawData.ticker,rawData.purchaseUnitPrice).catch(console.error);
+        updateWalletSnapshots(baseURL,rawData.country,rawData.purchaseDate,rawData.quantity,rawData.currency,formattedDate,rawData.ticker,rawData.purchaseUnitPrice).catch(console.error);
         triggerRefresh();
         setIsOpen(false);
         setIsLoading(false);
@@ -315,7 +315,7 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
     const [notAddDataManually,setNotAddDataManually] = useState(true);
 
     const today = new Date();
-    const formattedDate = today.toISOString().split("T")[0];
+    const formattedDate = today.toLocaleDateString("sv-SE");
 
     return(
         <div className={`lg:relative text-light-text-secondary dark:text-dark-text`} ref={wrapperRef}>
