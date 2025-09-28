@@ -79,6 +79,11 @@ function MainChartComponent({mainCurrency}: {mainCurrency: string}) {
         },
     ],[snapshots]);
 
+    const tickStep = Math.ceil(snapshots.length / 10);
+    const tickValues = chartData[0].data
+        .filter((_,i) => i % tickStep === 0)
+        .map(d => d.x);
+
     return (
         <div className="min-h-[500px] w-full my-5 shadow-lg rounded-4xl bg-light-bg-secondary dark:bg-dark-bg-tertiary py-6 px-2 tiny:px-6 select-none">
             <div className="flex items-center">
@@ -105,6 +110,7 @@ function MainChartComponent({mainCurrency}: {mainCurrency: string}) {
                     reverse: false,
                 }}
                 axisBottom={{
+                    tickValues,
                     tickSize: 5,
                     tickPadding: 5,
                     tickRotation: -40,
