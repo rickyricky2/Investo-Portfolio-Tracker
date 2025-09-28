@@ -35,10 +35,14 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
     const [isOpen,setIsOpen]=useState(false);
     const [error, setError]=useState("");
     const [isLoading, setIsLoading]=useState(false);
+
+    const [type, setType] = useState("");
+    const [tickerState, setTickerState] = useState("");
+    const [nameState, setNameState] = useState("");
+    const [quantityState, setQuantityState] = useState<string | number>("");
     const [purchaseUnitPriceState, setPurchaseUnitPriceState] = useState<string | number>("");
     const [lastUnitPriceState, setLastUnitPriceState] = useState<string | number>("");
-
-    const [tickerState, setTickerState] = useState("");
+    const [currencyState, setCurrencyState] = useState<string>("");
     const [countryState, setCountryState] = useState("");
     const [purchaseDateState, setPurchaseDateState] = useState("");
     const [isDirty, setIsDirty] = useState(false);
@@ -330,32 +334,32 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
         if(!tickerState || !countryState || !purchaseDateState) return;
 
         const timeout = setTimeout( async () => {
+            let purchaseUnitPrice:string | number = "";
             const purchaseUnitPriceRes  = await fetch(`${baseURL}/api/stockMarketAPI?dataType=historicalPrices&ticker=${tickerState}&country=${countryState}&purchaseDate=${purchaseDateState}`, {
                 method: "GET",
                 headers:{"Content-Type": "application/json"},
             });
             if(purchaseUnitPriceRes.ok){
-                const purchaseUnitPrice = await purchaseUnitPriceRes.json();
-                if(purchaseUnitPrice.success){
-                    setPurchaseUnitPriceState(purchaseUnitPrice.price);
-                }
-            }else{
-                const purchaseUnitPriceRes  = await fetch(`${baseURL}/api/stockMarketAPI?dataType=lastPrice&ticker=${tickerState}&country=${countryState}`, {
-                    method: "GET",
-                    headers:{"Content-Type": "application/json"},
-                });
-                const purchaseUnitPrice = await purchaseUnitPriceRes.json();
-                if(purchaseUnitPrice.success){
-                    setPurchaseUnitPriceState(purchaseUnitPrice.lastPrice);
+                const data = await purchaseUnitPriceRes.json();
+                if(data.success){
+                    purchaseUnitPrice = data.price;
                 }
             }
+            const lastUnitPriceRes  = await fetch(`${baseURL}/api/stockMarketAPI?dataType=lastPrice&ticker=${tickerState}&country=${countryState}`, {
+                method: "GET",
+                headers:{"Content-Type": "application/json"},
+            });
+            const lastUnitPrice = await lastUnitPriceRes.json();
+            if(lastUnitPrice.success){
+                setLastUnitPriceState(lastUnitPrice.lastPrice);
+                purchaseUnitPrice = purchaseUnitPrice === "" ? lastUnitPrice.lastPrice : purchaseUnitPrice;
+            }
+            setPurchaseUnitPriceState(purchaseUnitPrice);
         }, 500);
 
         return () => clearTimeout(timeout);
     },[tickerState, countryState, purchaseDateState])
 
-    const [type, setType] = useState("");
-    const [quantityState, setQuantityState] = useState(0);
     const [notAddDataManually,setNotAddDataManually] = useState(true);
 
     useEffect( () => {
@@ -394,9 +398,6 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                             setNotAddDataManually(typesWithTicker.includes(e.target.value));
                             setError("");
                             setIsDirty(false);
-                            setTickerState("");
-                            setCountryState("");
-                            setPurchaseUnitPriceState("");
                             setLastUnitPriceState("");
                         }}
                     >
@@ -424,6 +425,7 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                 <input
                                     type={"number"}
                                     min={1}
+                                    value={quantityState === "" ? "" : quantityState}
                                     onChange={(e) => setQuantityState(Number(e.target.value))}
                                     required
                                     name={"quantity"}
@@ -475,85 +477,115 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                             </section>
                         </>
                     ) : type ? (
-                        formAssets.map( (item,index) => {
-                                return(
-                                    ![ !typesWithTicker.includes(type) ? 0 : -1,!typesWithTicker.includes(type) ? 4 : -1].includes(index) ? (
-                                        <section className={"flex my-3 relative w-full "} key={index}>
-                                        {item.key === "currency" ? (
-                                            <div>
-                                                <label htmlFor="currency-select" className="sr-only">
-                                                    Choose Currency
-                                                </label>
-                                                <select
-                                                    name={item.key}
-                                                    id={"currency-select"}
-                                                    className="text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none appearance-none bg-transparent p-1 focus:bg-light-bg-tertiary dark:focus:bg-dark-bg-tertiary focus:border-b-light-text-tertiary dark:focus:border-b-dark-main"
-                                                    required
-                                                    defaultValue=""
-                                                >
-                                                    <option value="" disabled>
-                                                        -- Select Currency --
-                                                    </option>
-                                                    {currencyOptions}
-                                                </select>
-                                            </div>
-                                        ) : item.key === "country" ? (
-                                            <div>
-                                                <label htmlFor="country-select" className="sr-only">
-                                                    Choose Country
-                                                </label>
-                                                <select
-                                                    name="country"
-                                                    id={"country-select"}
-                                                    className="text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none appearance-none bg-transparent p-1 focus:bg-light-bg-tertiary dark:focus:bg-dark-bg-tertiary focus:border-b-light-text-tertiary dark:focus:border-b-dark-main"
-                                                    size={1}
-                                                    required
-                                                    defaultValue=""
-                                                >
-                                                    <option value="" disabled>-- Select Country --</option>
-                                                    {countryOptions}
-                                                </select>
-                                            </div>
-                                        ) : item.key === "purchaseDate" ? (
-                                            <section className={"flex my-3 relative w-full"}>
-                                                <input
-                                                    type={"date"}
-                                                    min={1}
-                                                    placeholder={"Purchase Date"}
-                                                    defaultValue={purchaseDateState}
-                                                    required
-                                                    name={"purchaseDate"}
-                                                    className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
-                                            </section>
-                                        ) : item.key === "purchaseUnitPrice" ? (
-                                            <input
-                                                min={1}
-                                                placeholder={item.label}
-                                                name={item.key}
-                                                required={true}
-                                                value={purchaseUnitPriceState}
-                                                onChange={(e) => setPurchaseUnitPriceState(Number(e.target.value))}
-                                                className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
-                                        ) : item.key === "lastUnitPrice" ? (
-                                            <input
-                                                min={1}
-                                                placeholder={item.label}
-                                                name={item.key}
-                                                required={true}
-                                                value={lastUnitPriceState}
-                                                onChange={(e) => setLastUnitPriceState(Number(e.target.value))}
-                                                className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
-                                        ) : (
-                                            <input
-                                                min={1}
-                                                placeholder={item.label}
-                                                name={item.key}
-                                                className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
-                                        )}
-                                        </section>
-                                    ) : null
-                                );
-                            })
+                        <>
+                            <section className={`flex my-3 relative w-full ${typesWithTicker.includes(type) ? "" : "hidden"}`}>
+                                <span className={`absolute z-0 w-auto font-medium transition-all ${tickerState ? "text-[.9rem] left-0 -top-[7px]" : "top-1 left-1"}`}>Ticker</span>
+                                <input
+                                    type={"text"}
+                                    name={"ticker"}
+                                    value={tickerState}
+                                    disabled={!typesWithTicker.includes(type)}
+                                    required
+                                    onChange={ (e) => setTickerState(e.target.value) }
+                                    className={"text-dark-tertiary w-full z-10 font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
+                            </section>
+                            <section className={"flex my-3 relative w-full"}>
+                                <span className={`absolute z-0 w-auto font-medium transition-all ${nameState ? "text-[.9rem] left-0 -top-[7px]" : "top-1 left-1"}`}>Name</span>
+                                <input
+                                    type={"text"}
+                                    value={nameState}
+                                    onChange={(e) => setNameState(e.target.value)}
+                                    required
+                                    name={"name"}
+                                    className={"text-dark-tertiary w-full z-10 font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
+                            </section>
+                            <section className={"flex my-3 relative w-full"}>
+                                <span className={`absolute z-0 w-auto font-medium transition-all ${quantityState ? "text-[.9rem] left-0 -top-[7px]" : "top-1 left-1"}`}>Quantity</span>
+                                <input
+                                    type={"number"}
+                                    min={1}
+                                    value={quantityState === "" ? "" : quantityState}
+                                    onChange={(e) => setQuantityState(Number(e.target.value))}
+                                    required
+                                    name={"quantity"}
+                                    className={"text-dark-tertiary w-full z-10 font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
+                            </section>
+                            <section className={"flex my-3 relative w-full"}>
+                                <span className={`absolute z-0 w-auto font-medium transition-all ${purchaseUnitPriceState ? "text-[.9rem] left-0 -top-[7px]" : "top-1 left-1"}`}>Purchase Unit Price</span>
+                                <input
+                                    type={"number"}
+                                    value={purchaseUnitPriceState === "" ? "" : purchaseUnitPriceState}
+                                    onChange={ (e) => {
+                                        setIsDirty(true);
+                                        setPurchaseUnitPriceState(e.target.value);
+                                    }}
+                                    required={true}
+                                    name={"purchaseUnitPrice"}
+                                    className={"text-dark-tertiary w-full z-10 font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
+                            </section>
+                            <section className={`flex my-3 relative w-full ${typesWithTicker.includes(type) ? "" : "hidden"}`}>
+                                <span className={`absolute z-0 w-auto font-medium transition-all ${lastUnitPriceState ? "text-[.9rem] left-0 -top-[7px]" : "top-1 left-1"}`}>Last Unit Price </span>
+                                <input
+                                    type={"number"}
+                                    value={lastUnitPriceState === "" ? "" : lastUnitPriceState}
+                                    onChange={(e) => setLastUnitPriceState(Number(e.target.value))}
+                                    required={true}
+                                    disabled={!typesWithTicker.includes(type)}
+                                    name={"lastUnitPrice"}
+                                    className={"text-dark-tertiary w-full z-10 font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
+                            </section>
+                            <section className={"flex my-3 relative w-full"}>
+                                <label htmlFor="currency-select" className="sr-only">
+                                    Choose currency
+                                </label>
+                                <span className={`absolute z-0 w-auto font-medium transition-all ${currencyState ? "text-[.9rem] left-0 -top-[7px]" : "top-1 left-1 opacity-0"}`}>Currency</span>
+                                <select
+                                    id={"currency-select"}
+                                    name="currency"
+                                    className="text-dark-tertiary w-full z-10 font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none appearance-none bg-transparent p-1 focus:bg-light-bg-tertiary dark:focus:bg-dark-bg-tertiary focus:border-b-light-text-tertiary dark:focus:border-b-dark-main"
+                                    size={1}
+                                    required
+                                    onChange={ (e) => setCurrencyState(e.target.value) }
+                                    defaultValue=""
+                                >
+                                    <option value="" disabled>
+                                        -- Select Currency --
+                                    </option>
+                                    {currencyOptions}
+                                </select>
+                            </section>
+                            <section className={"flex my-3 relative w-full"}>
+                                <label htmlFor="country-select" className="sr-only">
+                                    Choose country
+                                </label>
+                                <span className={`absolute z-0 w-auto font-medium transition-all ${countryState ? "text-[.9rem] left-0 -top-[7px]" : "top-1 left-1 opacity-0"}`}>Country</span>
+
+                                <select
+                                    id={"country-select"}
+                                    name="country"
+                                    className="text-dark-tertiary w-full z-10 font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none appearance-none bg-transparent p-1 focus:bg-light-bg-tertiary dark:focus:bg-dark-bg-tertiary focus:border-b-light-text-tertiary dark:focus:border-b-dark-main"
+                                    size={1}
+                                    required
+                                    onChange={ (e) => setCountryState(e.target.value) }
+                                    defaultValue=""
+                                >
+                                    <option value="" disabled>-- Select Country --</option>
+                                    {countryOptions}
+                                </select>
+                            </section>
+                            <section className={"flex my-3 relative w-full"}>
+                                <span className={`absolute z-0 w-auto font-medium transition-all ${purchaseDateState ? "text-[.9rem] left-0 -top-[7px]" : "top-1 left-1"}`}>Purchase Date</span>
+                                <input
+                                    type={"date"}
+                                    min={1}
+                                    placeholder={"Purchase Date"}
+                                    onChange={ (e) => setPurchaseDateState(e.target.value) }
+                                    defaultValue={today}
+                                    required
+                                    name={"purchaseDate"}
+                                    className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
+                            </section>
+                        </>
                     ) : null}
                     {error && (
                         <p className={"font-medium my-3 text-light-error-text dark:text-dark-error-text"}>{error}</p>
@@ -565,7 +597,87 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                  className={"bg-light-secondary mt-5 dark:bg-dark-main font-medium text-light-text-secondary dark:text-dark-text-secondary active:bg-light-active dark:active:bg-dark-active rounded-2xl px-7 py-3 cursor-pointer transition-all hover:-translate-y-1"}/>
                     }
                     </div>
-                </form>
+                {/*    formAssets.map( (item,index) => {*/}
+                {/*    return(*/}
+                {/*    ![ !typesWithTicker.includes(type) ? 0 : -1,!typesWithTicker.includes(type) ? 4 : -1].includes(index) ? (*/}
+                {/*    <section className={"flex my-3 relative w-full "} key={index}>*/}
+                {/*    {item.key === "currency" ? (*/}
+                {/*        <div>*/}
+                {/*            <label htmlFor="currency-select" className="sr-only">*/}
+                {/*                Choose Currency*/}
+                {/*            </label>*/}
+                {/*            <select*/}
+                {/*                name={item.key}*/}
+                {/*                id={"currency-select"}*/}
+                {/*                className="text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none appearance-none bg-transparent p-1 focus:bg-light-bg-tertiary dark:focus:bg-dark-bg-tertiary focus:border-b-light-text-tertiary dark:focus:border-b-dark-main"*/}
+                {/*                required*/}
+                {/*                defaultValue=""*/}
+                {/*            >*/}
+                {/*                <option value="" disabled>*/}
+                {/*                    -- Select Currency --*/}
+                {/*                </option>*/}
+                {/*                {currencyOptions}*/}
+                {/*            </select>*/}
+                {/*        </div>*/}
+                {/*    ) : item.key === "country" ? (*/}
+                {/*        <div>*/}
+                {/*            <label htmlFor="country-select" className="sr-only">*/}
+                {/*                Choose Country*/}
+                {/*            </label>*/}
+                {/*            <select*/}
+                {/*                name="country"*/}
+                {/*                id={"country-select"}*/}
+                {/*                className="text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none appearance-none bg-transparent p-1 focus:bg-light-bg-tertiary dark:focus:bg-dark-bg-tertiary focus:border-b-light-text-tertiary dark:focus:border-b-dark-main"*/}
+                {/*                size={1}*/}
+                {/*                required*/}
+                {/*                defaultValue=""*/}
+                {/*            >*/}
+                {/*                <option value="" disabled>-- Select Country --</option>*/}
+                {/*                {countryOptions}*/}
+                {/*            </select>*/}
+                {/*        </div>*/}
+                {/*    ) : item.key === "purchaseDate" ? (*/}
+                {/*        <section className={"flex my-3 relative w-full"}>*/}
+                {/*            <input*/}
+                {/*                type={"date"}*/}
+                {/*                min={1}*/}
+                {/*                placeholder={"Purchase Date"}*/}
+                {/*                defaultValue={purchaseDateState}*/}
+                {/*                required*/}
+                {/*                name={"purchaseDate"}*/}
+                {/*                className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>*/}
+                {/*        </section>*/}
+                {/*    ) : item.key === "purchaseUnitPrice" ? (*/}
+                {/*        <input*/}
+                {/*            min={1}*/}
+                {/*            placeholder={item.label}*/}
+                {/*            name={item.key}*/}
+                {/*            required={true}*/}
+                {/*            value={purchaseUnitPriceState}*/}
+                {/*            onChange={(e) => setPurchaseUnitPriceState(Number(e.target.value))}*/}
+                {/*            className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>*/}
+                {/*    ) : item.key === "lastUnitPrice" ? (*/}
+                {/*        <input*/}
+                {/*            min={1}*/}
+                {/*            placeholder={item.label}*/}
+                {/*            name={item.key}*/}
+                {/*            required={true}*/}
+                {/*            value={lastUnitPriceState}*/}
+                {/*            onChange={(e) => setLastUnitPriceState(Number(e.target.value))}*/}
+                {/*            className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>*/}
+                {/*    ) : (*/}
+                {/*        <input*/}
+                {/*            min={1}*/}
+                {/*            placeholder={item.label}*/}
+                {/*            name={item.key}*/}
+                {/*            className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>*/}
+                {/*    )}*/}
+                {/*</section>*/}
+                {/*) : null*/}
+                {/*);*/}
+                {/*})*/}
+                {/*) :*/}
+            </form>
             </div>
         </div>
     );
