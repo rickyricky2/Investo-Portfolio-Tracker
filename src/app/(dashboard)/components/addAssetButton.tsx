@@ -3,7 +3,7 @@ import {FaPlus, FaSpinner} from "react-icons/fa";
 import React, { useState,useEffect, useRef } from 'react';
 import { useWalletStore } from "@/store/useWalletStore";
 import {z} from "zod";
-import {formAssets,typesWithTicker,countries, currencies, assetTypes} from "@/content/assetContent";
+import {typesWithTicker,countries, currencies, assetTypes} from "@/content/assetContent";
 import {useNotification} from "./changeNotification";
 
 let assetSchema;
