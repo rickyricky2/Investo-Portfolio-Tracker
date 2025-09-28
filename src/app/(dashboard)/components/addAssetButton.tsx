@@ -334,9 +334,11 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                 method: "GET",
                 headers:{"Content-Type": "application/json"},
             });
-            const purchaseUnitPrice = await purchaseUnitPriceRes.json();
-            if(purchaseUnitPrice.success){
-                setPurchaseUnitPriceState(purchaseUnitPrice.price);
+            if(purchaseUnitPriceRes.ok){
+                const purchaseUnitPrice = await purchaseUnitPriceRes.json();
+                if(purchaseUnitPrice.success){
+                    setPurchaseUnitPriceState(purchaseUnitPrice.price);
+                }
             }else{
                 const purchaseUnitPriceRes  = await fetch(`${baseURL}/api/stockMarketAPI?dataType=lastPrice&ticker=${tickerState}&country=${countryState}`, {
                     method: "GET",
