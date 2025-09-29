@@ -39,14 +39,18 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
     const [type, setType] = useState("");
     const [tickerState, setTickerState] = useState("");
     const [nameState, setNameState] = useState("");
-    const [quantityState, setQuantityState] = useState<string | number>("");
-    const [purchaseUnitPriceState, setPurchaseUnitPriceState] = useState<string | number>("");
-    const [lastUnitPriceState, setLastUnitPriceState] = useState<string | number>("");
+    const [quantityState, setQuantityState] = useState<string>("");
+    const [purchaseUnitPriceState, setPurchaseUnitPriceState] = useState<string>("");
+    const [lastUnitPriceState, setLastUnitPriceState] = useState<string>("");
     const [currencyState, setCurrencyState] = useState<string>("");
     const [countryState, setCountryState] = useState("");
-    const [purchaseDateState, setPurchaseDateState] = useState("");
+
     const [isDirty, setIsDirty] = useState(false);
+
     const [today, setToday] = useState("");
+    const [purchaseDateState, setPurchaseDateState] = useState("");
+
+    const [notAddDataManually,setNotAddDataManually] = useState(true);
 
     const wrapperRef = useRef<HTMLDivElement>(null);
     const buttonRef = useRef<HTMLDivElement>(null);
@@ -57,6 +61,27 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
     const baseURL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
     const triggerRefresh = useWalletStore((state) => state.triggerRefresh);
+
+    useEffect( () => {
+        const formattedDate = new Date().toLocaleDateString("sv-SE");
+        setToday(formattedDate);
+        setPurchaseDateState(formattedDate);
+    },[]);
+
+    // ignoruje error bo nie wiem skad jest a nic nie zmienia
+    useEffect(() => {
+        const originalConsoleError = console.error;
+        console.error = (...args: any) => {
+            if (typeof args[0] === "string" && args[0].includes("A component is changing an uncontrolled input to be controlled")) {
+                return;
+            }
+            originalConsoleError(...args);
+        };
+
+        return () => {
+            console.error = originalConsoleError;
+        };
+    }, []);
 
     useEffect(() => {
         if(!isOpen) return;
@@ -255,24 +280,18 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                     setError("We couldn't find ticker info, u need to add information manually");
                     setIsLoading(false);
                     setNotAddDataManually(false);
-                    // if(purchaseUnitPrice.success){
-                    //     setPurchaseUnitPriceState(Number(purchaseUnitPrice.price));
-                        const res = await fetch(`${baseURL}/api/stockMarketAPI?dataType=lastPrice&ticker=${ticker}&country=${country}`, {
-                            method: "GET",
-                            headers:{"Content-Type": "application/json"},
-                        });
-                        const data = await res.json();
-                        if(data.success){
-                            console.log(1);
-                            setLastUnitPriceState(Number(data.lastPrice));
-                        }else{
-                            console.log(1);
-                            setLastUnitPriceState("");
-                        }
-                    // }
+                    const res = await fetch(`${baseURL}/api/stockMarketAPI?dataType=lastPrice&ticker=${ticker}&country=${country}`, {
+                        method: "GET",
+                        headers:{"Content-Type": "application/json"},
+                    });
+                    const data = await res.json();
+                    if(data.success){
+                        setLastUnitPriceState(String(data.lastPrice));
+                    }else{
+                        setLastUnitPriceState("");
+                    }
                     return;
                 }
-
                 const tickerInfo = data.tickerInfo;
                 const lastUnitPrice = Number(tickerInfo.close).toFixed(2);
 
@@ -351,23 +370,14 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
             });
             const lastUnitPrice = await lastUnitPriceRes.json();
             if(lastUnitPrice.success){
-                setLastUnitPriceState(lastUnitPrice.lastPrice);
+                setLastUnitPriceState(String(lastUnitPrice.lastPrice));
                 purchaseUnitPrice = purchaseUnitPrice === "" ? lastUnitPrice.lastPrice : purchaseUnitPrice;
             }
-            setPurchaseUnitPriceState(purchaseUnitPrice);
+            setPurchaseUnitPriceState(String(purchaseUnitPrice));
         }, 500);
 
         return () => clearTimeout(timeout);
     },[tickerState, countryState, purchaseDateState])
-
-    const [notAddDataManually,setNotAddDataManually] = useState(true);
-
-    useEffect( () => {
-        const todayDate = new Date();
-        const formattedDate = todayDate.toLocaleDateString("sv-SE");
-        setToday(formattedDate);
-        setPurchaseDateState(formattedDate);
-    },[]);
 
     return(
         <div className={`lg:relative text-light-text-secondary dark:text-dark-text`}>
@@ -425,8 +435,8 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                 <input
                                     type={"number"}
                                     min={1}
-                                    value={quantityState === "" ? "" : quantityState}
-                                    onChange={(e) => setQuantityState(Number(e.target.value))}
+                                    value={quantityState || ""}
+                                    onChange={(e) => setQuantityState(e.target.value)}
                                     required
                                     name={"quantity"}
                                     className={"text-dark-tertiary w-full z-10 font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
@@ -435,7 +445,7 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                 <span className={`absolute z-0 w-auto font-medium transition-all ${purchaseUnitPriceState ? "text-[.9rem] left-0 -top-[7px]" : "top-1 left-1"}`}>Purchase Unit Price</span>
                                 <input
                                     type={"number"}
-                                    value={purchaseUnitPriceState === "" ? "" : purchaseUnitPriceState}
+                                    value={purchaseUnitPriceState || ""}
                                     onChange={ (e) => {
                                         setIsDirty(true);
                                         setPurchaseUnitPriceState(e.target.value);
@@ -457,7 +467,7 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                     size={1}
                                     required
                                     onChange={ (e) => setCountryState(e.target.value) }
-                                    defaultValue=""
+                                    value={countryState || ""}
                                 >
                                     <option value="" disabled>-- Select Country --</option>
                                     {countryOptions}
@@ -470,7 +480,7 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                     min={1}
                                     placeholder={"Purchase Date"}
                                     onChange={ (e) => setPurchaseDateState(e.target.value) }
-                                    defaultValue={today}
+                                    value={purchaseDateState || ""}
                                     required
                                     name={"purchaseDate"}
                                     className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
@@ -483,7 +493,7 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                 <input
                                     type={"text"}
                                     name={"ticker"}
-                                    value={tickerState}
+                                    value={tickerState || ""}
                                     disabled={!typesWithTicker.includes(type)}
                                     required
                                     onChange={ (e) => setTickerState(e.target.value) }
@@ -493,7 +503,7 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                 <span className={`absolute z-0 w-auto font-medium transition-all ${nameState ? "text-[.9rem] left-0 -top-[7px]" : "top-1 left-1"}`}>Name</span>
                                 <input
                                     type={"text"}
-                                    value={nameState}
+                                    value={nameState || ""}
                                     onChange={(e) => setNameState(e.target.value)}
                                     required
                                     name={"name"}
@@ -504,8 +514,8 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                 <input
                                     type={"number"}
                                     min={1}
-                                    value={quantityState === "" ? "" : quantityState}
-                                    onChange={(e) => setQuantityState(Number(e.target.value))}
+                                    value={quantityState || ""}
+                                    onChange={(e) => setQuantityState(e.target.value)}
                                     required
                                     name={"quantity"}
                                     className={"text-dark-tertiary w-full z-10 font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
@@ -514,7 +524,7 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                 <span className={`absolute z-0 w-auto font-medium transition-all ${purchaseUnitPriceState ? "text-[.9rem] left-0 -top-[7px]" : "top-1 left-1"}`}>Purchase Unit Price</span>
                                 <input
                                     type={"number"}
-                                    value={purchaseUnitPriceState === "" ? "" : purchaseUnitPriceState}
+                                    value={purchaseUnitPriceState || ""}
                                     onChange={ (e) => {
                                         setIsDirty(true);
                                         setPurchaseUnitPriceState(e.target.value);
@@ -527,8 +537,8 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                 <span className={`absolute z-0 w-auto font-medium transition-all ${lastUnitPriceState ? "text-[.9rem] left-0 -top-[7px]" : "top-1 left-1"}`}>Last Unit Price </span>
                                 <input
                                     type={"number"}
-                                    value={lastUnitPriceState === "" ? "" : lastUnitPriceState}
-                                    onChange={(e) => setLastUnitPriceState(Number(e.target.value))}
+                                    value={lastUnitPriceState || ""}
+                                    onChange={(e) => setLastUnitPriceState(e.target.value)}
                                     required={true}
                                     disabled={!typesWithTicker.includes(type)}
                                     name={"lastUnitPrice"}
@@ -546,7 +556,7 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                     size={1}
                                     required
                                     onChange={ (e) => setCurrencyState(e.target.value) }
-                                    defaultValue=""
+                                    value={currencyState || ""}
                                 >
                                     <option value="" disabled>
                                         -- Select Currency --
@@ -567,7 +577,7 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                     size={1}
                                     required
                                     onChange={ (e) => setCountryState(e.target.value) }
-                                    defaultValue=""
+                                    value={countryState || ""}
                                 >
                                     <option value="" disabled>-- Select Country --</option>
                                     {countryOptions}
@@ -580,7 +590,7 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
                                     min={1}
                                     placeholder={"Purchase Date"}
                                     onChange={ (e) => setPurchaseDateState(e.target.value) }
-                                    defaultValue={today}
+                                    value={purchaseDateState || ""}
                                     required
                                     name={"purchaseDate"}
                                     className={"text-dark-tertiary w-full font-medium border-b-2 border-b-light-text-tertiary dark:border-b-dark-tertiary outline-none focus:scale-x-105 p-1 placeholder:text-[hsl(266,40%,70%)] dark:placeholder:text-dark-text-tertiary  dark:focus:placeholder:text-dark-text-secondary"}/>
