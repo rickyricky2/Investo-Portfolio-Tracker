@@ -5,10 +5,12 @@ export default function ThemeProvider({children}:{children:React.ReactNode}){
 
     useLayoutEffect(()=>{
         const theme = localStorage.getItem("theme");
-        if(theme === "dark"){
-            document.documentElement.classList.add("dark");
+        const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+
+        if(theme){
+            document.documentElement.classList.add(theme);
         }else{
-            document.documentElement.classList.remove("dark");
+            document.documentElement.classList.add(prefersDark ? "dark" : "light");
         }
     },[]);
 

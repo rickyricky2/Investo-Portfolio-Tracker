@@ -1,8 +1,8 @@
 "use client"
-import { useEffect } from "react";
+import { useLayoutEffect } from "react";
 
 export default function SetTheme() {
-    useEffect(() => {
+    useLayoutEffect(() => {
         const theme = localStorage.getItem("theme");
         const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
 
