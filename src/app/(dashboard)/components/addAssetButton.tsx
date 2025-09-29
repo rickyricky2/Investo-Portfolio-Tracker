@@ -71,7 +71,7 @@ function AddAssetButtonComponent({mobile}: {mobile: boolean;}) {
     // ignoruje error bo nie wiem skad jest a nic nie zmienia
     useEffect(() => {
         const originalConsoleError = console.error;
-        console.error = (...args: any) => {
+        console.error = (...args) => {
             if (typeof args[0] === "string" && args[0].includes("A component is changing an uncontrolled input to be controlled")) {
                 return;
             }
